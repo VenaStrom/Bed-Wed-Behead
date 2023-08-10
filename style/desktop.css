@@ -1,7 +1,74 @@
-::-webkit-scrollbar{
+::-webkit-scrollbar {
     display: none;
 }
 
 body {
-    background-color: #343434;
+    background-image: url(images/quick-ps-6CsREDPUK3Y-unsplash.jpg);
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+#mainLogo {
+    max-height: 20vh;
+    margin-top: 4vh;
+}
+
+h1 {
+    font-weight: bold;
+}
+
+.mainSection {
+    margin-top: 4vh;
+    display: grid;
+    column-gap: 5vw;
+    grid-template-columns: min-content min-content min-content;
+    grid-template-rows: auto auto;
+}
+
+.imageWrapper {
+    width: 15vw;
+}
+
+.image {
+    aspect-ratio: 1/1;
+    border-radius: 3vh;
+    object-fit: contain;
+    width: 100%;
+}
+
+.image:hover {
+    scale: 1.05;
+}
+
+.name {
+    font-size: large;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 1vh;
+}
+
+.radioWrapper {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    grid-template-columns: 15vw 15vw 15vw;
+    grid-column: 1/4;
+    column-gap: 5vw;
+}
+
+.radioWrapper div {
+    width: 15vw;
+}
+
+input[type=radio] {
+    width: 2vw;
+    aspect-ratio: 1/1;
 }
