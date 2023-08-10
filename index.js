@@ -1,5 +1,6 @@
 import puppeteer from "puppeteer";
 import fs from "fs"
+import { count } from "console";
 
 
 const scrape = async (urlParam) => {
@@ -19,7 +20,7 @@ const scrape = async (urlParam) => {
 
     let flag = true
     while (flag) {
-        const listOfLinks = await page.evaluate(() => {
+        const scrapedContent = await page.evaluate(() => {
 
             const nodeElements = document.querySelectorAll(".category-page__member-link");
 
@@ -36,9 +37,8 @@ const scrape = async (urlParam) => {
 
             return { links, url };
         });
-        
 
-        // console.log(listOfLinks);
+
         // let alternatives = []
         // let randomChar = listOfLinks[Math.floor(Math.random() * listOfLinks.length)]
         // let i = 0
@@ -48,7 +48,7 @@ const scrape = async (urlParam) => {
         //     alternatives.push(randomChar)
         // }
 
-        const content = JSON.stringify(listOfLinks.links).replaceAll("https://starwars.fandom.com/wiki/", "").replace("[", "").replace("]", "") + ","
+        const content = JSON.stringify(scrapedContent.links).replaceAll("https://starwars.fandom.com/wiki/", "").replace("[", "").replace("]", "") + ","
 
         try {
             fs.writeFileSync("links.csv", content, { flag: "a" });
@@ -62,7 +62,7 @@ const scrape = async (urlParam) => {
             break
         }
 
-        await page.goto(listOfLinks.url, {
+        await page.goto(scrapedContent.url, {
             waitUntil: "domcontentloaded",
         });
     }
@@ -72,8 +72,7 @@ const scrape = async (urlParam) => {
 
 
 // scrape("https://starwars.fandom.com/wiki/Category:Males")
-scrape("https://starwars.fandom.com/wiki/Category:Females")
-
+// scrape("https://starwars.fandom.com/wiki/Category:Females")
 // scrape("https://starwars.fandom.com/wiki/Category:Unidentified_females")
 // scrape("https://starwars.fandom.com/wiki/Category:Droids_with_feminine_programming")
 // scrape("https://starwars.fandom.com/wiki/Category:Unidentified_males")
