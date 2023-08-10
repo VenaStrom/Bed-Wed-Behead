@@ -1,41 +1,65 @@
 import puppeteer from "puppeteer";
+import fs from "fs"
+
 
 const getNames = async (url) => {
-    // Start a Puppeteer session with:
-    // - a visible browser (`headless: false` - easier to debug because you'll see the browser in action)
-    // - no default viewport (`defaultViewport: null` - website page will in full width and height)
     const browser = await puppeteer.launch({
         headless: false,
         defaultViewport: null,
+        args: ["--window-size=100,100"]
     });
 
-    // Open a new page
     const page = await browser.newPage();
 
-    // On this new page:
-    // - open the "url" website
-    // - wait until the dom content is loaded (HTML is ready)
     await page.goto(url, {
         waitUntil: "domcontentloaded",
     });
 
-    // Get page data
-    const name = await page.evaluate(() => {
+    const listOfLinks = await page.evaluate(() => {
 
-        const name = document.querySelector(".quote");
+        const nodeElements = document.querySelectorAll(".category-page__member-link");
 
-        const text = name.querySelector(".text").innerText;
-        const author = name.querySelector(".author").innerText;
+        let links = []
+        nodeElements.forEach(node => {
+            links.push(node.href)
+        })
 
-        return { name, image };
+        return links;
     });
 
-    // Display the quotes
-    console.log(name);
+    // console.log(listOfLinks);
+    // let alternatives = []
+    // let randomChar = listOfLinks[Math.floor(Math.random() * listOfLinks.length)]
+    // let i = 0
+    // while (randomChar.includes() == false && i < 3) {
+    //     randomChar = listOfLinks[Math.floor(Math.random() * listOfLinks.length)]
+    //     i++
+    //     alternatives.push(randomChar)
+    // }
 
-    // Close the browser
+    const content = JSON.stringify(listOfLinks).replaceAll("https://starwars.fandom.com/wiki/", "").replace("[", "").replace("]", "") + ","
+
+    try {
+        fs.writeFileSync("links.csv", content, { flag: "a" });
+        // file written successfully
+    } catch (err) {
+        console.error(err);
+    }
+
     await browser.close();
 };
 
-// Start the scraping
-getNames("https://starwars.fandom.com/wiki/Category:Droids_with_no_gender_programming");
+
+// getNames("https://starwars.fandom.com/wiki/Category:Females")
+// getNames("https://starwars.fandom.com/wiki/Category:Unidentified_females")
+// getNames("https://starwars.fandom.com/wiki/Category:Droids_with_feminine_programming")
+getNames("https://starwars.fandom.com/wiki/Category:Males")
+// getNames("https://starwars.fandom.com/wiki/Category:Unidentified_males")
+// getNames("https://starwars.fandom.com/wiki/Category:Droids_with_masculine_programming")
+// getNames("https://starwars.fandom.com/wiki/Category:Non-binary_individuals")
+// getNames("https://starwars.fandom.com/wiki/Category:Trans_individuals")
+// getNames("https://starwars.fandom.com/wiki/Category:Genderless_individuals")
+// getNames("https://starwars.fandom.com/wiki/Category:Droids_with_no_gender_programming")
+// getNames("https://starwars.fandom.com/wiki/Category:Individuals_of_unspecified_gender")
+// getNames("https://starwars.fandom.com/wiki/Category:Droids_with_unspecified_gender_programming")
+// getNames("https://starwars.fandom.com/wiki/Category:Individuals_of_unidentified_gender")
