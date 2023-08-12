@@ -1,7 +1,5 @@
 import puppeteer from "puppeteer";
 import fs from "fs"
-import { count } from "console";
-
 
 const scrape = async (urlParam) => {
     let url = urlParam
@@ -52,7 +50,6 @@ const scrape = async (urlParam) => {
 
         try {
             fs.writeFileSync("links.csv", content, { flag: "a" });
-            // file written successfully
         } catch (err) {
             console.error(err);
         }

@@ -10,59 +10,79 @@
 </head>
 
 <body>
-    <img src="style/images/bedwedbeheadlogo.png" alt="Bed Wed & Behead" id="mainLogo">
-    <h1>STAR WARS: &nbsp;Bed Wed & Behead</h1>
+    <img src="style/images/bedwedbeheadlogo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead"
+        id="mainLogo">
+    <h1>STAR WARS:&nbsp;&nbsp;Bed Wed & Behead</h1>
+
     <section class="mainSection">
-        <a target="_blank" href="" class="image1Wrapper imageWrapper">
+
+        <a target="_blank" href="https://starwars.fandom.com/wiki/CT-5555" class="imageWrapper" tabindex="1">
+            <img class="image" src="https://static.wikia.nocookie.net/starwars/images/6/62/FivesHS-Conspiracy.png" alt="Alien">
+            <p class="name">CT-5555</p>
+        </a>
+        <a target="_blank" href="https://starwars.fandom.com/wiki/Auk-Waimanu" class="imageWrapper" tabindex="6">
+            <img class="image" src="https://static.wikia.nocookie.net/starwars/images/8/85/Auk-Waimanu.png" alt="Alien">
+            <p class="name">Auk-Waimanu</p>
+        </a>
+        <a target="_blank" href="https://starwars.fandom.com/wiki/Y-45_armored_transport_hauler" class="imageWrapper" tabindex="9">
+            <img class="image" src="https://static.wikia.nocookie.net/starwars/images/f/fd/AThauler-SASWSOCE.png" alt="Alien">
+            <p class="name">Y-45 armored transport hauler</p>
+        </a>
+        <!-- <a target="_blank" href="" class="imageWrapper" tabindex="1">
             <img class="image" src="style/images/placeholder-alien.png" alt="Alien">
             <p class="name">Name</p>
-        </a>
-        <a target="_blank" href="" class="image2Wrapper imageWrapper">
+        </a> -->
+        <!-- <a target="_blank" href="" class="imageWrapper" tabindex="5">
             <img class="image" src="style/images/placeholder-alien.png" alt="Alien">
             <p class="name">Name</p>
-        </a>
-        <a target="_blank" href="" class="image3Wrapper imageWrapper">
+        </a> -->
+        <!-- <a target="_blank" href="" class="imageWrapper" tabindex="9">
             <img class="image" src="style/images/placeholder-alien.png" alt="Alien">
             <p class="name">Name</p>
-        </a>
-        <div class="radioWrapper">
-            <div>
-                <input type="radio" name="1" id="">
-                <label for="">Bed</label>
+        </a> -->
+
+        <div class="iconWrapper">
+            <div onclick="select(this,'bed1')" tabindex="2">
+                <img src="style/images/icons/bed_FILL1_wght600_GRAD0_opsz48.png" alt="Bed" class="icon">
+                <p class="alternativeName">Bed</p>
             </div>
-            <div>
-                <input type="radio" name="2" id="">
-                <label for="">Bed</label>
+            <div onclick="select(this,'bed2')" tabindex="6">
+                <img src="style/images/icons/bed_FILL1_wght600_GRAD0_opsz48.png" alt="Bed" class="icon">
+                <p class="alternativeName">Bed</p>
             </div>
-            <div>
-                <input type="radio" name="3" id="">
-                <label for="">Bed</label>
+            <div onclick="select(this,'bed3')" tabindex="10">
+                <img src="style/images/icons/bed_FILL1_wght600_GRAD0_opsz48.png" alt="Bed" class="icon">
+                <p class="alternativeName">Bed</p>
             </div>
-            <div>
-                <input type="radio" name="1" id="">
-                <label for="">Wed</label>
+
+            <div onclick="select(this,'wed1')" tabindex="3">
+                <img src="style/images/icons/favorite_FILL1_wght600_GRAD0_opsz48.png" alt="Wed" class="icon">
+                <p class="alternativeName">Wed</p>
             </div>
-            <div>
-                <input type="radio" name="2" id="">
-                <label for="">Wed</label>
+            <div onclick="select(this,'wed2')" tabindex="7">
+                <img src="style/images/icons/favorite_FILL1_wght600_GRAD0_opsz48.png" alt="Wed" class="icon">
+                <p class="alternativeName">Wed</p>
             </div>
-            <div>
-                <input type="radio" name="3" id="">
-                <label for="">Wed</label>
+            <div onclick="select(this,'wed3')" tabindex="11">
+                <img src="style/images/icons/favorite_FILL1_wght600_GRAD0_opsz48.png" alt="Wed" class="icon">
+                <p class="alternativeName">Wed</p>
             </div>
-            <div>
-                <input type="radio" name="1" id="">
-                <label for="">Behead</label>
+
+            <div onclick="select(this,'behead1')" tabindex="4">
+                <img src="style/images/icons/skull_FILL1_wght600_GRAD0_opsz48.png" alt="Behead" class="icon">
+                <p class="alternativeName">Behead</p>
             </div>
-            <div>
-                <input type="radio" name="2" id="">
-                <label for="">Behead</label>
+            <div onclick="select(this,'behead2')" tabindex="8">
+                <img src="style/images/icons/skull_FILL1_wght600_GRAD0_opsz48.png" alt="Behead" class="icon">
+                <p class="alternativeName">Behead</p>
             </div>
-            <div>
-                <input type="radio" name="3" id="">
-                <label for="">Behead</label>
+            <div onclick="select(this,'behead3')" tabindex="12">
+                <img src="style/images/icons/skull_FILL1_wght600_GRAD0_opsz48.png" alt="Behead" class="icon">
+                <p class="alternativeName">Behead</p>
             </div>
         </div>
+
+        <script src="script/main.js"></script>
     </section>
 </body>
 

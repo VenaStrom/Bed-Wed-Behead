@@ -18,16 +18,17 @@ a {
 }
 
 #mainLogo {
-    max-height: 20vh;
-    margin-top: 4vh;
+    max-height: 18vh;
+    margin-top: 3vh;
 }
 
 h1 {
+    margin-top: 2vh;
     font-weight: bold;
 }
 
 .mainSection {
-    margin-top: 4vh;
+    margin-top: 3vh;
     display: grid;
     column-gap: 5vw;
     grid-template-columns: min-content min-content min-content;
@@ -40,7 +41,6 @@ h1 {
 
 .image {
     aspect-ratio: 1/1;
-    border-radius: 3vh;
     object-fit: contain;
     width: 100%;
 }
@@ -56,7 +56,7 @@ h1 {
     margin-top: 1vh;
 }
 
-.radioWrapper {
+.iconWrapper {
     display: grid;
     grid-template-rows: auto auto auto;
     grid-template-columns: 15vw 15vw 15vw;
@@ -64,11 +64,31 @@ h1 {
     column-gap: 5vw;
 }
 
-.radioWrapper div {
-    width: 15vw;
+.iconWrapper div {
+    display: flex;
+    cursor: pointer;
+    padding-left: 1vw;
+    gap: 1vw;
+    align-items: center;
+    justify-content: left;
 }
 
-input[type=radio] {
-    width: 2vw;
-    aspect-ratio: 1/1;
+.iconWrapper div:hover {
+    scale: 1.05;
+}
+
+.icon {
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(34deg) brightness(102%) contrast(102%);
+    border-radius: 1vw;
+    width: 3vw;
+    height: 3vw;
+}
+
+.alternativeName {
+    font-weight: bold;
+}
+
+.selected {
+    box-shadow: 0 0 0 4px #ffe81f;
+    border-radius: 1vw;
 }
