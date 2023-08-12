@@ -14,7 +14,7 @@ body {
 
 a {
     color: white;
-    text-decoration: none;
+    /* text-decoration: none; */
 }
 
 #mainLogo {
@@ -31,6 +31,7 @@ h1 {
     margin-top: 3vh;
     display: grid;
     column-gap: 5vw;
+    row-gap: 3vh;
     grid-template-columns: min-content min-content min-content;
     grid-template-rows: auto auto;
 }
@@ -54,6 +55,10 @@ h1 {
     text-align: center;
     font-weight: bold;
     margin-top: 1vh;
+    margin-bottom: 0;
+}
+.name:hover{
+    filter: brightness(.6);
 }
 
 .iconWrapper {
@@ -62,6 +67,7 @@ h1 {
     grid-template-columns: 15vw 15vw 15vw;
     grid-column: 1/4;
     column-gap: 5vw;
+    row-gap: 1vh;
 }
 
 .iconWrapper div {
@@ -71,6 +77,7 @@ h1 {
     gap: 1vw;
     align-items: center;
     justify-content: left;
+    user-select: none;
 }
 
 .iconWrapper div:hover {
@@ -86,9 +93,41 @@ h1 {
 
 .alternativeName {
     font-weight: bold;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
 }
 
 .selected {
     box-shadow: 0 0 0 4px #ffe81f;
     border-radius: 1vw;
+}
+
+.playButtonWrapper {
+    width: 15vw;
+    grid-column-start: 2;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.playButton {
+    font-weight: bold;
+    font-size: 2rem;
+    text-align: center;
+
+    color: black;
+    background-color: #ffe81f;
+    cursor: pointer;
+    user-select: none;
+
+    border-radius: 1vw;
+    width: 9vw;
+    padding-bottom: 0.8vh;
+    margin-top: 2vh;
+
+    scale: .95;
+}
+
+.playButton:hover {
+    scale: 1.05;
 }
