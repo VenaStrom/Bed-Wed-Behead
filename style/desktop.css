@@ -131,3 +131,7 @@ h1 {
 .playButton:hover {
     scale: 1.05;
 }
+
+footer p {
+    font-size: small;
+}

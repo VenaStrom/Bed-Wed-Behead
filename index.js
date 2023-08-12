@@ -1,8 +1,7 @@
 import puppeteer from "puppeteer";
 import fs from "fs"
 
-const scrape = async (urlParam) => {
-    let url = urlParam
+const scrape = async (url, links) => {
 
     const browser = await puppeteer.launch({
         headless: false,
@@ -22,9 +21,13 @@ const scrape = async (urlParam) => {
 
             const nodeElements = document.querySelectorAll(".category-page__member-link");
 
-            let links = []
+            let names = []
             nodeElements.forEach(node => {
-                links.push(node.href)
+                if (node.innerHTML.includes("Category")) {
+                    links.push(node.href)
+                } else {
+                    names.push(node.href)
+                }
             })
 
             try {
@@ -33,40 +36,51 @@ const scrape = async (urlParam) => {
                 url = ""
             }
 
-            return { links, url };
+            return { names: names, url: url, links: links };
         });
 
-
-        // let alternatives = []
-        // let randomChar = listOfLinks[Math.floor(Math.random() * listOfLinks.length)]
-        // let i = 0
-        // while (randomChar.includes() == false && i < 3) {
-        //     randomChar = listOfLinks[Math.floor(Math.random() * listOfLinks.length)]
-        //     i++
-        //     alternatives.push(randomChar)
-        // }
-
-        const content = JSON.stringify(scrapedContent.links).replaceAll("https://starwars.fandom.com/wiki/", "").replace("[", "").replace("]", "") + ","
+        const content = JSON.stringify(scrapedContent.names).replaceAll("https://starwars.fandom.com/wiki/", "").replace("[", "").replace("]", "") + ","
 
         try {
-            fs.writeFileSync("links.csv", content, { flag: "a" });
-        } catch (err) {
-            console.error(err);
+            fs.writeFileSync("dataVault/testing.csv", content, { flag: "a" });
+        } catch (error) {
+            console.error(error);
         }
 
-        if (url = "") {
+        if (scrapedContent.url = "" && scrapedContent.links.length > 0) {
+            scrapedContent.links.shift()
+            console.log(scrapedContent.links[0]);
+            scrapedContent.url = scrapedContent.links[0]
+        } else if (scrapedContent.links.length == 0) {
             flag = false
-            break
+            return console.log("Done");
+        } else {
+            await page.goto(scrapedContent.url, {
+                waitUntil: "domcontentloaded",
+            });
         }
-
-        await page.goto(scrapedContent.url, {
-            waitUntil: "domcontentloaded",
-        });
     }
-
+    
     await browser.close();
 };
 
+const linkList = ["https://starwars.fandom.com/wiki/Category:clone_troopers", "https://starwars.fandom.com/wiki/Category:Clone_cadets"]
+
+scrape(linkList[0], linkList)
+
+// const loop = () => {
+//     if (linkList.length <= 0) {
+//         return
+//     }
+//     console.log(linkList[0]);
+//     scrape(linkList[0])
+//         .then(() => {
+//             linkList.shift()
+//             loop()
+//         })
+// }
+
+// loop()
 
 // scrape("https://starwars.fandom.com/wiki/Category:Males")
 // scrape("https://starwars.fandom.com/wiki/Category:Females")
