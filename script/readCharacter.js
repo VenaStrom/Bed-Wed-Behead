@@ -22,7 +22,25 @@ fetch("dataVault/filteredOutput.csv")
         headshots.forEach((element, index) => {
             element.href = "https://starwars.fandom.com/wiki/" + alternatives[index]
         })
-
-        // testing()
+    
+    
+    
+    
+        async function fetchDataFromBackend(url) {
+            try {
+              const response = await fetch(`/scrape?url=${encodeURIComponent(url)}`);
+              const data = await response.json();
+              console.log(data);
+            } catch (error) {
+              console.error(error);
+            }
+          }
+          
+          const targetUrl = "https://example.com"; // URL you want to scrape
+          fetchDataFromBackend(targetUrl);
+    
+    
+    
+    
     })
     .catch((error) => console.error(error))

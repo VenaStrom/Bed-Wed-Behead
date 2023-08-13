@@ -93,9 +93,8 @@ scrape(linkList)
 
 
 
-app.get()
-
 const getPicAndName = async (URL) => {
+    console.log("object");
 
     const browser = await puppeteer.launch({
         headless: false,
