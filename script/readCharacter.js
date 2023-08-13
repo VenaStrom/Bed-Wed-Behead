@@ -3,8 +3,8 @@ fetch("dataVault/filteredOutput.csv")
     .then((result) => result.text())
     .then((text) => {
 
-        const fullListOfIndividuals = text.replaceAll("\"","").replaceAll(" ", "").split(",")
-        
+        const fullListOfIndividuals = text.replaceAll("\"", "").replaceAll(" ", "").split(",")
+
         document.getElementById("totalCharacterCount").innerHTML = fullListOfIndividuals.length - 1
 
         let alternatives = []
@@ -18,33 +18,33 @@ fetch("dataVault/filteredOutput.csv")
 
         console.log(alternatives);
 
-        const headshots = document.querySelectorAll(".imageWrapper")
-        headshots.forEach((element, index) => {
-            const URL = "https://starwars.fandom.com/wiki/" + alternatives[index]
-            const result = getPicAndName(URL)
-            element.href = URL
-            element.children[0] = result.imageURL
-            element.children[1] = result.name
-        })
-    
-    
-    
-    
+        // const headshots = document.querySelectorAll(".imageWrapper")
+        // headshots.forEach((element, index) => {
+        //     const URL = "https://starwars.fandom.com/wiki/" + alternatives[index]
+        //     const result = getPicAndName(URL)
+        //     element.href = URL
+        //     element.children[0] = result.imageURL
+        //     element.children[1] = result.name
+        // })
+
+
+
+
         async function fetchDataFromBackend(url) {
             try {
-              const response = await fetch(`/scrape?url=${encodeURIComponent(url)}`);
-              const data = await response.json();
-              console.log(data);
+                const response = await fetch(`/scrape?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+                console.log(data);
             } catch (error) {
-              console.error(error);
+                console.error(error);
             }
-          }
-          
-          const targetUrl = "https://example.com"; // URL you want to scrape
-          fetchDataFromBackend(targetUrl);
-    
-    
-    
-    
+        }
+
+        const targetUrl = "https://example.com"; // URL you want to scrape
+        fetchDataFromBackend(targetUrl);
+
+
+
+
     })
     .catch((error) => console.error(error))

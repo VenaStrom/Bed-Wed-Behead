@@ -87,9 +87,9 @@ const scrape = async (masterCategoryList) => {
 };
 
 
-const linkList = ["https://starwars.fandom.com/wiki/Category:clone_troopers", "https://starwars.fandom.com/wiki/Category:Females","https://starwars.fandom.com/wiki/Category:Males","https://starwars.fandom.com/wiki/Category:Non-binary_individuals","https://starwars.fandom.com/wiki/Category:Genderless_individuals","https://starwars.fandom.com/wiki/Category:Individuals_of_unspecified_gender","https://starwars.fandom.com/wiki/Category:Individuals_of_unidentified_gender"]
+const linkList = ["https://starwars.fandom.com/wiki/Category:clone_troopers", "https://starwars.fandom.com/wiki/Category:Females", "https://starwars.fandom.com/wiki/Category:Males", "https://starwars.fandom.com/wiki/Category:Non-binary_individuals", "https://starwars.fandom.com/wiki/Category:Genderless_individuals", "https://starwars.fandom.com/wiki/Category:Individuals_of_unspecified_gender", "https://starwars.fandom.com/wiki/Category:Individuals_of_unidentified_gender"]
 
-scrape(linkList)
+// scrape(linkList)
 
 
 
@@ -117,3 +117,41 @@ const getPicAndName = async (URL) => {
     })
     return pageResult
 }
+
+
+import express from "express"
+
+const app = express();
+const port = 3000;
+
+async function scrapeWebsite(url) {
+    // const browser = await puppeteer.launch();
+    // const page = await browser.newPage();
+
+    // await page.goto(url);
+
+    // // Perform scraping operations
+    // const scrapedData = await page.evaluate(() => {
+    //     // Your scraping logic here
+    //     const title = document.title;
+    //     return { title };
+    // });
+
+    // await browser.close();
+    return "scrapedData";
+}
+
+app.get('/scrape', async (req, res) => {
+    const { url } = req.query;
+    try {
+        const scrapedData = await scrapeWebsite(url);
+        res.json(scrapedData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred during scraping.' });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+});
