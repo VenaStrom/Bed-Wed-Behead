@@ -20,7 +20,11 @@ fetch("dataVault/filteredOutput.csv")
 
         const headshots = document.querySelectorAll(".imageWrapper")
         headshots.forEach((element, index) => {
-            element.href = "https://starwars.fandom.com/wiki/" + alternatives[index]
+            const URL = "https://starwars.fandom.com/wiki/" + alternatives[index]
+            const result = getPicAndName(URL)
+            element.href = URL
+            element.children[0] = result.imageURL
+            element.children[1] = result.name
         })
     
     

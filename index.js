@@ -110,9 +110,10 @@ const getPicAndName = async (URL) => {
     });
 
     const pageResult = await page.evaluate(() => {
+        imageURL = document.querySelector(".pi-image-thumbnail").src.replace(/(\.(png|jpe?g))[^/]*$/i, '$1');
+        nameText = document.querySelector(".page-header__title").innerHTML
 
-
+        return { imageURL: imageURL, name: nameText }
     })
-
-    return {imageURL: "", name: ""}
+    return pageResult
 }
