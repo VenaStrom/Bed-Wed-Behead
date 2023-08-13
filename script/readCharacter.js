@@ -28,21 +28,17 @@ fetch("dataVault/filteredOutput.csv")
         // })
 
 
-
-
-        async function fetchDataFromBackend(url) {
+        async function fetchDataFromBackend(call) {
             try {
-                const response = await fetch(`/scrape?url=${encodeURIComponent(url)}`);
-                const data = await response.json();
+                const response = await fetch(`http://localhost:3000/scrape?nameData`, { mode: "no-cors" });
+                const data = response
                 console.log(data);
             } catch (error) {
                 console.error(error);
             }
         }
 
-        const targetUrl = "https://example.com"; // URL you want to scrape
-        fetchDataFromBackend(targetUrl);
-
+        fetchDataFromBackend("targetUrl");
 
 
 
