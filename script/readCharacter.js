@@ -18,29 +18,26 @@ fetch("dataVault/filteredOutput.csv")
 
         console.log(alternatives);
 
-        // const headshots = document.querySelectorAll(".imageWrapper")
-        // headshots.forEach((element, index) => {
-        //     const URL = "https://starwars.fandom.com/wiki/" + alternatives[index]
-        //     const result = getPicAndName(URL)
-        //     element.href = URL
-        //     element.children[0] = result.imageURL
-        //     element.children[1] = result.name
-        // })
-
-
-        async function fetchDataFromBackend(call) {
+        async function getNameAndImage(title) {
             try {
-                const response = await fetch(`http://localhost:3000/scrape?nameData`, { mode: "no-cors" });
-                const data = response
-                console.log(data);
+                const response = await fetch(`http://localhost:3000/getPage/${title}`);
+                const data = await response.json();
+                return data;
             } catch (error) {
                 console.error(error);
+                return { title: "Error", imageURL: "" };
             }
         }
 
-        fetchDataFromBackend("targetUrl");
-
-
-
+        const headshots = document.querySelectorAll(".imageWrapper")
+        headshots.forEach((element, index) => {
+            const title = alternatives[index]
+            const result = getNameAndImage(title)
+            console.log(result);
+            const URL = "https://starwars.fandom.com/wiki/" + title
+            element.href = URL
+            element.children[0].src = result.imageURL
+            element.children[1].innerHTML = result.name
+        })
     })
     .catch((error) => console.error(error))

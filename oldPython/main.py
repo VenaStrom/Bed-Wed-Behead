@@ -1,24 +1,34 @@
 import requests
 import json
+import re
 
 
-def getPage(api):
-    response = requests.get(f'{api}')
+def getPage(title):
+    response = requests.get(f'https://starwars.fandom.com/api.php?page={title}&format=json&action=parse&prop=displaytitle')
 
     if response.status_code == 200:
         print("Successful call")
-        with open("dumps/dump.json", "w") as file:
-            file.write(
-                response.text
-            )
+        with open("oldPython/dumps/dump.json", "w") as file:
+            content = json.loads(response.text)
+            print(content)
+            title = content["parse"]["title"]
+            
+            imageGetURL = f'https://starwars.fandom.com/api.php?action=imageserving&wisTitle={title}&format=json'
+            imageResponse = requests.get(imageGetURL)
+            
+            if response.status_code == 200:
+                print("Successful call")
+                imageContent = json.loads(imageResponse.text)
+                imageURL = imageContent["image"]["imageserving"]
+                imageURL = re.sub(r"(\.(png|jpe?g)).*", r"\1", imageURL, flags=re.I)
+            else:
+                print(
+                    f'Something went wrong. Error code {response.status_code}')
+
+            file.write(json.dumps({"title": title, "imageURL": imageURL}))
             pass
     else:
         print(f'Something went wrong. Error code {response.status_code}')
 
 
-getPage("https://starwars.fandom.com/api.php?action=infobox&title=Droids%20with%20no%20genderprogramming")
-# getPage("https://starwars.fandom.com/api.php?action=infobox&page=Category:Droids_with_no_gender_programming")
-# getPage("https://starwars.fandom.com/api.php?action=parse&page=Category:Individuals&format=json")
-
-# with open("dumps/dump.json") as file:
-#     print(json.load(file))
+getPage("CT-5555")
