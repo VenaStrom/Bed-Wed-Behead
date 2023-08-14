@@ -63,14 +63,15 @@ const port = 3000;
 app.use(cors({ origin: "http://127.0.0.1:5500" }))
 
 app.get('/getPage/:title', async (req, res) => {
-    const title = req.params.title;
-
+    const titleURL = req.params.title;
+    console.log(titleURL);
     try {
-        const response = await fetchPage(title);
+        const response = await fetchPage(titleURL);
 
         if (response.status === 200) {
             const content = JSON.parse(response.data);
             const pageTitle = content.parse.title;
+            console.log(pageTitle);
 
             const imageContent = await fetchImage(pageTitle);
             if (imageContent.status === 200) {
@@ -78,7 +79,7 @@ app.get('/getPage/:title', async (req, res) => {
                 let imageURL = imageJSON.image.imageserving;
                 imageURL = imageURL.replace(/(\.(png|jpe?g)).*/i, '$1');
 
-                res.send({ imgURL: result.imageURL, name: result.name })
+                res.send({ imageURL: imageURL, name: pageTitle })
                 res.status(200).json({ success: true });
             } else {
                 console.log(`Something went wrong. Error code ${imageContent.status}`);
@@ -98,8 +99,9 @@ async function fetchPage(title) {
     return new Promise((resolve, reject) => {
         const url = `https://starwars.fandom.com/api.php?page=${title}&format=json&action=parse&prop=displaytitle`;
         app.get(url, (response) => {
+            console.log("data");
             let data = '';
-
+            
             response.on('data', (chunk) => {
                 data += chunk;
             });
