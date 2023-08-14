@@ -20,7 +20,8 @@ fetch("dataVault/filteredOutput.csv")
 
         async function getNameAndImage(title) {
             try {
-                const response = await fetch(`http://localhost:3000/getPage/${title}`);
+                const response = await fetch(`https://viggostrom.github.io/bedWedBehead/backend.js:3000/getPage/${title}`);
+                // const response = await fetch(`http://localhost:3000/getPage/${title}`);
                 const data = await response.json();
                 return data;
             } catch (error) {
