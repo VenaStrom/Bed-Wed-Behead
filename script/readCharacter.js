@@ -23,9 +23,9 @@ fetch("dataVault/filteredOutput.csv")
         console.log(alternatives);
 
 
-        async function fetchCharacterInfo(pageURL) {
+        async function fetchCharacterInfo(title) {
             try {
-                const response = await fetch(`https://starwars.fandom.com/api.php?page=${pageURL}&format=json&action=parse&prop=displaytitle&origin=https://viggostrom.github.io/bedWedBehead/`, { "method": "GET", "credentials": "include" });
+                const response = await fetch(`https://starwars.fandom.com/api.php?page=${title}&format=json&action=parse&prop=displaytitle&origin=https://viggostrom.github.io/bedWedBehead/`, { "method": "GET", "credentials": "include" });
                 const content = await response.json();
                 const pageTitle = content.parse.title;
 
@@ -44,9 +44,9 @@ fetch("dataVault/filteredOutput.csv")
         const headshots = document.querySelectorAll(".imageWrapper");
         headshots.forEach(async (element, index) => {
             const title = alternatives[index];
+            const result = await fetchCharacterInfo(title);
+            
             const URL = "https://starwars.fandom.com/wiki/" + title;
-            const result = await fetchCharacterInfo(URL);
-
             element.href = URL;
             element.children[0].src = result.imageURL;
             element.children[1].innerHTML = result.name;
