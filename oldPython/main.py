@@ -1,10 +1,12 @@
 import requests
 import json
 import re
+import random
 
 
 def getPage(title):
-    response = requests.get(f'https://starwars.fandom.com/api.php?page={title}&format=json&action=parse&prop=displaytitle')
+    response = requests.get(
+        f'https://starwars.fandom.com/api.php?page={title}&format=json&action=parse&prop=displaytitle')
 
     if response.status_code == 200:
         print("Successful call")
@@ -12,15 +14,19 @@ def getPage(title):
             content = json.loads(response.text)
             print(content)
             title = content["parse"]["title"]
-            
+
             imageGetURL = f'https://starwars.fandom.com/api.php?action=imageserving&wisTitle={title}&format=json'
             imageResponse = requests.get(imageGetURL)
-            
+
             if response.status_code == 200:
                 print("Successful call")
                 imageContent = json.loads(imageResponse.text)
-                imageURL = imageContent["image"]["imageserving"]
-                imageURL = re.sub(r"(\.(png|jpe?g)).*", r"\1", imageURL, flags=re.I)
+                try:
+                    imageURL = imageContent["image"]["imageserving"]
+                    imageURL = re.sub(r"(\.(png|jpe?g)).*",
+                                      r"\1", imageURL, flags=re.I)
+                except:
+                    imageURL = ""
             else:
                 print(
                     f'Something went wrong. Error code {response.status_code}')
@@ -31,4 +37,7 @@ def getPage(title):
         print(f'Something went wrong. Error code {response.status_code}')
 
 
-getPage("CT-5555")
+with open("dataVault/filteredOutput.csv", "r") as file:
+    listOfNames = file.readline().replace("\"", "").split(",")
+    name = random.choice(listOfNames)
+    getPage(name)
