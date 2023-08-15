@@ -25,11 +25,11 @@ fetch("dataVault/filteredOutput.csv")
 
         async function fetchCharacterInfo(title) {
             try {
-                const response = await fetch(`https://starwars.fandom.com/api.php?page=${title}&format=json&action=parse&prop=displaytitle`, { "method": "GET", "Headers": { "Origin": "https://viggostrom.github.io/bedWedBehead/" }, "credentials": "include" });
+                const response = await fetch(`https://starwars.fandom.com/api.php?page=${title}&format=json&action=parse&prop=displaytitle`, { "method": "GET", "headers": { "Origin": "https://viggostrom.github.io/bedWedBehead/" }, "credentials": "include" });
                 const content = await response.json();
                 const pageTitle = content.parse.title;
 
-                const imageResponse = await fetch(`https://starwars.fandom.com/api.php?action=imageserving&wisTitle=${pageTitle}&format=json`, { "method": "GET", "Headers": { "Origin": "https://viggostrom.github.io/bedWedBehead/" }, "credentials": "include" });
+                const imageResponse = await fetch(`https://starwars.fandom.com/api.php?action=imageserving&wisTitle=${pageTitle}&format=json`, { "method": "GET", "headers": { "Origin": "https://viggostrom.github.io/bedWedBehead/" }, "credentials": "include" });
                 const imageContent = await imageResponse.json();
                 let imageURL = imageContent.image.imageserving;
                 imageURL = imageURL.replace(/(\.(png|jpe?g)).*/i, '$1');
