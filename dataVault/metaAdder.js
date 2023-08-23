@@ -1,21 +1,42 @@
 import fs from "fs"
 
 
-const fetchAndAppend = (uriName, outputFile) => {
+const fetchTitleAndImage = (uriName) => {
+    let title = ""
+    let imageURL = ""
 
+    fetch(`https://starwars.fandom.com/api.php?page=${uriName}&format=json&action=parse&prop=displaytitle`)
+        .then((result) => result.text())
+        .then((titleResponse) => {
+            title = json.parse(titleResponse).parse.title
+        })
+
+    fetch(`https://starwars.fandom.com/api.php?action=imageserving&wisTitle=${uriName}&format=json`)
+        .then((result) => result.text())
+        .then((imageResponse) => {
+            try {
+                imageURL = json.parse(imageResponse).image.imageserving.replace(/(\.(png|jpe?g))[^/]*$/i, '$1')
+            } catch (error) {
+                imageURL = ""
+            }
+        })
+
+    return [title, imageURL]
 }
 
-fs.appendFile("dataVault/indexedList.json","string?")
 
-// fetch("dataVault/filteredOutput.csv")
-//     .then((result) => result.text())
-//     .then((inputFile) => {
-//         fetch("dataVault/indexedList.json")
-//             .then((result) => result.text())
-//             .then((outputFile) => {
+fs.writeFile("dataVault/indexedList.json", "{", () => { })
 
-//                 const uriNames = inputFile.replaceAll("\"", "").replaceAll(" ", "").split(",")
+fetch("dataVault/filteredOutput.csv")
+    .then((result) => result.text())
+    .then((inputFile) => {
+        const uriNames = inputFile.replaceAll("\"", "").replaceAll(" ", "").split(",")
 
+        for (let index = 0; index < 10; index++) {
 
-//             })
-//     })
+            const data = `${uriNames[index]}: ${fetchTitleAndImage(uriNames[index])},`
+            fs.appendFile("dataVault/indexedList.json", data, () => { })
+        }
+    })
+
+fs.writeFile("dataVault/indexedList.json", "}", () => { })
