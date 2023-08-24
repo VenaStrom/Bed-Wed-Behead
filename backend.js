@@ -106,55 +106,82 @@ import express, { response } from "express";
 import cors from "cors"
 import axios from "axios"
 const app = express();
-const port = 3000; // Set your desired port number
+const port = 3000;
 
 app.use(cors({ origin: "http://127.0.0.1:5500" }))
 
-// Define a route that responds to GET requests
 app.get('/api/getPage/:uriName', async (req, res) => {
     const uriName = req.params.uriName
+    const url = {
+        name: `https://starwars.fandom.com/api.php?page=${uriName}&format=json&action=parse&prop=displaytitle`,
+        imageURL: `https://starwars.fandom.com/api.php?action=imageserving&wisTitle=${uriName}&format=json`
+    }
+
     let name = ""
     let imageURL = ""
 
     console.log(uriName);
 
     try {
-        const response = JSON.parse(await fetchName(uriName))
-
-        name = response.name
-        imageURL = response.imageURL
+        const response = await axios.get(url.name)
+        name = response.data.parse.title
     } catch (error) {
-        console.log(error);
+        console.error("Name", error);
+    }
+
+    try {
+        const response = await axios.get(url.imageURL)
+        imageURL = response.data.image.imageserving
+        imageURL = imageURL.replace(/(\.(png|jpe?g)).*/i, '$1');
+    } catch (error) {
+        // This will pass if the article doesnt have an image so no error logging
     }
 
     const responseData = { name: name, imageURL: imageURL };
     res.json(responseData);
 });
 
-const fetchName = async (uriName) => {
-    const url = `https://starwars.fandom.com/api.php?page=${uriName}&format=json&action=parse&prop=displaytitle`;
+// const fetchCharInfo = async (uriName) => {
+//     const url = `https://starwars.fandom.com/api.php?page=${uriName}&format=json&action=parse&prop=displaytitle`;
+//     let name = ""
 
-    try {
-        const response = await axios.get(url);
-        // Parse JSON data from the response
-        const data = response.data;
-        // Extract the relevant data
-        const pageTitle = data.parse.title;
+//     try {
+//         const response = await axios.get(url);
+//         name = response.data.parse.title
 
-        // Fetch image data
-        const imageResponse = await fetchImage(pageTitle);
-        const imageJSON = imageResponse.data;
 
-        // Extract the imageURL
-        let imageURL = imageJSON.image.imageserving;
-        imageURL = imageURL.replace(/(\.(png|jpe?g)).*/i, '$1');
+        // // Parse JSON data from the response
+        // const data = response.data;
+        // // Extract the relevant data
+        // const pageTitle = data.parse.title;
+
+        // // Fetch image data
+        // const imageResponse = await fetchImage(uriName);
+        // const imageJSON = imageResponse.data;
+
+        // // Extract the imageURL
+        // let imageURL = imageJSON.image.imageserving;
+        // imageURL = imageURL.replace(/(\.(png|jpe?g)).*/i, '$1');
 
         // Return the parsed data
-        return { name: pageTitle, imageURL };
-    } catch (error) {
-        throw error;
-    }
-}
+//     } catch (error) {
+//         console.error(error);;
+//     }
+
+//     return { name: name, imageURL: imageURL };
+// }
+
+// const fetchImage = async (uriName) => {
+//     const url = `https://starwars.fandom.com/api.php?action=imageserving&wisTitle=${uriName}&format=json`;
+
+//     try {
+//         const response = await axios.get(url);
+//         return response.data;
+//     } catch (error) {
+//         throw error;
+//     }
+// }
+
 
 
 // function fetchName(uriName) {
@@ -220,7 +247,6 @@ const fetchName = async (uriName) => {
 //     });
 // }
 
-// Start the Express server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

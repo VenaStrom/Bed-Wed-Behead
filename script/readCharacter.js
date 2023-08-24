@@ -51,6 +51,10 @@
 //     })
 // }
 
+const filter = {
+    image: true
+}
+
 if (true) {
 
     fetch("dataVault/filteredOutput.csv")
@@ -77,11 +81,20 @@ if (true) {
             console.log(alternatives);
 
 
-            alternatives.forEach(async uriName => {
+            const setCharacter = async (uriName) => {
                 fetch(`http://localhost:3000/api/getPage/${uriName}`)
                     .then((response) => response.json())
                     .then((data) => {
                         const index = alternatives.indexOf(uriName)
+
+                        // Filters
+                        if (data.imageURL == "" && !filter.image) {
+                            data.imageURL = "style/images/placeholder-alien.png"
+                        } else if (data.imageURL == "" && filter.image) {
+                            return setCharacter()
+                        }
+
+
                         console.log(index, data);
 
                         const imageWrapper = document.querySelectorAll(".imageWrapper")[index];
@@ -91,7 +104,9 @@ if (true) {
                         imageWrapper.children[0].src = data.imageURL;
                         imageWrapper.children[1].innerHTML = data.name;
                     })
-            })
+            }
+
+            alternatives.forEach(setCharacter(uriName))
 
 
 
