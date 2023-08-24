@@ -1,43 +1,114 @@
-import fs from "fs"
-import fetch from "node-fetch"
+// import axios from "axios"
+// import fs from "fs"
+// import fetch from "node-fetch"
+
+// const fetchStuff = async (uriName) => {
+
+//     const url = {
+//         name: `https://starwars.fandom.com/api.php?page=${uriName}&format=json&action=parse&prop=displaytitle`,
+//         imageURL: `https://starwars.fandom.com/api.php?action=imageserving&wisTitle=${uriName}&format=json`
+//     }
+
+//     let name = ""
+//     let imageURL = ""
+
+//     console.log(uriName);
+
+//     try {
+//         const response = await axios.get(url.name)
+//         name = response.data.parse.title
+//     } catch (error) {
+//         console.error("Name", error);
+//     }
+
+//     try {
+//         const response = await axios.get(url.imageURL)
+//         imageURL = response.data.image.imageserving
+//         imageURL = imageURL.replace(/(\.(png|jpe?g)).*/i, '$1');
+//     } catch (error) {
+//         // This will pass if the article doesnt have an image so no error logging
+//     }
+
+//     return [name, imageURL];
+// }
 
 
-const fetchTitleAndImage = (uriName) => {
-    let title = ""
-    let imageURL = ""
 
-    fetch(`https://starwars.fandom.com/api.php?page=${uriName}&format=json&action=parse&prop=displaytitle`)
-        .then((result) => result.text())
-        .then((titleResponse) => {
-            title = json.parse(titleResponse).parse.title
-        })
+// fs.writeFileSync("dataVault/indexedList.json", "{", () => { })
 
-    fetch(`https://starwars.fandom.com/api.php?action=imageserving&wisTitle=${uriName}&format=json`)
-        .then((result) => result.text())
-        .then((imageResponse) => {
-            try {
-                imageURL = json.parse(imageResponse).image.imageserving.replace(/(\.(png|jpe?g))[^/]*$/i, '$1')
-            } catch (error) {
-                imageURL = ""
-            }
-        })
+// fs.promises.readFile("dataVault/filteredOutput.csv", "utf-8")
+//     .then((inputFile) => {
+//         const uriNames = inputFile.replaceAll("\"", "").replaceAll(" ", "").split(",")
+//         const uriNamesLength = uriNames.length
 
-    return [title, imageURL]
-}
+//         const promises = uriNames.slice(0, 10).map(async (uriName) => {
+//             return fetchStuff(uriName).then(([name, imageURL]) => {
+//                 const data = `"${uriName}": {"name": "${name}", "imageURL": "${imageURL}"},`;
+//                 fs.appendFileSync("dataVault/indexedList.json", data);
+//             });
+//         });
+
+//         return Promise.all(promises);
 
 
-fs.writeFile("dataVault/indexedList.json", "{", () => { })
+//         for (let index = 0; index < 10; index++) {
 
-fetch("dataVault/filteredOutput.csv")
-    .then((result) => result.text())
-    .then((inputFile) => {
-        const uriNames = inputFile.replaceAll("\"", "").replaceAll(" ", "").split(",")
+//             const data = `${uriNames[index]}: ${fetchStuff(uriNames[index])},`
 
-        for (let index = 0; index < 10; index++) {
+//             fs.appendFile("dataVault/indexedList.json", data, () => { })
+//         }
+//     })
+//     .then(() => {
+//         fs.writeFileSync("dataVault/indexedList.json", "}", () => { })
+//     })
 
-            const data = `${uriNames[index]}: ${fetchTitleAndImage(uriNames[index])},`
-            fs.appendFile("dataVault/indexedList.json", data, () => { })
+
+import axios from "axios";
+import fs from "fs";
+
+const fetchStuff = async (uriName) => {
+    const baseUrl = "https://starwars.fandom.com/api.php";
+    const nameUrl = `${baseUrl}?page=${uriName}&format=json&action=parse&prop=displaytitle`;
+    const imageURLUrl = `${baseUrl}?action=imageserving&wisTitle=${uriName}&format=json`;
+
+    try {
+        const nameResponse = await axios.get(nameUrl);
+        const name = nameResponse.data.parse.title;
+
+        let imageURL = "";
+        try {
+            const imageURLResponse = await axios.get(imageURLUrl);
+            imageURL = imageURLResponse.data.image.imageserving.replace(/(\.(png|jpe?g)).*/i, '$1');
+        } catch (imageError) {
+            // Handle this error or ignore it if the article doesn't have an image
         }
-    })
 
-fs.writeFile("dataVault/indexedList.json", "}", () => { })
+        return [name, imageURL];
+    } catch (nameError) {
+        console.error("Name Error", nameError);
+        return ["", ""];
+    }
+};
+
+fs.writeFileSync("dataVault/indexedList.json", "{");
+
+fs.promises.readFile("dataVault/filteredOutput.csv", "utf-8")
+    .then((inputFile) => {
+        const uriNames = inputFile.replace(/"/g, "").replace(/ /g, "").split(",");
+        const uriNamesLength = uriNames.length;
+
+        const promises = uriNames.slice(0, 10).map((uriName) => {
+            return fetchStuff(uriName).then(([name, imageURL]) => {
+                const data = `"${uriName}": {"name": "${name}", "imageURL": "${imageURL}"},`;
+                fs.appendFileSync("dataVault/indexedList.json", data);
+            });
+        });
+
+        return Promise.all(promises);
+    })
+    .then(() => {
+        fs.appendFileSync("dataVault/indexedList.json", "}");
+    })
+    .catch((error) => {
+        console.error("Main Error", error);
+    });
