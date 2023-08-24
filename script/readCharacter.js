@@ -1,57 +1,57 @@
 
-const fetchCharacterInfo = async (pageTitle) => {
-    return new Promise((resolve, reject) => {
+// const fetchCharacterInfo = async (pageTitle) => {
+//     return new Promise((resolve, reject) => {
 
-        const apiEndpoint = "https://starwars.fandom.com/api.php";
-        const titleParams = "action=parse&prop=displaytitle&title=" + encodeURIComponent(pageTitle) + "&callback=callback&format=json";
-        const imageParams = "action=imageserving&wisTitle=" + encodeURIComponent(pageTitle) + "&callback=callback&format=json";
+//         const apiEndpoint = "https://starwars.fandom.com/api.php";
+//         const titleParams = "action=parse&prop=displaytitle&title=" + encodeURIComponent(pageTitle) + "&callback=callback&format=json";
+//         const imageParams = "action=imageserving&wisTitle=" + encodeURIComponent(pageTitle) + "&callback=callback&format=json";
 
-        const scriptTagTitle = document.createElement("script");
-        const scriptTagImage = document.createElement("script");
-        scriptTagTitle.src = apiEndpoint + "?" + titleParams
-        scriptTagImage.src = apiEndpoint + "?" + imageParams
+//         const scriptTagTitle = document.createElement("script");
+//         const scriptTagImage = document.createElement("script");
+//         scriptTagTitle.src = apiEndpoint + "?" + titleParams
+//         scriptTagImage.src = apiEndpoint + "?" + imageParams
 
-        let titleFetched = false;
-        let imageFetched = false;
-        let title = "";
-        let imageURL = "";
+//         let titleFetched = false;
+//         let imageFetched = false;
+//         let title = "";
+//         let imageURL = "";
 
-        window.callback = function (response) {
-            try {
-                title = response.parse.title;
+//         window.callback = function (response) {
+//             try {
+//                 title = response.parse.title;
 
-                titleFetched = true;
-                checkCompletion();
-            } catch (error) { }
+//                 titleFetched = true;
+//                 checkCompletion();
+//             } catch (error) { }
 
-            try {
-                imageURL = response.image.imageserving.replace(/(\.(png|jpe?g)).*/i, '$1');
+//             try {
+//                 imageURL = response.image.imageserving.replace(/(\.(png|jpe?g)).*/i, '$1');
 
-                imageFetched = true;
-                checkCompletion();
-            } catch (error) {
+//                 imageFetched = true;
+//                 checkCompletion();
+//             } catch (error) {
 
-                imageURL = "style/images/placeholder-alien.png"
-                imageFetched = true;
-                checkCompletion();
-            }
-        };
+//                 imageURL = "style/images/placeholder-alien.png"
+//                 imageFetched = true;
+//                 checkCompletion();
+//             }
+//         };
 
-        const checkCompletion = () => {
-            if (titleFetched && imageFetched) {
-                resolve({ imageURL: imageURL, name: title });
-            }
-        };
+//         const checkCompletion = () => {
+//             if (titleFetched && imageFetched) {
+//                 resolve({ imageURL: imageURL, name: title });
+//             }
+//         };
 
-        document.body.appendChild(scriptTagTitle);
-        document.body.appendChild(scriptTagImage);
+//         document.body.appendChild(scriptTagTitle);
+//         document.body.appendChild(scriptTagImage);
 
-        scriptTagTitle.remove()
-        scriptTagImage.remove()
-    })
-}
+//         scriptTagTitle.remove()
+//         scriptTagImage.remove()
+//     })
+// }
 
-if (false) {
+if (true) {
 
     fetch("dataVault/filteredOutput.csv")
         .then((result) => result.text())
@@ -77,53 +77,54 @@ if (false) {
             console.log(alternatives);
 
 
-            // const headshots = document.querySelectorAll(".imageWrapper");
+            alternatives.forEach(async uriName => {
+                fetch(`http://localhost:3000/api/getPage/${uriName}`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const index = alternatives.indexOf(uriName)
+                        console.log(index, data);
 
-            // headshots.forEach(async (element, index) => {
-            //     const title = alternatives[index];
+                        const imageWrapper = document.querySelectorAll(".imageWrapper")[index];
 
-            //     await fetchCharacterInfo(title)
-            //         .then((result) => {
-            //             console.log(result);
+                        const URI = "https://starwars.fandom.com/wiki/" + uriName;
+                        imageWrapper.href = URI;
+                        imageWrapper.children[0].src = data.imageURL;
+                        imageWrapper.children[1].innerHTML = data.name;
+                    })
+            })
 
-            //             const URL = "https://starwars.fandom.com/wiki/" + title;
-            //             element.href = URL;
-            //             element.children[0].src = result.imageURL;
-            //             element.children[1].innerHTML = result.name;
-            //         })
-            //         .catch((error) => console.error(error))
-            // });
 
-            const imageWrappers = document.querySelectorAll(".imageWrapper")
 
-            const imageWrapper1 = imageWrappers[0]
-            const imageWrapper2 = imageWrappers[1]
-            const imageWrapper3 = imageWrappers[2]
+            // const imageWrappers = document.querySelectorAll(".imageWrapper")
 
-            imageWrapper1.children[1].innerHTML = "Fetching"
-            imageWrapper2.children[1].innerHTML = "Fetching"
-            imageWrapper3.children[1].innerHTML = "Fetching"
+            // const imageWrapper1 = imageWrappers[0]
+            // const imageWrapper2 = imageWrappers[1]
+            // const imageWrapper3 = imageWrappers[2]
 
-            fetchCharacterInfo(alternatives[0])
-                .then((result) => {
-                    imageWrapper1.href = "https://starwars.fandom.com/wiki/" + alternatives[0]
-                    imageWrapper1.children[0].src = result.imageURL
-                    imageWrapper1.children[1].innerHTML = result.name
-                }).finally(() => {
-                    fetchCharacterInfo(alternatives[1])
-                        .then((result) => {
-                            imageWrapper2.href = "https://starwars.fandom.com/wiki/" + alternatives[1]
-                            imageWrapper2.children[0].src = result.imageURL
-                            imageWrapper2.children[1].innerHTML = result.name
-                        }).finally(() => {
-                            fetchCharacterInfo(alternatives[2])
-                                .then((result) => {
-                                    imageWrapper3.href = "https://starwars.fandom.com/wiki/" + alternatives[2]
-                                    imageWrapper3.children[0].src = result.imageURL
-                                    imageWrapper3.children[1].innerHTML = result.name
-                                })
-                        })
-                })
+            // imageWrapper1.children[1].innerHTML = "Fetching"
+            // imageWrapper2.children[1].innerHTML = "Fetching"
+            // imageWrapper3.children[1].innerHTML = "Fetching"
+
+            // fetchCharacterInfo(alternatives[0])
+            //     .then((result) => {
+            //         imageWrapper1.href = "https://starwars.fandom.com/wiki/" + alternatives[0]
+            //         imageWrapper1.children[0].src = result.imageURL
+            //         imageWrapper1.children[1].innerHTML = result.name
+            //     }).finally(() => {
+            //         fetchCharacterInfo(alternatives[1])
+            //             .then((result) => {
+            //                 imageWrapper2.href = "https://starwars.fandom.com/wiki/" + alternatives[1]
+            //                 imageWrapper2.children[0].src = result.imageURL
+            //                 imageWrapper2.children[1].innerHTML = result.name
+            //             }).finally(() => {
+            //                 fetchCharacterInfo(alternatives[2])
+            //                     .then((result) => {
+            //                         imageWrapper3.href = "https://starwars.fandom.com/wiki/" + alternatives[2]
+            //                         imageWrapper3.children[0].src = result.imageURL
+            //                         imageWrapper3.children[1].innerHTML = result.name
+            //                     })
+            //             })
+            //     })
 
             // document.querySelectorAll(".imageWrapper").forEach(async (element) => {
             //     const title = alternatives[Array.prototype.indexOf.call(imageWrappers, element)]
@@ -146,7 +147,7 @@ if (false) {
 
         })
         .catch((error) => console.error(error))
-} else {
+} else { // Read local pre-indexed list
     fetch("dataVault/indexedList.csv")
         .then((result) => result.text())
         .then((text) => {
