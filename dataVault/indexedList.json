@@ -1,42 +1,798 @@
 {
-    "2242": {
-        "name": "2242",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/bf/Cooker.jpg"
+    "Attie": {
+        "name": "Attie",
+        "imageURL": ""
+    },
+    "35_(Ando_Prime)": {
+        "name": "35 (Ando Prime)",
+        "imageURL": ""
+    },
+    "Blasty": {
+        "name": "Blasty",
+        "imageURL": ""
+    },
+    "17": {
+        "name": "17",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/06/Clonetrooper17.jpg"
+    },
+    "Chopper_(clone_trooper)": {
+        "name": "Chopper (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/6/64/Chopper-TCWCEJtB.png"
     },
     "Clone_trooper": {
         "name": "Clone trooper",
         "imageURL": "https://static.wikia.nocookie.net/starwars/images/7/71/PhaseICloneTrooper2-Fathead.png"
     },
+    "Blunt": {
+        "name": "Blunt",
+        "imageURL": ""
+    },
+    "Boro": {
+        "name": "Boro",
+        "imageURL": ""
+    },
+    "CT-1008": {
+        "name": "CT-1008",
+        "imageURL": ""
+    },
     "16": {
         "name": "16",
         "imageURL": ""
     },
-    "1139": {
-        "name": "1139",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/b7/1139-AlwaysCountYourClonesBeforeTakeoff.jpg"
+    "Blue_22": {
+        "name": "Blue 22",
+        "imageURL": ""
     },
-    "35_(Ando_Prime)": {
-        "name": "35 (Ando Prime)",
+    "44": {
+        "name": "44",
+        "imageURL": ""
+    },
+    "Doc_(clone_trooper)": {
+        "name": "Doc (clone trooper)",
+        "imageURL": ""
+    },
+    "Cannon_(clone_trooper)": {
+        "name": "Cannon (clone trooper)",
+        "imageURL": ""
+    },
+    "CC-01/425": {
+        "name": "CC-01/425",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/83/DeltaAdvisor.jpg"
+    },
+    "Crest": {
+        "name": "Crest",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/b9/Crest_Clone_Trooper.jpg"
+    },
+    "CT-1226": {
+        "name": "CT-1226",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/e/e3/CT-1226.jpg"
+    },
+    "Chatter": {
+        "name": "Chatter",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/09/Chatter.jpg"
+    },
+    "CT-1477/Legends": {
+        "name": "CT-1477/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/31/CT-1477.png"
+    },
+    "CT-9529": {
+        "name": "CT-9529",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/a7/Havoc-BI.png"
+    },
+    "Bren_(clone_trooper)": {
+        "name": "Bren (clone trooper)",
+        "imageURL": ""
+    },
+    "Bellows_(clone_trooper)": {
+        "name": "Bellows (clone trooper)",
+        "imageURL": ""
+    },
+    "Gamma-383": {
+        "name": "Gamma-383",
+        "imageURL": ""
+    },
+    "Falco_(clone_trooper)": {
+        "name": "Falco (clone trooper)",
+        "imageURL": ""
+    },
+    "Joc": {
+        "name": "Joc",
+        "imageURL": ""
+    },
+    "Close-Shave": {
+        "name": "Close-Shave",
+        "imageURL": ""
+    },
+    "Derel": {
+        "name": "Derel",
+        "imageURL": ""
+    },
+    "Basher_(stormtrooper)": {
+        "name": "Basher (stormtrooper)",
+        "imageURL": ""
+    },
+    "Dyre": {
+        "name": "Dyre",
+        "imageURL": ""
+    },
+    "Nic": {
+        "name": "Nic",
+        "imageURL": ""
+    },
+    "CT-915": {
+        "name": "CT-915",
+        "imageURL": ""
+    },
+    "CT-44/444": {
+        "name": "CT-44/444",
         "imageURL": ""
     },
     "23": {
         "name": "23",
         "imageURL": ""
     },
+    "Dom": {
+        "name": "Dom",
+        "imageURL": ""
+    },
+    "Nexu_(clone_trooper)": {
+        "name": "Nexu (clone trooper)",
+        "imageURL": ""
+    },
+    "CT-9779": {
+        "name": "CT-9779",
+        "imageURL": ""
+    },
+    "Bek_(clone_trooper)": {
+        "name": "Bek (clone trooper)",
+        "imageURL": ""
+    },
+    "CT-6/774": {
+        "name": "CT-6/774",
+        "imageURL": ""
+    },
+    "CT-014/783": {
+        "name": "CT-014/783",
+        "imageURL": ""
+    },
+    "Lost_Prophet": {
+        "name": "Lost Prophet",
+        "imageURL": ""
+    },
+    "CT-0528": {
+        "name": "CT-0528",
+        "imageURL": ""
+    },
+    "Checkers": {
+        "name": "Checkers",
+        "imageURL": ""
+    },
+    "Flashpoint_(clone_trooper)": {
+        "name": "Flashpoint (clone trooper)",
+        "imageURL": ""
+    },
+    "CT-12/74": {
+        "name": "CT-12/74",
+        "imageURL": ""
+    },
+    "Dash-1129": {
+        "name": "Dash-1129",
+        "imageURL": ""
+    },
+    "CT-0368/7766": {
+        "name": "CT-0368/7766",
+        "imageURL": ""
+    },
+    "Doc_(Tualon_Yaluna)": {
+        "name": "Doc (Tualon Yaluna)",
+        "imageURL": ""
+    },
+    "Dandy": {
+        "name": "Dandy",
+        "imageURL": ""
+    },
+    "CT-8770": {
+        "name": "CT-8770",
+        "imageURL": ""
+    },
+    "CT-8910": {
+        "name": "CT-8910",
+        "imageURL": ""
+    },
+    "Fi_(clone_trooper)": {
+        "name": "Fi (clone trooper)",
+        "imageURL": ""
+    },
+    "Hil": {
+        "name": "Hil",
+        "imageURL": ""
+    },
+    "Dash-1044": {
+        "name": "Dash-1044",
+        "imageURL": ""
+    },
+    "Drak": {
+        "name": "Drak",
+        "imageURL": ""
+    },
+    "Lunn": {
+        "name": "Lunn",
+        "imageURL": ""
+    },
+    "Ince": {
+        "name": "Ince",
+        "imageURL": ""
+    },
+    "CT-307": {
+        "name": "CT-307",
+        "imageURL": ""
+    },
+    "Able-472": {
+        "name": "Able-472",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/c/c9/Abel.jpg"
+    },
+    "CT-327": {
+        "name": "CT-327",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/52/CT-327.png"
+    },
+    "Eight-eight-six-nine": {
+        "name": "Eight-eight-six-nine",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/2/21/ThreeCloneTroopers.jpg"
+    },
+    "CT-8801": {
+        "name": "CT-8801",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/ac/CT-8801.png"
+    },
+    "Flanker": {
+        "name": "Flanker",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/b6/Shiv.png"
+    },
     "4/163": {
         "name": "4/163",
         "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/3e/4-163.png"
     },
-    "1137": {
-        "name": "1137",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/c/cf/1137-AlwaysCountYourClonesBeforeTakeoff.jpg"
+    "Bel/Legends": {
+        "name": "Bel/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/d/dc/Bel-LoG.png"
+    },
+    "CT-5539": {
+        "name": "CT-5539",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/01/HockPortrait.jpg"
+    },
+    "Crys/Legends": {
+        "name": "Crys/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/01/Crys.png"
+    },
+    "Bouncer_(clone_trooper)": {
+        "name": "Bouncer (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/d/d6/Bouncer_clone.png"
+    },
+    "Gaffa": {
+        "name": "Gaffa",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/7/73/Gaffa.jpg"
+    },
+    "Buzz/Legends": {
+        "name": "Buzz/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/4/4e/Buzz.png"
+    },
+    "CT-914": {
+        "name": "CT-914",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/a4/BarrissOffee-OP.png"
+    },
+    "CT-9544/Legends": {
+        "name": "CT-9544/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/5b/ScytheHS.png"
+    },
+    "CT-3278": {
+        "name": "CT-3278",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/a0/CT-3278.png"
+    },
+    "CT-00-2010": {
+        "name": "CT-00-2010",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/36/Droidbait-TCW.png"
+    },
+    "CT-4040/Legends": {
+        "name": "CT-4040/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/6/61/CT4040HS-Rookies.png"
+    },
+    "No-Nines": {
+        "name": "No-Nines",
+        "imageURL": ""
+    },
+    "Flip_(clone_trooper)": {
+        "name": "Flip (clone trooper)",
+        "imageURL": ""
+    },
+    "Del_(clone_trooper)": {
+        "name": "Del (clone trooper)",
+        "imageURL": ""
+    },
+    "CT-4/619": {
+        "name": "CT-4/619",
+        "imageURL": ""
+    },
+    "Denal": {
+        "name": "Denal",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/bd/Denal.png"
+    },
+    "Chopper_(clone_trooper)/Legends": {
+        "name": "Chopper (clone trooper)/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/c/c5/Chopperclone2.png"
+    },
+    "CT-00-2010/Legends": {
+        "name": "CT-00-2010/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/36/Droidbait-TCW.png"
+    },
+    "Kaddak_(clone_trooper)": {
+        "name": "Kaddak (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/e/e8/Kaddak_real.jpg"
+    },
+    "Jark_(clone_trooper)": {
+        "name": "Jark (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/8f/JarkAndFixer-TCWcomic07.jpg"
+    },
+    "CT-9/85": {
+        "name": "CT-9/85",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/9e/Alpha-98.jpg"
+    },
+    "Edge": {
+        "name": "Edge",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f9/Edge.png"
+    },
+    "1139": {
+        "name": "1139",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/b7/1139-AlwaysCountYourClonesBeforeTakeoff.jpg"
+    },
+    "Gus/Legends": {
+        "name": "Gus/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/52/Gus.png"
+    },
+    "Hawkeye/Legends": {
+        "name": "Hawkeye/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/52/Hawkeye.png"
+    },
+    "CT-5177": {
+        "name": "CT-5177",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/0d/BreakoutSquad-OpressUnleashed.jpg"
+    },
+    "Charger/Legends": {
+        "name": "Charger/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/2/2b/Charger-TC.png"
+    },
+    "Gunner_(clone_trooper)": {
+        "name": "Gunner (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/4/4b/Gunner-NM.jpg"
+    },
+    "Cut_Lawquane/Legends": {
+        "name": "Cut Lawquane/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/8f/Cut.png"
+    },
+    "Lassar": {
+        "name": "Lassar",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/fa/Lassar.png"
+    },
+    "Mixer/Legends": {
+        "name": "Mixer/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/4/4d/Mixer.png"
+    },
+    "CT-6922": {
+        "name": "CT-6922",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/4/43/DogmaHS-SWE.png"
+    },
+    "CT-4012": {
+        "name": "CT-4012",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/0d/BreakoutSquad-OpressUnleashed.jpg"
+    },
+    "Flak_(clone_trooper)": {
+        "name": "Flak (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/81/Flak.jpg"
+    },
+    "Knuckles_(182nd_Legion)": {
+        "name": "Knuckles (182nd Legion)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/91/Knuckles.jpg"
+    },
+    "Denal/Legends": {
+        "name": "Denal/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/bd/Denal.png"
+    },
+    "CT-8508": {
+        "name": "CT-8508",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/ab/CT-8508.png"
+    },
+    "Nemec": {
+        "name": "Nemec",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/35/Nemec.png"
+    },
+    "Knuckles_(Breakout_Squad)": {
+        "name": "Knuckles (Breakout Squad)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/c/cc/Knuckles-OpressUnleashed.jpg"
+    },
+    "Heater_(clone_trooper)": {
+        "name": "Heater (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/55/Heater.jpg"
+    },
+    "Draa": {
+        "name": "Draa",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/32/Draa_cannon.png"
+    },
+    "Jek_15": {
+        "name": "Jek 15",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/37/Jek15.png"
+    },
+    "Hardcase/Legends": {
+        "name": "Hardcase/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/33/HardcaseHS-POD.png"
+    },
+    "Koho/Legends": {
+        "name": "Koho/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/39/Koho-CoD.png"
+    },
+    "Dogma": {
+        "name": "Dogma",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/4/43/DogmaHS-SWE.png"
+    },
+    "Niner": {
+        "name": "Niner",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/2/29/Niner-LoG.png"
+    },
+    "CT-3423": {
+        "name": "CT-3423",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/ad/CT-3423.png"
+    },
+    "AR-9771": {
+        "name": "AR-9771",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/54/AR-9771.png"
+    },
+    "5/373": {
+        "name": "5/373",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f9/5-373.png"
+    },
+    "CT-802": {
+        "name": "CT-802",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/3d/Jos_Vondar.jpg"
+    },
+    "CT-327/Legends": {
+        "name": "CT-327/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/52/CT-327.png"
+    },
+    "CT2": {
+        "name": "CT2",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/a9/CT2.png"
     },
     "Clone_trooper/Legends": {
         "name": "Clone trooper/Legends",
         "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/56/Clone_trooper_squad.png"
     },
-    "17": {
-        "name": "17",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/06/Clonetrooper17.jpg"
+    "2242": {
+        "name": "2242",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/bf/Cooker.jpg"
+    },
+    "CT-3899": {
+        "name": "CT-3899",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/1/1b/CT-3899.jpg"
+    },
+    "Jek-14/Legends": {
+        "name": "Jek-14/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/e/e2/Jek_14_Yoda_Chronicles.jpg"
+    },
+    "Cale_(clone_trooper)": {
+        "name": "Cale (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/6/62/Cale.jpg"
+    },
+    "CT-1477": {
+        "name": "CT-1477",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/31/CT-1477.png"
+    },
+    "Cameron": {
+        "name": "Cameron",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/ad/Cameron2.png"
+    },
+    "Ayar": {
+        "name": "Ayar",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/a4/Teth_Monastery_entrance.png"
+    },
+    "Nax": {
+        "name": "Nax",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f8/Nax-DoRTVG.png"
+    },
+    "CT-782/Legends": {
+        "name": "CT-782/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/d/d1/Hevy2.png"
+    },
+    "99": {
+        "name": "99",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/9c/99-ARCT.png"
+    },
+    "CT-5597/Legends": {
+        "name": "CT-5597/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/7/78/Jesse.png"
+    },
+    "Cut_Lawquane": {
+        "name": "Cut Lawquane",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/88/CutTBB.png"
+    },
+    "Eight-eight-six-eight": {
+        "name": "Eight-eight-six-eight",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/2/21/ThreeCloneTroopers.jpg"
+    },
+    "Kicker": {
+        "name": "Kicker",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/8d/DVDLotS2-Kicker.png"
+    },
+    "CT-9544": {
+        "name": "CT-9544",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/5b/ScytheHS.png"
+    },
+    "Kosmos": {
+        "name": "Kosmos",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/6/64/Cosmos.png"
+    },
+    "6/298": {
+        "name": "6/298",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/c/ce/TCG_SR_35.jpg"
+    },
+    "BL-1707": {
+        "name": "BL-1707",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/fc/BL-1707_Able.jpg"
+    },
+    "Crys": {
+        "name": "Crys",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/01/Crys.png"
+    },
+    "CT-8863": {
+        "name": "CT-8863",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/0d/BreakoutSquad-OpressUnleashed.jpg"
+    },
+    "Horns": {
+        "name": "Horns",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/94/Horns.jpg"
+    },
+    "Flash": {
+        "name": "Flash",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/7/7a/Flash_headshot.png"
+    },
+    "CT-9538": {
+        "name": "CT-9538",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f9/Edge.png"
+    },
+    "Cameron/Legends": {
+        "name": "Cameron/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/ad/Cameron2.png"
+    },
+    "Fireball_(clone_trooper)": {
+        "name": "Fireball (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/2/22/Trooper-Fireball.png"
+    },
+    "Hawkeye": {
+        "name": "Hawkeye",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/52/Hawkeye.png"
+    },
+    "Lucky/Legends": {
+        "name": "Lucky/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/c/c0/Lucky-JC.png"
+    },
+    "Chatter_(radio_communications_clone)": {
+        "name": "Chatter (radio communications clone)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/5d/Chatter_face.jpg"
+    },
+    "Joker": {
+        "name": "Joker",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/56/Sergeant_Joker_CWA.jpg"
+    },
+    "Lucky": {
+        "name": "Lucky",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/c/c0/Lucky-JC.png"
+    },
+    "CloneKL-555": {
+        "name": "CloneKL-555",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/4/4c/CloneKL-555.png"
+    },
+    "Longshot/Legends": {
+        "name": "Longshot/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/ab/Longshot-face-shot.jpg"
+    },
+    "CT-782": {
+        "name": "CT-782",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/95/CT782Hevy-TCWCEJtB.png"
+    },
+    "Havoc_(clone_trooper)": {
+        "name": "Havoc (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/a7/Havoc-BI.png"
+    },
+    "Gearshift": {
+        "name": "Gearshift",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/1/1e/Gearshift.png"
+    },
+    "CT-5385/Legends": {
+        "name": "CT-5385/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/38/TupHS-POD.png"
+    },
+    "Flash/Legends": {
+        "name": "Flash/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/7/7a/Flash_headshot.png"
+    },
+    "CT-4040": {
+        "name": "CT-4040",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/6/61/CT4040HS-Rookies.png"
+    },
+    "CT-282-SD00001-983725138": {
+        "name": "CT-282-SD00001-983725138",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/3c/282-Insider67.png"
+    },
+    "Nub": {
+        "name": "Nub",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/e/ed/NubNoHelmet-Rookies.png"
+    },
+    "Clone0000004": {
+        "name": "Clone0000004",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/ad/Clone0000004.png"
+    },
+    "Nub/Legends": {
+        "name": "Nub/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/e/ed/NubNoHelmet-Rookies.png"
+    },
+    "Ding": {
+        "name": "Ding",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/7/7e/DVDLotS2-Ding-Fullbody-redner.png"
+    },
+    "Mortar_(clone_trooper)": {
+        "name": "Mortar (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/83/Mortar.png"
+    },
+    "Deadeye": {
+        "name": "Deadeye",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/3e/BX_ambush.jpg"
+    },
+    "CT-1157": {
+        "name": "CT-1157",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f1/Stance.jpg"
+    },
+    "Niner/Legends": {
+        "name": "Niner/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/2/29/Niner-LoG.png"
+    },
+    "Gearshift/Legends": {
+        "name": "Gearshift/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/1/1e/Gearshift.png"
+    },
+    "CP-6824": {
+        "name": "CP-6824",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/d/d6/Switch.jpg"
+    },
+    "Koho": {
+        "name": "Koho",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/39/Koho-CoD.png"
+    },
+    "Longshot": {
+        "name": "Longshot",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/a/ab/Longshot-face-shot.jpg"
+    },
+    "Eight-eight-six-seven": {
+        "name": "Eight-eight-six-seven",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/2/21/ThreeCloneTroopers.jpg"
+    },
+    "Glitch": {
+        "name": "Glitch",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/87/Glitch.jpg"
+    },
+    "CT-43/002": {
+        "name": "CT-43/002",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/e/eb/CT-43.png"
+    },
+    "Jester": {
+        "name": "Jester",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/e/e0/Jester.png"
+    },
+    "Mixer": {
+        "name": "Mixer",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/4/4d/Mixer.png"
+    },
+    "Boost": {
+        "name": "Boost",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f6/Boost3.png"
+    },
+    "Cutter_(clone_trooper)": {
+        "name": "Cutter (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/6/6d/Cutter.png"
+    },
+    "Mag_(clone_trooper)": {
+        "name": "Mag (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/7/71/Mag.png"
+    },
+    "Kosmos/Legends": {
+        "name": "Kosmos/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/6/64/Cosmos.png"
+    },
+    "Draa/Legends": {
+        "name": "Draa/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/32/Draa_cannon.png"
+    },
+    "1137": {
+        "name": "1137",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/c/cf/1137-AlwaysCountYourClonesBeforeTakeoff.jpg"
+    },
+    "Ged": {
+        "name": "Ged",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/5c/Battle_of_Christophsis.png"
+    },
+    "Hexx": {
+        "name": "Hexx",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/6/62/Hexx.png"
+    },
+    "Jester/Legends": {
+        "name": "Jester/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/e/e0/Jester.png"
+    },
+    "Hardcase": {
+        "name": "Hardcase",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/33/HardcaseHS-POD.png"
+    },
+    "Charlie": {
+        "name": "Charlie",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/e/e7/Charlie-clone.png"
+    },
+    "Clone_99": {
+        "name": "Clone 99",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/9c/99-ARCT.png"
+    },
+    "Eyeball": {
+        "name": "Eyeball",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/33/Eyeball.jpg"
+    },
+    "Fixer_(clone_trooper)": {
+        "name": "Fixer (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f0/Fixer-TCW8.jpg"
+    },
+    "Charger": {
+        "name": "Charger",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/2/2b/Charger-TC.png"
+    },
+    "Ghost_(clone_trooper)": {
+        "name": "Ghost (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/96/Ghost_clone_portrait.jpg"
+    },
+    "Keeli": {
+        "name": "Keeli",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/89/KeeliHS-SL.png"
+    },
+    "Bel": {
+        "name": "Bel",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/d/dc/Bel-LoG.png"
+    },
+    "Jayk_(clone_trooper)": {
+        "name": "Jayk (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/c/c4/1st_Platoon_MPQ.png"
+    },
+    "CT-5385": {
+        "name": "CT-5385",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/3/38/TupHS-POD.png"
+    },
+    "Nova_(clone_trooper)": {
+        "name": "Nova (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/0/0b/Nova_clone_trooper_backpack.png"
+    },
+    "Checkbox": {
+        "name": "Checkbox",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/2/27/Grievous-SaberTruth.jpg"
+    },
+    "Gus": {
+        "name": "Gus",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/52/Gus.png"
+    },
+    "CT-6200/8901": {
+        "name": "CT-6200/8901",
+        "imageURL": ""
+    },
+    "Clone0000005": {
+        "name": "Clone0000005",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/8e/Clone0000005.png"
+    },
+    "Bellow": {
+        "name": "Bellow",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/d/df/Bellow.jpg"
+    },
+    "CT-4860": {
+        "name": "CT-4860",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f6/Boost3.png"
     }
 }

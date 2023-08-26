@@ -86,21 +86,32 @@ const fetchStuff = async (uriName) => {
         return [name, imageURL];
     } catch (nameError) {
         console.error("Name Error", nameError);
-        return ["", ""];
+        return ["Error", ""];
     }
 };
 
-fs.writeFileSync("dataVault/indexedList.json", "{");
 
 fs.promises.readFile("dataVault/filteredOutput.csv", "utf-8")
     .then((inputFile) => {
         const uriNames = inputFile.replace(/"/g, "").replace(/ /g, "").split(",");
         const uriNamesLength = uriNames.length;
+        let i = 0
+        let first = true
 
-        const promises = uriNames.slice(0, 10).map((uriName) => {
+        fs.writeFileSync("dataVault/indexedList.json", "{");
+
+        const promises = uriNames.slice(0, 200).map((uriName) => {
             return fetchStuff(uriName).then(([name, imageURL]) => {
-                const data = `"${uriName}": {"name": "${name}", "imageURL": "${imageURL}"},`;
-                fs.appendFileSync("dataVault/indexedList.json", data);
+                const data = `"${uriName}": {"name": "${name}", "imageURL": "${imageURL}"}`;
+
+                if (first) {
+                    fs.appendFileSync("dataVault/indexedList.json", data);
+                    first = false
+                } else {
+                    fs.appendFileSync("dataVault/indexedList.json", "," + data);
+                }
+                i++
+                console.log(i, uriName);
             });
         });
 
