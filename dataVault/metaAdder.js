@@ -65,6 +65,7 @@
 
 import axios from "axios";
 import fs from "fs";
+import https from "https"
 
 const fetchStuff = async (uriName) => {
     const baseUrl = "https://starwars.fandom.com/api.php";
@@ -77,7 +78,12 @@ const fetchStuff = async (uriName) => {
 
         let imageURL = "";
         try {
-            const imageURLResponse = await axios.get(imageURLUrl);
+            const imageURLResponse = await axios.get(imageURLUrl,
+                {
+                    timeout: 60000,
+                    httpsAgent: new https.Agent({ keepAlive: true })
+                });
+
             imageURL = imageURLResponse.data.image.imageserving.replace(/(\.(png|jpe?g)).*/i, '$1');
         } catch (imageError) {
             // Handle this error or ignore it if the article doesn't have an image
@@ -100,7 +106,7 @@ fs.promises.readFile("dataVault/filteredOutput.csv", "utf-8")
 
         fs.writeFileSync("dataVault/indexedList.json", "{");
 
-        const promises = uriNames.slice(0, 200).map((uriName) => {
+        const promises = uriNames.slice(1000, 2000).map((uriName) => {
             return fetchStuff(uriName).then(([name, imageURL]) => {
                 const data = `"${uriName}": {"name": "${name}", "imageURL": "${imageURL}"}`;
 
