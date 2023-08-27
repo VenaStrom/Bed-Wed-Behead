@@ -52,7 +52,7 @@ const scrape = async (masterCategoryList) => {
         const content = JSON.stringify(pageResult.individuals).replaceAll("https://starwars.fandom.com/wiki/", "").replace("[", "").replace("]", "") + ","
 
         try {
-            fs.writeFileSync("dataVault/rawOutput.csv", content, { flag: "a" });
+            fs.writeFileSync("dataVault/ships/rawScrapeOutput.csv", content, { flag: "a" });
         } catch (error) {
             console.error(error);
         }
@@ -87,8 +87,7 @@ const scrape = async (masterCategoryList) => {
 };
 
 
-const linkList = ["https://starwars.fandom.com/wiki/Category:clone_troopers", "https://starwars.fandom.com/wiki/Category:Females", "https://starwars.fandom.com/wiki/Category:Males", "https://starwars.fandom.com/wiki/Category:Non-binary_individuals", "https://starwars.fandom.com/wiki/Category:Genderless_individuals", "https://starwars.fandom.com/wiki/Category:Individuals_of_unspecified_gender", "https://starwars.fandom.com/wiki/Category:Individuals_of_unidentified_gender"]
+// const linkList = ["https://starwars.fandom.com/wiki/Category:clone_troopers", "https://starwars.fandom.com/wiki/Category:Females", "https://starwars.fandom.com/wiki/Category:Males", "https://starwars.fandom.com/wiki/Category:Non-binary_individuals", "https://starwars.fandom.com/wiki/Category:Genderless_individuals", "https://starwars.fandom.com/wiki/Category:Individuals_of_unspecified_gender", "https://starwars.fandom.com/wiki/Category:Individuals_of_unidentified_gender"]
+const linkList = ["https://starwars.fandom.com/wiki/Category:Starships"]
 
-// scrape(linkList)
-
-
+scrape(linkList)

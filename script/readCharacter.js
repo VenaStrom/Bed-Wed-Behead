@@ -3,15 +3,20 @@ const filter = {
     image: true
 }
 
+const URLs = {
+    noDupes: "dataVault/individuals/noDupes.csv",
+    preIndexed: "dataVault/individuals/preIndexedList.json",
+    placeholderImage: "style/images/placeholder-alien.png"
+}
 
-fetch("dataVault/filteredOutput.csv")
+
+fetch(URLs.noDupes)
     .then((result) => result.text())
     .then((text) => {
 
         const fullListOfIndividuals = text.replaceAll("\"", "").replaceAll(" ", "").split(",")
 
         document.getElementById("totalCharacterCount").innerHTML = fullListOfIndividuals.length - 1
-
 
         const getRandomName = (checkAgainst) => {
             const names = fullListOfIndividuals
@@ -39,7 +44,7 @@ fetch("dataVault/filteredOutput.csv")
 
                     // Filters
                     if (data.imageURL == "" && !filter.image) {
-                        data.imageURL = "style/images/placeholder-alien.png"
+                        data.imageURL = URLs.placeholderImage
                     } else if (data.imageURL == "" && filter.image) {
                         return setCharacter(getRandomName(alternatives), index)
                     }
@@ -57,7 +62,7 @@ fetch("dataVault/filteredOutput.csv")
 
                 .catch((error) => {
                     // Read local pre-indexed list
-                    fetch("./dataVault/indexedList.json")
+                    fetch(URLs.preIndexed)
                         .then((result) => result.text())
                         .then((text) => {
                             indexedList = JSON.parse(text)
@@ -87,7 +92,7 @@ fetch("dataVault/filteredOutput.csv")
                                 // Filters
                                 try {
                                     if (data.imageURL == "" && !filter.image) {
-                                        data.imageURL = "style/images/placeholder-alien.png"
+                                        data.imageURL = URLs.placeholderImage
                                     } else if (data.imageURL == "" && filter.image) {
                                         return setCharacter(getRandomName(alternatives), index)
                                     }
@@ -108,7 +113,6 @@ fetch("dataVault/filteredOutput.csv")
 
                             alternatives.forEach((uriName, index) => { setCharacter(uriName, index) })
                         })
-
                 })
         }
 
