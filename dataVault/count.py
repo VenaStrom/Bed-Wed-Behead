@@ -1,3 +1,3 @@
 
-with open("dataVault/filteredOutput.csv", "r") as file:
+with open("dataVault/ships/rawScrapeOutput.csv", "r") as file:
     print(file.read().count(","))

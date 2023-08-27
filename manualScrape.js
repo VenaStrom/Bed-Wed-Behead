@@ -88,6 +88,6 @@ const scrape = async (masterCategoryList) => {
 
 
 // const linkList = ["https://starwars.fandom.com/wiki/Category:clone_troopers", "https://starwars.fandom.com/wiki/Category:Females", "https://starwars.fandom.com/wiki/Category:Males", "https://starwars.fandom.com/wiki/Category:Non-binary_individuals", "https://starwars.fandom.com/wiki/Category:Genderless_individuals", "https://starwars.fandom.com/wiki/Category:Individuals_of_unspecified_gender", "https://starwars.fandom.com/wiki/Category:Individuals_of_unidentified_gender"]
-const linkList = ["https://starwars.fandom.com/wiki/Category:Starships"]
+const linkList = ["https://starwars.fandom.com/wiki/Category:Vehicles"]
 
 scrape(linkList)
