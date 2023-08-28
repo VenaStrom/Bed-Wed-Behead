@@ -75,13 +75,25 @@
         </div>
     </section>
 
+    <div id="gearIcon" onclick="openConfig()">⚙️</div>
+    <aside id="configMenu" style="display: none;">
+        <h2>Filter</h2>
+
+        <p class="configName">Images:</p>
+        <input type="checkbox" class="configCheckbox" name="" id="" checked="true">
+
+        <p class="configName">Config Option:</p>
+        <input type="checkbox" class="configCheckbox" name="" id="">
+    </aside>
+
     <footer>
         <p>Total character count: <span id="totalCharacterCount">00000</span></p>
         <p>Licensed under <a target="_blank" href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a></p>
     </footer>
 
     <script src="script/readCharacter.js"></script>
-    <script src="script/select.js"></script>    
+    <script src="script/select.js"></script> 
+    <script src="script/configHandler.js"></script>   
 </body>
 
 </html>

@@ -4,6 +4,7 @@ const filter = {
 }
 
 const URLs = {
+    // noDupes: "dataVault/ships/noDupes.csv",
     noDupes: "dataVault/individuals/noDupes.csv",
     preIndexed: "dataVault/individuals/preIndexedList.json",
     placeholderImage: "style/images/placeholder-alien.png"
@@ -13,6 +14,9 @@ const URLs = {
 fetch(URLs.noDupes)
     .then((result) => result.text())
     .then((text) => {
+        document.querySelectorAll(".imageWrapper p").forEach(title => {
+            title.innerHTML = "Fetching"
+        });
 
         const fullListOfIndividuals = text.replaceAll("\"", "").replaceAll(" ", "").split(",")
 
