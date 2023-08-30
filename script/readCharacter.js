@@ -1,7 +1,4 @@
 
-const filter = {
-    image: true
-}
 
 const URLs = {
     // noDupes: "dataVault/ships/noDupes.csv",
@@ -47,9 +44,9 @@ fetch(URLs.noDupes)
                 .then((data) => {
 
                     // Filters
-                    if (data.imageURL == "" && !filter.image) {
+                    if (data.imageURL == "" && !localStorage.getItem("filterImage")) {
                         data.imageURL = URLs.placeholderImage
-                    } else if (data.imageURL == "" && filter.image) {
+                    } else if (data.imageURL == "" && localStorage.getItem("filterImage")) {
                         return setCharacter(getRandomName(alternatives), index)
                     }
 
@@ -62,9 +59,17 @@ fetch(URLs.noDupes)
                     imageWrapper.href = URL;
                     imageWrapper.children[0].src = data.imageURL;
                     imageWrapper.children[1].innerHTML = data.name;
-                })
 
+                    // Kinda janky solution but it works for now
+                    setCharacter.breakFlag = true
+                })
                 .catch((error) => {
+                    // Kinda janky solution but it works for now
+                    if (setCharacter.breakFlag) {
+                        return
+                    }
+                    setCharacter.breakFlag = true
+
                     // Read local pre-indexed list
                     fetch(URLs.preIndexed)
                         .then((result) => result.text())
@@ -95,9 +100,9 @@ fetch(URLs.noDupes)
 
                                 // Filters
                                 try {
-                                    if (data.imageURL == "" && !filter.image) {
+                                    if (data.imageURL == "" && !Boolean(localStorage.getItem("filterImage"))) {
                                         data.imageURL = URLs.placeholderImage
-                                    } else if (data.imageURL == "" && filter.image) {
+                                    } else if (data.imageURL == "" && Boolean(localStorage.getItem("filterImage"))) {
                                         return setCharacter(getRandomName(alternatives), index)
                                     }
                                 } catch (error) {
