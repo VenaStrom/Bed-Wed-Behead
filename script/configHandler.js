@@ -1,19 +1,19 @@
 
-window.onload = (event) => {
-    if (Boolean(localStorage.getItem("configOpen")) == true) {
-        const aside = document.getElementById("configMenu");
+// window.onload = (event) => {
+//     if (Boolean(localStorage.getItem("configOpen")) == true) {
+//         const aside = document.getElementById("configMenu");
     
-        aside.style.display = "grid";
-    }
-    console.log(localStorage.getItem("configOpen"));
-    if (localStorage.getItem("configOpen") == null) {
-        console.log(true);
-        localStorage.setItem("configOpen", false)
+//         aside.style.display = "grid";
+//     }
+//     console.log(localStorage.getItem("configOpen"));
+//     if (localStorage.getItem("configOpen") == null) {
+//         console.log(true);
+//         localStorage.setItem("configOpen", false)
 
-        localStorage.setItem("filterImage", false)
-        localStorage.setItem("filterTest", false)
-    }
-}
+//         localStorage.setItem("filterImage", false)
+//         localStorage.setItem("filterTest", false)
+//     }
+// }
 
 
 const openConfig = () => {
