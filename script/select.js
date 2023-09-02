@@ -1,5 +1,4 @@
 
-localStorage.clear()
 for (let index = 1; index <= 3; index++) {
     localStorage.setItem("bed" + index.toString(), false)
     localStorage.setItem("wed" + index.toString(), false)

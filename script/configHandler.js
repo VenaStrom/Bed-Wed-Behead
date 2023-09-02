@@ -1,12 +1,4 @@
 
-// DEBUG
-document.addEventListener("keydown", (event) => {
-    if (event.key == "u") {
-        console.log("Cleared Localstorage");
-        window.localStorage.clear()
-    }
-})
-
 
 window.onload = (event) => {
 
@@ -19,9 +11,9 @@ window.onload = (event) => {
 
         // Add items here when you make another config
         window.localStorage.setItem("filterImage", "unchecked")
-        window.localStorage.setItem("filterTest", "unchecked")
+        window.localStorage.setItem("filterString", "unchecked")
     }
-
+    
     // Implement relevant config options
     if (window.localStorage.getItem("config") == "open") {
         const configMenu = document.getElementById("configMenu");
@@ -29,8 +21,12 @@ window.onload = (event) => {
         window.localStorage.setItem("config", "open")
     }
     if (window.localStorage.getItem("filterImage") == "checked"){
-        const filterImageCheckbox = document.getElementById("filterImage")
-        filterImageCheckbox.checked = true
+        const checkbox = document.getElementById("filterImage")
+        checkbox.checked = true
+    }
+    if (window.localStorage.getItem("filterString") == "checked"){
+        const checkbox = document.getElementById("filterString")
+        checkbox.checked = true
     }
 }
 
@@ -55,21 +51,25 @@ document.addEventListener("keydown", (event) => {
         toggleConfigMenu()
     }
 })
-// document.addEventListener("mousedown", (event) => {
-//     if (window.localStorage.getItem("config") == "open") {
-//         console.log(event.target);
-//         try {
-//             if (event.target.id != "configMenu") {
-//                 toggleConfigMenu()
-//             }
-//         } catch (error) { }
-//     }
-// })
+document.addEventListener("mousedown", (event) => {
+    if (window.localStorage.getItem("config") == "open") {
+        console.log(event.target);
+        try {
+            if (
+                event.target.id != "configMenu" &&
+                !event.target.classList.includes("configCheckbox") &&
+                !event.target.classList.includes("configName") 
+            ) {
+                toggleConfigMenu()
+            }
+        } catch (error) { }
+    }
+})
 
 
 const toggleConfig = (srcElement) => {
     const configId = srcElement.id
-    
+
     if (srcElement.checked == true) {
         window.localStorage.setItem(configId, "checked")
     } else {

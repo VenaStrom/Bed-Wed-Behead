@@ -118,7 +118,7 @@
     </section>
 
 
-    <div id="gearIcon" onclick="toggleConfigMenu()">⚙️</div>
+    <div id="gearIcon" onclick="toggleConfigMenu()" tabindex="13">⚙️</div>
 
     <aside id="configMenu" style="display: none;">
         <h2>Filter</h2>
@@ -126,8 +126,9 @@
         <p class="configName">Images:</p>
         <input type="checkbox" onchange="toggleConfig(this)" class="configCheckbox" name="" id="filterImage">
 
-        <p class="configName">Test config:</p>
-        <input type="checkbox" onchange="toggleConfig(this)" class="configCheckbox" name="" id="filterTest">
+        <p class="configName">String:</p>
+        <input type="text" name="" id="filterStringTextInput" class="configTextInput">
+        <input type="checkbox" onchange="toggleConfig(this)" class="configCheckbox" name="" id="filterString">
 
     </aside>
 
