@@ -44,9 +44,9 @@ fetch(URLs.noDupes)
                 .then((data) => {
 
                     // Filters
-                    if (data.imageURL == "" && !localStorage.getItem("filterImage")) {
+                    if (data.imageURL == "" && window.localStorage.getItem("filterImage") == "unchecked") {
                         data.imageURL = URLs.placeholderImage
-                    } else if (data.imageURL == "" && localStorage.getItem("filterImage")) {
+                    } else if (data.imageURL == "" && window.localStorage.getItem("filterImage") == "checked") {
                         return setCharacter(getRandomName(alternatives), index)
                     }
 
@@ -100,9 +100,9 @@ fetch(URLs.noDupes)
 
                                 // Filters
                                 try {
-                                    if (data.imageURL == "" && !Boolean(localStorage.getItem("filterImage"))) {
+                                    if (data.imageURL == "" && window.localStorage.getItem("filterImage") == "unchecked") {
                                         data.imageURL = URLs.placeholderImage
-                                    } else if (data.imageURL == "" && Boolean(localStorage.getItem("filterImage"))) {
+                                    } else if (data.imageURL == "" && window.localStorage.getItem("filterImage") == "checked") {
                                         return setCharacter(getRandomName(alternatives), index)
                                     }
                                 } catch (error) {

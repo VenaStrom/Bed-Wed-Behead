@@ -179,4 +179,5 @@ footer p {
 
 .configCheckbox {
     grid-column: 2 / 3;
+    cursor: pointer;
 }
