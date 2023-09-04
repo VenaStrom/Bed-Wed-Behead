@@ -150,6 +150,8 @@ footer p {
     margin: 0;
     grid-column: 1 / 4;
     text-align: center;
+    cursor: default;
+    margin-bottom: 1rem;
 }
 
 #configMenu {
@@ -165,31 +167,36 @@ footer p {
     height: 75vh;
 
     overflow-y: scroll;
-
-    grid-template-columns: repeat(3, auto);
-    grid-template-rows: 3rem repeat(15, 2rem);
 }
 
-.configName {
+#configForm {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: auto max-content 2rem;
+    grid-template-rows: repeat(15, 2rem);
+}
+
+#configForm label {
     grid-column: 1 / 2;
     font-size: large;
-    position: relative;
-    bottom: 1rem;
+    cursor: default;
 }
 
-.configCheckbox {
-    grid-column: 3 / 4;
-    cursor: pointer;
-}
-
-.configTextInput {
+#configForm input[type=text] {
     width: 80%;
     justify-self: center;
 }
 
+#configForm input[type=checkbox] {
+    grid-column: 3 / 4;
+    cursor: pointer;
+}
+
+
 /* Incognito Mode */
-body {
+/* body {
     background-image: none;
     background-color: #343434;
     opacity: 0.08;
-}
+} */

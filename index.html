@@ -31,23 +31,6 @@
         content="http://github.com/viggoStrom/bedWedBehead/blob/main/style/images/metaImage.png?raw=true">
 
 
-
-    <!-- <meta name="description" content="Play Star Wars: Bed Wed & Behead with 40,000+ characters"> -->
-    <!-- <meta property="og:description" content="Play Star Wars: Bed Wed & Behead with 40,000+ characters"> -->
-    <!-- <meta name="twitter:description" content="Play Star Wars: Bed Wed & Behead with 40,000+ characters"> -->
-
-    <!-- TODO -->
-    <!-- TODO -->
-    <!-- <meta property="og:image"content="https://github.com/viggoStrom/bedWedBehead/blob/main/style/images/metaImage.png?raw=true"> -->
-    <!-- <meta name="twitter:card" content="summary_large_image" /> -->
-    <!-- <meta name="twitter:image" content="https://github.com/viggoStrom/bedWedBehead/blob/main/style/images/metaImage.png?raw=true"> -->
-    <!-- TODO -->
-    <!-- TODO -->
-
-    <!-- <title>STAR WARS: Bed Wed & Behead</title> -->
-    <!-- <meta property="og:title" content="STAR WARS: Bed Wed & Behead"> -->
-    <!-- <meta name="twitter:title" content="STAR WARS: Bed Wed & Behead"> -->
-
     <link rel="stylesheet" href="style/desktop.css">
     <link rel="shortcut icon" href="style/images/bedwedbehead_beshicon.png" type="image/x-icon">
 </head>
@@ -85,6 +68,7 @@
                 <p class="alternativeName">Bed</p>
             </div>
 
+
             <div id="wed1" onclick="select(this,'wed1')" tabindex="3">
                 <img src="style/images/icons/favorite_FILL1_wght600_GRAD0_opsz48.png" alt="Wed" class="icon">
                 <p class="alternativeName">Wed</p>
@@ -97,6 +81,7 @@
                 <img src="style/images/icons/favorite_FILL1_wght600_GRAD0_opsz48.png" alt="Wed" class="icon">
                 <p class="alternativeName">Wed</p>
             </div>
+
 
             <div id="behead1" onclick="select(this,'behead1')" tabindex="4">
                 <img src="style/images/icons/skull_FILL1_wght600_GRAD0_opsz48.png" alt="Behead" class="icon">
@@ -113,7 +98,7 @@
         </div>
 
         <div class="playButtonWrapper">
-            <p onclick="" class="playButton">Play</p>
+            <p onclick="play()" class="playButton">Play</p>
         </div>
     </section>
 
@@ -123,13 +108,18 @@
     <aside id="configMenu" style="display: none;">
         <h2>Filter</h2>
 
-        <p class="configName">Images:</p>
-        <input type="checkbox" onchange="toggleConfig(this)" class="configCheckbox" name="" id="filterImage">
+        <form id="configForm" onchange="updateConfig()">
+            <label for="filterImage">Images:</label>
+            <input id="filterImage" class="configCheckbox" type="checkbox">
 
-        <p class="configName">String:</p>
-        <input type="text" name="" id="filterStringTextInput" class="configTextInput">
-        <input type="checkbox" onchange="toggleConfig(this)" class="configCheckbox" name="" id="filterString">
+            <label for="filterUnidentified">Unidentified:</label>
+            <input id="filterUnidentified" class="configCheckbox" type="checkbox">
 
+            <label for="filterStringTextInput">String:</label>
+            <input id="filterStringTextInput" class="configTextInput" placeholder="Exclude this text" type="text">
+            <label for="filterString" style="display: none;">String:</label>
+            <input id="filterString" class="configCheckbox" type="checkbox">
+        </form>
     </aside>
 
 
