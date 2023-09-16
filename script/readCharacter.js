@@ -160,10 +160,14 @@ const fetchJSON = async (url) => {
 };
 
 const updateCharacterInfo = (index, data) => {
+    console.log(index, data.name);
+
     const imageWrapper = document.querySelectorAll(".imageWrapper")[index];
     const URL = `https://starwars.fandom.com/wiki/${data.name}`;
     imageWrapper.href = URL;
+
     imageWrapper.children[0].src = data.imageURL || URLs.placeholderImage;
+
     imageWrapper.children[1].innerHTML = data.name;
 };
 
@@ -197,23 +201,31 @@ const play = async () => {
         alternatives.push(getRandomName(alternatives, fullListOfIndividuals));
     }
 
-    console.log(alternatives);
-
-    for (let i = 0; i < alternatives.length; i++) {
-        const uriName = alternatives[i];
+    let tryFetch = true
+    for (let index = 0; index < alternatives.length; index++) {
         try {
-            const data = await fetchJSON(`http://localhost:3000/api/getPage/${uriName}`);
-            if (!filterCharacter(data)) {
-                updateCharacterInfo(i, data);
+            if (tryFetch) {
+                console.log("Fetching", alternatives);
+
+                const uriName = alternatives[index];
+                const data = await fetchJSON(`http://localhost:3000/api/getPage/${uriName}`);
+                updateCharacterInfo(index, data);
             }
         } catch (error) {
-            const preIndexedListText = await fetchText(URLs.preIndexed);
-            const indexedList = JSON.parse(preIndexedListText);
-            alternatives.forEach((uriName, index) => {
-                if (!alternatives.includes(uriName) && !filterCharacter(indexedList[uriName])) {
-                    console.log("object");
-                    updateCharacterInfo(index, indexedList[uriName]);
-                }
+            tryFetch = false
+
+            const indexedList = JSON.parse(await fetchText(URLs.preIndexed));
+            const indexedListOfIndividuals = Object.keys(indexedList)
+
+            const localAlternatives = []
+            while (localAlternatives.length < 3) {
+                localAlternatives.push(getRandomName(localAlternatives, indexedListOfIndividuals));
+            }
+
+            console.log("Loading", localAlternatives);
+
+            localAlternatives.forEach((uriName, index) => {
+                updateCharacterInfo(index, indexedList[uriName]);
             });
         }
     }

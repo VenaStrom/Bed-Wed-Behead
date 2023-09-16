@@ -103,27 +103,12 @@
     </section>
 
 
-    <div id="gearIcon" title="Filters" onclick="toggleConfigMenu()" tabindex="14">⚙️</div>
+    <img onclick="toggleConfigMenu()" src="style/images/icons/icon_settings.png" id="gearIcon" class="icon direction" title="Filters" tabindex="14">
 
     <aside id="configMenu" style="display: none;">
         <h2>Filter</h2>
 
-        <form id="configForm" onchange="updateConfig()">
-            <label for="filterImage" title="!!TODO!! ΧΧΧ LIANS JOBB ΧΧΧ !!TODO!!">Images:</label>
-            <input id="filterImage" class="configCheckbox" type="checkbox">
-
-            <label for="filterUnidentified" title="!!TODO!! ΧΧΧ LIANS JOBB ΧΧΧ !!TODO!!">Unidentified:</label>
-            <input id="filterUnidentified" class="configCheckbox" type="checkbox">
-
-            <label for="filterStringTextInput" title="!!TODO!! ΧΧΧ LIANS JOBB ΧΧΧ !!TODO!!">String:</label>
-            <div class="checkboxWrapper">
-                <img class="icon" title="Reset" onclick="resetTextInput(this,'filterStringTextInput')"
-                    src="style/images/icons/refresh_FILL0_wght600_GRAD0_opsz48.png" alt="reset">
-                <input id="filterStringTextInput" class="configTextInput" placeholder="Exclude this text" type="text">
-            </div>
-            <label for="filterString" style="display: none;">String:</label>
-            <input id="filterString" class="configCheckbox" type="checkbox">
-        </form>
+        <form id="configForm" onchange="updateConfig()"></form>
     </aside>
 
 
