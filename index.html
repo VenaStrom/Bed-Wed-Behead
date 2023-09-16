@@ -98,12 +98,12 @@
         </div>
 
         <div class="playButtonWrapper">
-            <p onclick="play()" class="playButton">Play</p>
+            <p onclick="play()" class="playButton" tabindex="13">Play</p>
         </div>
     </section>
 
 
-    <div id="gearIcon" onclick="toggleConfigMenu()" tabindex="13">⚙️</div>
+    <div id="gearIcon" onclick="toggleConfigMenu()" tabindex="14">⚙️</div>
 
     <aside id="configMenu" style="display: none;">
         <h2>Filter</h2>
@@ -114,9 +114,12 @@
 
             <label for="filterUnidentified">Unidentified:</label>
             <input id="filterUnidentified" class="configCheckbox" type="checkbox">
-
+            
             <label for="filterStringTextInput">String:</label>
-            <input id="filterStringTextInput" class="configTextInput" placeholder="Exclude this text" type="text">
+            <div class="checkboxWrapper">
+                <img class="icon" onclick="resetTextInput(this,'filterStringTextInput')" src="style/images/icons/refresh_FILL0_wght600_GRAD0_opsz48.png" alt="reset">
+                <input id="filterStringTextInput" class="configTextInput" placeholder="Exclude this text" type="text">
+            </div>
             <label for="filterString" style="display: none;">String:</label>
             <input id="filterString" class="configCheckbox" type="checkbox">
         </form>

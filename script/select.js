@@ -1,4 +1,13 @@
 
+document.addEventListener("keydown", event => {
+    if (event.key == " ") {
+        event.preventDefault()
+        if (event.target.parentElement.classList[0] == "iconWrapper") {
+            select(event.target, event.target.id)
+        }
+    }
+})
+
 for (let index = 1; index <= 3; index++) {
     localStorage.setItem("bed" + index.toString(), false)
     localStorage.setItem("wed" + index.toString(), false)

@@ -9,7 +9,10 @@ const defineConfigOption = (name) => {
     else if (window.localStorage.getItem(name) == "checked") {
         const checkbox = document.getElementById(name)
         checkbox.checked = true
-    } if (window.localStorage.getItem(name).includes("TextInput") == "text") {
+    } else if (window.localStorage.getItem(name) == "unchecked") {
+        const checkbox = document.getElementById(name)
+        checkbox.checked = false
+    } else if (name.includes("TextInput")) {
         const textBox = document.getElementById(name)
         textBox.value = window.localStorage.getItem(name)
     }
@@ -27,6 +30,7 @@ window.onload = (event) => {
     // Add items here when you make another config
     defineConfigOption("filterImage")
     defineConfigOption("filterString")
+    defineConfigOption("filterStringTextInput")
     defineConfigOption("filterUnidentified")
 
     // Keep config open if necessary
@@ -35,11 +39,6 @@ window.onload = (event) => {
         configMenu.style.display = "block";
         window.localStorage.setItem("config", "open")
     }
-
-    // Add the toggle config function to the inputs
-    // document.querySelectorAll("#configForm input[type=checkbox]").forEach(input => {
-    //     input.onchange = "toggleConfig(this)"
-    // });
 }
 
 
@@ -56,17 +55,10 @@ const toggleConfigMenu = () => {
     }
 }
 
+document.getElementById("configForm").addEventListener("submit", event => {
+    event.preventDefault()
+})
 
-// Toggle a single config option
-const toggleConfig = (srcElement) => {
-    const configId = srcElement.id
-
-    if (srcElement.checked == true) {
-        window.localStorage.setItem(configId, "checked")
-    } else {
-        window.localStorage.setItem(configId, "unchecked")
-    }
-}
 
 const updateConfig = () => {
     const configForm = document.forms["configForm"]
@@ -82,7 +74,6 @@ const updateConfig = () => {
         const element = configInputs[key]
 
         if (element.type == "text") {
-            // For the text field
             window.localStorage.setItem(key, element.value)
         } else if (element.checked) {
             window.localStorage.setItem(key, "checked")
@@ -92,6 +83,16 @@ const updateConfig = () => {
     })
 }
 
+const resetTextInput = (src, textInput) => {
+    if (!src.classList.contains("spin")) {
+        src.classList.toggle("spin")
+        setTimeout(() => {
+            src.classList.toggle("spin")
+        }, 500);
+    }
+    window.localStorage.setItem(textInput, "")
+    document.getElementById(textInput).value = ""
+}
 
 // Closes the config menu if you press esc or click outside of menu
 document.addEventListener("keydown", (event) => {

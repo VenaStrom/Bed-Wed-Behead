@@ -38,17 +38,32 @@ const play = () => {
 
             console.log(alternatives);
 
+            const filter = (data) => { // False is fine and true means it has catched something
+                // Filter
+                try {
+                    if (data.imageURL == "" && window.localStorage.getItem("filterImage") == "checked") {
+                        return true
+                    } else if (
+                        window.localStorage.getItem("filterUnidentified") == "checked"
+                        && data.
+                    ) {
+
+                    }
+                } catch (error) { }
+
+
+
+                return false
+            }
+
             const setCharacter = async (uriName, index) => {
                 fetch(`http://localhost:3000/api/getPage/${uriName}`)
                     .then((response) => response.json())
                     .then((data) => {
 
                         // Filters
-                        if (data.imageURL == "" && window.localStorage.getItem("filterImage") == "unchecked") {
-                            data.imageURL = URLs.placeholderImage
-                        } else if (data.imageURL == "" && window.localStorage.getItem("filterImage") == "checked") {
-                            return setCharacter(getRandomName(alternatives), index)
-                        }
+                        // Filters
+                        // Filters
 
                         console.log(index, data);
 
@@ -59,12 +74,12 @@ const play = () => {
                         imageWrapper.children[0].src = data.imageURL;
                         imageWrapper.children[1].innerHTML = data.name;
 
-                        // Kinda janky solution but it works for now
+                        // Kinda janky of a solution but it works for now
                         setCharacter.breakFlag = true
                     })
                     .catch((error) => {
 
-                        // Kinda janky solution but it works for now
+                        // Kinda janky of a solution but it works for now
                         if (setCharacter.breakFlag) {
                             return
                         } else {
@@ -82,7 +97,8 @@ const play = () => {
                                 const getRandomName = (checkAgainst) => {
                                     const keys = Object.keys(indexedList)
                                     let uriName = keys[Math.floor(Math.random() * keys.length)]
-                                    while (checkAgainst.includes(uriName)) {
+
+                                    while (checkAgainst.includes(uriName) && filter(indexedList[uriName])) {
                                         uriName = keys[Math.floor(Math.random() * keys.length)];
                                     }
 
@@ -101,14 +117,9 @@ const play = () => {
                                 const setCharacter = async (uriName, index) => {
                                     let data = indexedList[uriName]
 
-                                    // Filter
-                                    try {
-                                        if (data.imageURL == "" && window.localStorage.getItem("filterImage") == "unchecked") {
-                                            data.imageURL = URLs.placeholderImage
-                                        } else if (data.imageURL == "" && window.localStorage.getItem("filterImage") == "checked") {
-                                            return setCharacter(getRandomName(alternatives), index)
-                                        }
-                                    } catch (error) { }
+                                    if (data.imageURL == "") {
+                                        data.imageURL = URLs.placeholderImage
+                                    }
 
                                     console.log(index, uriName);
 
