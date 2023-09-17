@@ -1,9 +1,28 @@
 
+
 document.addEventListener("keydown", event => {
-    if (event.key == " ") {
+    if (event.key == " " || event.key == "Enter") {
         event.preventDefault()
+
         if (event.target.parentElement.classList[0] == "iconWrapper") {
             select(event.target, event.target.id)
+
+        } else if (event.target.id.includes("TextInput") && event.key != "Enter") {
+            event.target.value += " "
+
+        } else if (event.target.type == "checkbox") {
+            event.target.checked = !event.target.checked
+            updateConfig()
+
+        } else if (event.target.classList.contains("resetTextInput")) {
+            resetTextInput()
+            updateConfig()
+
+        } else if (event.target.id == "gearIcon") {
+            toggleConfigMenu()
+
+        } else if (event.target.children[0].classList.contains("image")) {
+            window.open(event.target.href,"_blank")
         }
     }
 })

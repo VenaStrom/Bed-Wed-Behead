@@ -80,6 +80,12 @@ document.getElementById("configMenu").addEventListener("submit", event => {
     event.preventDefault()
 })
 
+const resetTextInput = (id) => {
+    // Function to reset a text input in local storage and its corresponding value
+    window.localStorage.setItem(id, "");
+    document.getElementById(id).value = "";
+}
+
 // Function to create a filter element in DOM and handle local storage
 const createFilter = (defaultValue, category, id, displayName, pattern, description = "") => {
 
@@ -93,23 +99,24 @@ const createFilter = (defaultValue, category, id, displayName, pattern, descript
     const input = document.createElement("input");
     input.type = "checkbox";
     input.id = id;
+    input.title = description
     input.checked = defaultValue
 
     const parent = document.getElementById(category);
     if (id.toLowerCase().includes("custom")) {
         const textInput = document.createElement("input")
         textInput.type = "text"
+        textInput.title = description
         textInput.id = id + "TextInput"
         textInput.placeholder = "Exclude this text"
         textInput.value = window.localStorage.getItem(textInput.id);
 
         const reset = document.createElement("img")
-        reset.addEventListener("click", () => {
-            // Function to reset a text input in local storage and its corresponding value
-            window.localStorage.setItem(textInput.id, "");
-            document.getElementById(textInput.id).value = "";
-        })
+        reset.onclick = `resetTextInput(${textInput.id})`
+        reset.title = "Clear the text."
         reset.src = "../style/images/icons/refresh_FILL0_wght600_GRAD0_opsz48.png"
+        reset.classList.add("resetTextInput")
+        reset.tabIndex = 0
 
         const textInputwrapper = document.createElement("div")
         textInputwrapper.classList.add("textInputWrapper")
@@ -119,7 +126,7 @@ const createFilter = (defaultValue, category, id, displayName, pattern, descript
         const biggerWrapper = document.createElement("div")
         biggerWrapper.style.display = "flex"
         biggerWrapper.style.flexFlow = "row nowrap"
-        biggerWrapper.style.justifyContent = "center"
+        biggerWrapper.style.alignContent = "center"
         biggerWrapper.classList.add("biggerTextInputWrapper")
         biggerWrapper.appendChild(label)
         biggerWrapper.appendChild(textInputwrapper)
@@ -156,6 +163,7 @@ window.onload = () => {
         window.localStorage.setItem("config", "closed");
     }
 
+    // Gender
     createFilter(
         defaultValue = true,
         category = "gender",
@@ -180,10 +188,11 @@ window.onload = () => {
         pattern = "category:female",
         description = "Include women"
     )
+    // Miscellaneous
     createFilter(
         defaultValue = false,
         category = "miscellaneous",
-        id = "filterCustomString",
+        id = "filterCustomMisc",
         displayName = "Custom",
         pattern = "!string",
         description = "Exclude individuals with names that include this text."
@@ -204,13 +213,14 @@ window.onload = () => {
         pattern = "!imageURL",
         description = "Include individuals that do not have an image associated with it."
     )
+    // Status
     createFilter(
         defaultValue = true,
         category = "status",
-        id = "filterCanon",
-        displayName = "Canon",
-        pattern = "category:canon",
-        description = "Include canon individuals."
+        id = "filterNonCanon",
+        displayName = "Non-canon",
+        pattern = "category:non-canon",
+        description = "Include non-canon individuals."
     )
     createFilter(
         defaultValue = true,
@@ -223,10 +233,83 @@ window.onload = () => {
     createFilter(
         defaultValue = true,
         category = "status",
-        id = "filterNonCanon",
-        displayName = "Non-canon",
-        pattern = "category:non-canon",
-        description = "Include non-canon individuals."
+        id = "filterCanon",
+        displayName = "Canon",
+        pattern = "category:canon",
+        description = "Include canon individuals."
+    )
+    // Appearance
+    createFilter(
+        defaultValue = false,
+        category = "appearance",
+        id = "filterCustomAppearance",
+        displayName = "Custom",
+        pattern = "",
+        description = "Enter name of media as it appears in the Appearances section of articles on Wookieepedia"
+    )
+    createFilter(
+        defaultValue = true,
+        category = "appearance",
+        id = "filterAhsoka",
+        displayName = "Ahsoka",
+        pattern = "",
+        description = "Include individuals who appeared in Ahsoka."
+    )
+    createFilter(
+        defaultValue = true,
+        category = "appearance",
+        id = "filterAndor",
+        displayName = "Andor",
+        pattern = "",
+        description = "Include individuals who appeared in Andor."
+    )
+    createFilter(
+        defaultValue = true,
+        category = "appearance",
+        id = "filterObiWan",
+        displayName = "Obi-Wan Kenobi",
+        pattern = "",
+        description = "Include individuals who appeared in Obi-Wan Kenobi."
+    )
+    createFilter(
+        defaultValue = true,
+        category = "appearance",
+        id = "filterMandoBoba",
+        displayName = "The Mandalorian & The Book of Boba Fett",
+        pattern = "",
+        description = "Include individuals who appeared in The Mandalorian & The Book of Boba Fett."
+    )
+    createFilter(
+        defaultValue = true,
+        category = "appearance",
+        id = "filterBadBatch",
+        displayName = "The Bad Batch",
+        pattern = "",
+        description = "Include individuals who appeared in The Bad Batch."
+    )
+    createFilter(
+        defaultValue = true,
+        category = "appearance",
+        id = "filterRebels",
+        displayName = "Rebels",
+        pattern = "",
+        description = "Include individuals who appeared in Rebels."
+    )
+    createFilter(
+        defaultValue = true,
+        category = "appearance",
+        id = "filterCloneWars",
+        displayName = "The Clone Wars",
+        pattern = "",
+        description = "Include individuals who appeared in The Clone Wars."
+    )
+    createFilter(
+        defaultValue = true,
+        category = "appearance",
+        id = "filterSkywalkerRogue",
+        displayName = "Skywalker saga & Rogue One",
+        pattern = "",
+        description = "Include individuals who appear in movies 1 - 9 & Rogue One"
     )
 
     // Remeber if config was open or not
