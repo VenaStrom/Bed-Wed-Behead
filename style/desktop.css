@@ -173,14 +173,22 @@ footer p {
     width: 100%;
 
     display: grid;
-    grid-template-columns: min-content auto 2rem;
+    grid-template-columns: 2rem auto auto;
     grid-template-rows: repeat(15, 2rem);
 }
 
 #configForm label {
-    grid-column: 1 / 2;
+    grid-column: 2 / 4;
     font-size: large;
-    cursor: default;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    margin-left: 1vw;
+    align-self: center;
+}
+
+.labelForTextInput {
+    grid-column: 2/3;
 }
 
 #configForm input[type=text] {
@@ -192,22 +200,21 @@ footer p {
 }
 
 #configForm input[type=checkbox] {
-    grid-column: 3 / 4;
     cursor: pointer;
+    /* grid-column: 3 / 4; */
 }
 
-.checkboxWrapper {
+.textInputWrapper {
     display: flex;
     flex-flow: row nowrap;
 
-    margin-right: .5vw;
-    margin-left: .5vw;
     background-color: white;
     border-radius: .3vh;
-    height: 1.9rem;
+    height: 1.7rem;
+    margin-left: 1vw;
 }
 
-.checkboxWrapper img {
+.textInputWrapper img {
     cursor: pointer;
     height: 1.7rem;
     width: 1.7rem;
@@ -217,8 +224,25 @@ footer p {
     filter: invert(51%) sepia(0%) saturate(898%) hue-rotate(264deg) brightness(88%) contrast(85%);
 }
 
-.checkboxWrapper img:hover {
+.textInputWrapper img:hover {
     scale: 1.05;
+}
+.textInputWrapper img:active {
+    scale: 1.1;
+}
+
+.biggerTextInputWrapper {
+    align-items: center;
+}
+
+.filterHeading {
+    font-size: 1.2rem;
+    font-weight: 500;
+    font-style: italic;
+    text-align: center;
+    grid-column: 1/4;
+    margin: 0;
+    margin-top: 1vh;
 }
 
 .spinLeft {
@@ -248,6 +272,7 @@ footer p {
         transform: rotate(60deg);
     }
 }
+
 
 /* Incognito Mode */
 /* body {
