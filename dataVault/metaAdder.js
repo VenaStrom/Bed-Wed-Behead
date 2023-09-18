@@ -2,9 +2,10 @@ import axios from "axios";
 import fs from "fs";
 import https from "https"
 
-URLs = {
+const URLs = {
     input: "dataVault/individuals/noDupes.csv",
-    output: "dataVault/individuals/testingNewQueries.json"
+    output: "dataVault/individuals/testingNewQueries.json",
+    appendTo: ""
 }
 
 const fetchStuff = async (uriName) => {
@@ -25,9 +26,13 @@ const fetchStuff = async (uriName) => {
                 });
 
             imageURL = imageURLResponse.data.image.imageserving.replace(/(\.(png|jpe?g)).*/i, '$1');
-        } catch (imageError) {
-            // Handle this error or ignore it if the article doesn't have an image
-        }
+        } catch (_) { }
+
+
+        // Try other queries here
+        // Try other queries here
+        // Try other queries here
+
 
         return [name, imageURL];
     } catch (nameError) {
@@ -46,26 +51,27 @@ fs.promises.readFile(URLs.input, "utf-8")
 
         fs.writeFileSync(URLs.output, "{");
 
-        const promises = uriNames.slice(0, uriNamesLength).map((uriName) => {
-            return fetchStuff(uriName).then(([name, imageURL]) => {
-                const data = `"${uriName}": {"name": "${name}", "imageURL": "${imageURL}"}`;
-
-                if (first) {
-                    fs.appendFileSync(URLs.output, data);
-                    first = false
-                } else {
-                    fs.appendFileSync(URLs.output, "," + data);
-                }
-                i++
-                console.log(i, uriName);
+        const promises = uriNames
+            .slice(0, 100)
+            .map(async (uriName) => {
+                return fetchStuff(uriName).then(([name, imageURL]) => {
+                    const data = `"${uriName}": {"name": "${name}", "imageURL": "${imageURL}"}`;
+                    if (first) {
+                        fs.appendFileSync(URLs.output, data);
+                        first = false
+                    } else {
+                        fs.appendFileSync(URLs.output, "," + data);
+                    }
+                    i++
+                    console.log(i, uriName);
+                });
             });
-        });
 
         return Promise.all(promises);
     })
     // Append a smaller sample to a larger file
     // .then(() => {
-    //     fs.appendFileSync("dataVault/ships/preIndexedList.json", "}");
+    //     fs.appendFileSync(URLs.appendTo, "}");
     // })
     .catch((error) => {
         console.error("Main Error", error);
