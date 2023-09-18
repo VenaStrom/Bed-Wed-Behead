@@ -27,16 +27,14 @@ const updateCharacterInfo = (index, data) => {
     imageWrapper.children[1].innerHTML = data.name;
 };
 
-const filterCharacter = (data) => {
-    if (data.imageURL === "" && window.localStorage.getItem("filterImage") === "checked") {
-        return true;
-    } else if (
-        window.localStorage.getItem("filterUnidentified") === "checked" &&
-        data.name.includes("unidentified")
-    ) {
-        return true;
+const filterCharacter = (data) => { // If true, its fine 
+    if (data.imageURL === "" && window.localStorage.getItem("filterImage") === "unchecked") {
+        return false;
     }
-    return false;
+    if (data.name.includes("unidentified") && window.localStorage.getItem("filterUnidentified") === "unchecked") {
+        return false
+    }
+    return true;
 };
 
 const getRandomName = (checkAgainst, names) => {
@@ -47,7 +45,7 @@ const getRandomName = (checkAgainst, names) => {
     return uriName;
 };
 
-const fetching = () => {
+const showFetching = () => {
     const tiles = document.querySelectorAll(".imageWrapper")
 
     tiles.forEach(tile => {
@@ -57,29 +55,46 @@ const fetching = () => {
     })
 }
 
+const clearSelection = () => {
+    try {
+        document.querySelectorAll(".selected").forEach(element => {
+            console.log(element);
+            element.classList.remove("selected")
+            window.localStorage.setItem(element.id, "false")
+        })
+    } catch (_) { }
+}
+
 const play = async () => {
-    fetching()
+    clearSelection()
+    showFetching()
 
     const text = await fetchText(URLs.noDupes);
     const fullListOfIndividuals = text.replaceAll("\"", "").replaceAll(" ", "").split(",");
     document.getElementById("totalCharacterCount").innerHTML = fullListOfIndividuals.length - 1;
 
+    let tryFetch = true
     const alternatives = [];
-    while (alternatives.length < 3) {
-        alternatives.push(getRandomName(alternatives, fullListOfIndividuals));
+    try {
+        while (tryFetch && alternatives.length < 3) {
+            const name = getRandomName(alternatives, fullListOfIndividuals)
+            const data = await fetchJSON(`http://localhost:3000/api/getPage/${name}`);
+            if (filterCharacter(data)) {
+                alternatives.push(data);
+            }
+        }
+    } catch (_) {
+        tryFetch = false
     }
 
-    let tryFetch = true
-    for (let index = 0; index < alternatives.length; index++) {
-        try {
-            if (tryFetch) {
-                console.log("Fetching", alternatives);
+    for (let index = 0; index < 3; index++) {
+        if (tryFetch) {
+            console.log(index == 0 ? ("Fetching", alternatives) : "");
 
-                const uriName = alternatives[index];
-                const data = await fetchJSON(`http://localhost:3000/api/getPage/${uriName}`);
-                updateCharacterInfo(index, data);
-            }
-        } catch (_) {
+            const data = alternatives[index]
+            updateCharacterInfo(index, data);
+        } else {
+
             tryFetch = false
 
             const indexedList = JSON.parse(await fetchText(URLs.preIndexed));
@@ -87,14 +102,16 @@ const play = async () => {
 
             const localAlternatives = []
             while (localAlternatives.length < 3) {
-                localAlternatives.push(getRandomName(localAlternatives, indexedListOfIndividuals));
+                const name = getRandomName(localAlternatives, indexedListOfIndividuals)
+                const data = indexedList[name]
+                if (filterCharacter(data)) {
+                    localAlternatives.push(name);
+                }
             }
 
-            console.log("Loading", localAlternatives);
+            console.log(index == 0 ? ("Loading", localAlternatives) : "");
 
-            localAlternatives.forEach((uriName, index) => {
-                updateCharacterInfo(index, indexedList[uriName]);
-            });
+            updateCharacterInfo(index, indexedList[localAlternatives[index]]);
         }
     }
 };

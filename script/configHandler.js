@@ -58,19 +58,12 @@ document.addEventListener("mousedown", (event) => {
             if (
                 target.id !== "gearIcon"
                 && target.id !== "configMenu"
-                && target.id !== "configForm"
-                && target.parentElement.id !== "configMenu"
-                && target.parentElement.id !== "configForm"
-                && target.parentElement.parentElement.id !== "configMenu"
-                && target.parentElement.parentElement.id !== "configForm"
-                && target.parentElement.parentElement.parentElement.id !== "configMenu"
-                && target.parentElement.parentElement.parentElement.id !== "configForm"
+                && !target.closest("#configMenu")
             ) {
                 toggleConfigMenu();
             }
         } catch (_) {
             toggleConfigMenu();
-
         }
     }
 });
@@ -209,7 +202,7 @@ window.onload = () => {
         defaultValue = true,
         category = "miscellaneous",
         id = "filterImage",
-        displayName = "Image",
+        displayName = "Imageless",
         pattern = "!imageURL",
         description = "Include individuals that do not have an image associated with it."
     )
@@ -313,9 +306,9 @@ window.onload = () => {
     )
 
     // Remeber if config was open or not
-    if (window.localStorage.getItem("config") === "open") {
-        const configMenu = document.getElementById("configMenu");
-        configMenu.style.display = "block";
-        window.localStorage.setItem("config", "open");
-    }
+    // if (window.localStorage.getItem("config") === "open") {
+    //     const configMenu = document.getElementById("configMenu");
+    //     configMenu.style.display = "block";
+    //     window.localStorage.setItem("config", "open");
+    // }
 };

@@ -21,8 +21,6 @@ document.addEventListener("keydown", event => {
         } else if (event.target.id == "gearIcon") {
             toggleConfigMenu()
 
-        } else if (event.target.children[0].classList.contains("image")) {
-            window.open(event.target.href,"_blank")
         }
     }
 })

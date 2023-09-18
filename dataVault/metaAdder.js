@@ -2,6 +2,11 @@ import axios from "axios";
 import fs from "fs";
 import https from "https"
 
+URLs = {
+    input: "dataVault/individuals/noDupes.csv",
+    output: "dataVault/individuals/testingNewQueries.json"
+}
+
 const fetchStuff = async (uriName) => {
     const baseUrl = "https://starwars.fandom.com/api.php";
     const nameUrl = `${baseUrl}?page=${uriName}&format=json&action=parse&prop=displaytitle`;
@@ -32,24 +37,24 @@ const fetchStuff = async (uriName) => {
 };
 
 
-fs.promises.readFile("dataVault/ships/noDupes.csv", "utf-8")
+fs.promises.readFile(URLs.input, "utf-8")
     .then((inputFile) => {
         const uriNames = inputFile.replace(/"/g, "").replace(/ /g, "").split(",");
-        const uriNamesLength = uriNames.length;
+        const uriNamesLength = uriNames.length - 1;
         let i = 0
         let first = true
 
-        fs.writeFileSync("dataVault/ships/preIndexedList.json", "{");
+        fs.writeFileSync(URLs.output, "{");
 
         const promises = uriNames.slice(0, uriNamesLength).map((uriName) => {
             return fetchStuff(uriName).then(([name, imageURL]) => {
                 const data = `"${uriName}": {"name": "${name}", "imageURL": "${imageURL}"}`;
 
                 if (first) {
-                    fs.appendFileSync("dataVault/ships/preIndexedList.json", data);
+                    fs.appendFileSync(URLs.output, data);
                     first = false
                 } else {
-                    fs.appendFileSync("dataVault/ships/preIndexedList.json", "," + data);
+                    fs.appendFileSync(URLs.output, "," + data);
                 }
                 i++
                 console.log(i, uriName);
@@ -58,9 +63,10 @@ fs.promises.readFile("dataVault/ships/noDupes.csv", "utf-8")
 
         return Promise.all(promises);
     })
-    .then(() => {
-        fs.appendFileSync("dataVault/ships/preIndexedList.json", "}");
-    })
+    // Append a smaller sample to a larger file
+    // .then(() => {
+    //     fs.appendFileSync("dataVault/ships/preIndexedList.json", "}");
+    // })
     .catch((error) => {
         console.error("Main Error", error);
     });
