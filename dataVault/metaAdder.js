@@ -171,8 +171,8 @@ fs.promises.readFile(URLs.input, "utf-8")
     .then((inputFile) => {
         const uriNames = inputFile.replace(/"/g, "").replace(/ /g, "").split(",");
         const uriNamesLength = uriNames.length - 1;
-        const span = [0, 100];
-        const limit = plimit(5)
+        const span = [0, uriNamesLength];
+        const limit = plimit(1000)
 
         const outputFile = fs.openSync(URLs.output, 'a');
         // fs.writeFileSync(outputFile, "{");
