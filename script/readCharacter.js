@@ -27,20 +27,46 @@ const updateCharacterInfo = (index, data) => {
     imageWrapper.children[1].innerHTML = data.name;
 };
 
-const filterCharacter = (data) => { // If true, its fine 
-    if (data.imageURL === "" && window.localStorage.getItem("filterImage") === "unchecked") {
-        return false;
-    }
-    if (data.name.includes("unidentified") && window.localStorage.getItem("filterUnidentified") === "unchecked") {
+const filterCharacter = (data) => { // If true, its fine
+
+    const patternIDs = Object.keys(localStorage)
+
+    for (let index = 0; index < patternIDs.length; index++) {
+        const patternID = patternIDs[index]
+
+        const patternPlusId = patternID.split("%pattern", 1)
+        const checkboxID = patternPlusId[0]
+        const pattern = localStorage.getItem(patternID).split("cat:")[1]
+        if (
+            pattern !== "" // Has a pattern
+            && patternPlusId[1] !== "" // 
+            && localStorage.getItem(checkboxID) === "checked" // Check if option is checked
+            && data.categories.includes(pattern) // If it has a category that is included
+        ) {
+            console.log(false);
+        } else {
+            console.log(true);
+            return true
+        }
         return false
     }
-    return true;
+
+    // if (data.imageURL ==== "" && localStorage.getItem("filterImage") ==== "unchecked") {
+    //     return false;
+    // }
+    // if (data.name.toLowerCase().includes("unidentified") && localStorage.getItem("filterUnidentified") ==== "unchecked") {
+    //     return false
+    // }
+    // if (data.name.toLowerCase().includes(localStorage.getItem("filterCustomMiscTextInput").toLowerCase()) && localStorage.getItem("filterCustomMisc") ==== "checked") {
+    //     return false
+    // }
+    // return true;
 };
 
-const getRandomName = (checkAgainst, names) => {
-    let uriName = names[Math.floor(Math.random() * names.length)];
+const getRandomName = (checkAgainst, fullListNames) => {
+    let uriName = fullListNames[Math.floor(Math.random() * fullListNames.length)];
     while (checkAgainst.includes(uriName)) {
-        uriName = names[Math.floor(Math.random() * names.length)];
+        uriName = fullListNames[Math.floor(Math.random() * fullListNames.length)];
     }
     return uriName;
 };
@@ -58,9 +84,8 @@ const showFetching = () => {
 const clearSelection = () => {
     try {
         document.querySelectorAll(".selected").forEach(element => {
-            console.log(element);
             element.classList.remove("selected")
-            window.localStorage.setItem(element.id, "false")
+            localStorage.setItem(element.id, "false")
         })
     } catch (_) { }
 }
@@ -87,32 +112,34 @@ const play = async () => {
         tryFetch = false
     }
 
-    for (let index = 0; index < 3; index++) {
-        if (tryFetch) {
-            console.log(index == 0 ? ("Fetching", alternatives) : "");
+    if (tryFetch) {
 
-            const data = alternatives[index]
-            updateCharacterInfo(index, data);
-        } else {
+        alternatives.forEach((data, index) => {
+            console.log(index === 0 ? ("Fetching", alternatives) : "");
+            updateCharacterInfo(index, data)
+        })
 
-            tryFetch = false
+    } else {
 
-            const indexedList = JSON.parse(await fetchText(URLs.preIndexed));
-            const indexedListOfIndividuals = Object.keys(indexedList)
+        tryFetch = false
 
-            const localAlternatives = []
-            while (localAlternatives.length < 3) {
-                const name = getRandomName(localAlternatives, indexedListOfIndividuals)
-                const data = indexedList[name]
-                if (filterCharacter(data)) {
-                    localAlternatives.push(name);
-                }
+        const indexedList = JSON.parse(await fetchText(URLs.preIndexed));
+        const indexedListOfIndividuals = Object.keys(indexedList)
+
+        const localAlternatives = []
+        while (localAlternatives.length < 3) {
+            const name = getRandomName(localAlternatives, indexedListOfIndividuals)
+            const data = indexedList[name]
+            if (filterCharacter(data)) {
+                localAlternatives.push(name);
             }
-
-            console.log(index == 0 ? ("Loading", localAlternatives) : "");
-
-            updateCharacterInfo(index, indexedList[localAlternatives[index]]);
         }
+
+        localAlternatives.forEach((name, index) => {
+            index === 0 ? console.log("Loading", localAlternatives) : undefined
+
+            updateCharacterInfo(index, indexedList[name]);
+        })
     }
 };
 

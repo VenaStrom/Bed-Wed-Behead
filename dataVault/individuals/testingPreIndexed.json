@@ -1,0 +1,30 @@
+{
+    "Elora": {
+        "name": "Elora",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/fb/Elora1.jpg"
+    },
+    "Eotrisa": {
+        "name": "Eotrisa",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/57/Eotrisa.png"
+    },
+    "Ceta_Farr": {
+        "name": "Ceta Farr",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/1/17/Ceta_Farr.png"
+    },
+    "Eeusu_Estornii/Legends": {
+        "name": "Eeusu Estornii/Legends",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/97/EeusuEstornii-WoSW.png"
+    },
+    "Maris_Fahrs": {
+        "name": "Maris Fahrs",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/92/MarisFahrs.jpg"
+    },
+    "Eeusu_Estornii": {
+        "name": "Eeusu Estornii",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f7/EeusuEstornii.png"
+    },
+    "Ekiya": {
+        "name": "Ekiya",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/be/SWRonin-Cover.jpg"
+    }
+}

@@ -282,8 +282,8 @@ footer p {
 
 
 /* Incognito Mode */
-/* body {
+body {
     background-image: none;
     background-color: #343434;
-    opacity: 0.08;
-} */
+    opacity: 0.05;
+}
