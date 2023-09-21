@@ -72,6 +72,12 @@
 //     });
 
 
+// !!!!!!
+// 
+// Append appearances to existing data
+// 
+// !!!!!!
+
 import axios from "axios";
 import fs from "fs";
 import plimit from "p-limit"
@@ -86,57 +92,69 @@ fs.promises.readFile(URLs.input, "utf-8")
     .then(async preIndexedList => {
 
         const preIndexedListKeys = Object.keys(JSON.parse(preIndexedList))
-        const preIndexedListLength = preIndexedListKeys.length
-        const length = 10
         const limit = plimit(1000)
+        const baseURL = "https://starwars.fandom.com/api.php?"
 
 
         const fetchSection = async (sectionsURL) => {
-            console.warn("Fetch sections");
+            // console.warn("Fetch sections");
             const sectionsJSON = await axios.get(sectionsURL)
-            console.warn("[DONE] Fetch sections");
+            // console.warn("[DONE] Fetch sections");
             return sectionsJSON
         }
         const fetchAppearance = async (appearanceURL) => {
-            console.warn("Fetching appearance");
+            // console.warn("Fetching appearance");
             const appearanceJSON = await axios.get(appearanceURL)
-            console.warn("[DONE] Fetching appearance");
+            // console.warn("[DONE] Fetching appearance");
             return appearanceJSON
         }
 
+
         const output = JSON.parse(preIndexedList)
+        const promises = preIndexedListKeys
+            .map(async (uriName, index) => {
+                await limit(async () => {
+                    console.log("[BEGN]", index, uriName);
 
-        for (let index = 0; index < length; index++) {
+                    try {
+                        const sectionsURL = baseURL + `action=parse&page=${uriName}&format=json&prop=sections`
+                        const sectionsJSON = await fetchSection(sectionsURL)
 
-            const uriName = preIndexedListKeys[index]
+                        let sectionIndex = ""
+                        sectionsJSON.data.parse.sections.forEach(item => {
+                            if (item.line === "Appearances") {
+                                sectionIndex = item.index
+                            }
+                        })
 
-            const baseURL = "https://starwars.fandom.com/api.php?"
+                        const appearanceURL = baseURL + `action=parse&page=${uriName}&format=json&section=${sectionIndex}`
+                        const appearanceJSON = await fetchAppearance(appearanceURL)
 
-            const sectionsURL = baseURL + `action=parse&page=${uriName}&format=json&prop=sections`
-            const sectionsJSON = await limit(async () => await fetchSection(sectionsURL))
+                        let appearancesArray = []
+                        appearanceJSON.data.parse.templates.forEach(templateObject => {
+                            appearancesArray.push(templateObject["*"])
+                        });
 
-            let sectionIndex = ""
-            sectionsJSON.data.parse.sections.forEach(item => {
-                if (item.line === "Appearances") {
-                    sectionIndex = item.index
-                }
+                        const appearances = JSON.stringify(appearancesArray).replaceAll("Template:", "").replaceAll("\"", "").replace("[", "").replace("]", "")
+
+                        output[uriName].appearances = appearances
+
+                        console.log("[DONE]", index, uriName);
+
+                    } catch (_) {
+
+                        output[uriName].appearances = ""
+
+                        console.log("[MISS]", index, uriName);
+                    }
+                })
             })
 
-            const appearanceURL = baseURL + `action=parse&page=${uriName}&format=json&section=${sectionIndex}`
-            const appearanceJSON = await limit(async () => await fetchAppearance(appearanceURL))
-
-            let appearancesArray = []
-            appearanceJSON.data.parse.templates.forEach(templateObject => {
-                appearancesArray.push(templateObject["*"])
-            });
-
-            const appearances = JSON.stringify(appearancesArray).replaceAll("Template:", "").replaceAll("\"", "").replace("[", "").replace("]", "")
-
-            console.log("appearances", appearances.split(","));
-
-            output[uriName].appearances = appearances
-        }
-
-        fs.promises.writeFile(URLs.output, JSON.stringify(output))
+        Promise.all(promises).then(() => {
+            fs.promises.writeFile(URLs.output, JSON.stringify(output))
+                .then(() => {
+                    console.log("Output Written to:", URLs.output);
+                })
+        })
     })
 

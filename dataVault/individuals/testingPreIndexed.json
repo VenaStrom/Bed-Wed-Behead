@@ -1,30 +1,67 @@
 {
-    "Elora": {
-        "name": "Elora",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/fb/Elora1.jpg"
+    "Saral_Aenet": {
+        "name": "Saral Aenet",
+        "imageURL": "",
+        "categories": "Legends_articles,Articles_with_unpopulated_pronoun_parameters,Articles_with_unpopulated_family_parameters,Alliance_Fleet_captains,Females,Individuals_of_unspecified_species"
     },
-    "Eotrisa": {
-        "name": "Eotrisa",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/5/57/Eotrisa.png"
+    "Deemus_Abrus": {
+        "name": "Deemus Abrus",
+        "imageURL": "",
+        "categories": "Canon_articles,Articles_with_unpopulated_pronoun_parameters,Articles_with_unpopulated_family_parameters,Character_stubs,Corellians,Females,LGBTQ+_individuals,Members_of_the_Galactic_Society_of_Creature_Enthusiasts,Twi'leks"
     },
-    "Ceta_Farr": {
-        "name": "Ceta Farr",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/1/17/Ceta_Farr.png"
+    "Ake": {
+        "name": "Ake",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/7/78/Doctor_Ake.jpg",
+        "categories": "Legends_articles,Pages_needing_citation,Articles_with_unpopulated_pronoun_parameters,Articles_with_unpopulated_family_parameters,Cyborgs,Females,Healers_and_doctors,Individuals_with_lost_eyes,Rattataki,Sith_Empire_individuals"
     },
-    "Eeusu_Estornii/Legends": {
-        "name": "Eeusu Estornii/Legends",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/97/EeusuEstornii-WoSW.png"
+    "Alara": {
+        "name": "Alara",
+        "imageURL": "",
+        "categories": "Legends_articles,Wookieepedia_Comprehensive_articles,Articles_with_unpopulated_pronoun_parameters,Articles_with_unpopulated_family_parameters,Females,Humans,Jedi_of_the_Jedi_Order"
     },
-    "Maris_Fahrs": {
-        "name": "Maris Fahrs",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/92/MarisFahrs.jpg"
+    "Kandria_A%27Daasha": {
+        "name": "Kandria A'Daasha",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f6/KandriaADaasha-WHSV081.png",
+        "categories": "Legends_articles,Articles_with_unpopulated_family_parameters,Business_owners_and_executives,Corellians,Females,Humans,Individuals_with_she/her_pronouns"
     },
-    "Eeusu_Estornii": {
-        "name": "Eeusu Estornii",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f7/EeusuEstornii.png"
+    "Whirl": {
+        "name": "Whirl",
+        "imageURL": "",
+        "categories": "Canon_articles,Articles_that_are_known_by_a_nickname,Articles_with_unpopulated_pronoun_parameters,Character_stubs,Clone_troopers"
     },
-    "Ekiya": {
-        "name": "Ekiya",
-        "imageURL": "https://static.wikia.nocookie.net/starwars/images/b/be/SWRonin-Cover.jpg"
+    "Unidentified_clone_trooper_(327th_Star_Corps)": {
+        "name": "Unidentified clone trooper (327th Star Corps)",
+        "imageURL": "",
+        "categories": "Canon_articles,Articles_with_conjectural_titles,Articles_with_unpopulated_pronoun_parameters,Character_stubs,Members_of_the_327th_Star_Corps,Unidentified_clone_troopers"
+    },
+    "All-Terrain_Attack_Vehicle": {
+        "name": "All-Terrain Attack Vehicle",
+        "imageURL": "",
+        "categories": "Legends_articles,Pages_using_Template:Pet_without_pronouns_parameter,Females,House_of_Organa,Named_pets,Pittins"
+    },
+    "Threepwood": {
+        "name": "Threepwood",
+        "imageURL": "",
+        "categories": "Canon_articles,Canon_articles_with_Legends_counterparts,Articles_that_are_known_by_a_nickname,Articles_with_unpopulated_pronoun_parameters,Clone_troopers"
+    },
+    "Allia_(Twi%27lek)": {
+        "name": "Allia (Twi'lek)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/f/f9/Allia.png",
+        "categories": "Legends_articles,Articles_with_unpopulated_pronoun_parameters,Articles_with_unpopulated_family_parameters,Character_stubs,Females,Pilgrims,Twi'leks"
+    },
+    "Achitan": {
+        "name": "Achitan",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/9/91/Achitan.png",
+        "categories": "Legends_articles,Articles_with_unpopulated_pronoun_parameters,Articles_with_unpopulated_family_parameters,Females,Togruta"
+    },
+    "Sprint_(clone_trooper)": {
+        "name": "Sprint (clone trooper)",
+        "imageURL": "https://static.wikia.nocookie.net/starwars/images/8/89/Sprint-CWA.jpg",
+        "categories": "Legends_articles,Articles_that_are_known_by_a_nickname,Articles_with_unpopulated_pronoun_parameters,Clone_troopers,Members_of_the_104th_Battalion"
+    },
+    "Lina_Adonais": {
+        "name": "Lina Adonais",
+        "imageURL": "",
+        "categories": "Legends_articles,Articles_with_unpopulated_pronoun_parameters,Articles_with_unpopulated_family_parameters,Females,Kuari_Princess_crewmembers,Qonto"
     }
 }
