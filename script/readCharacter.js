@@ -29,8 +29,21 @@ const updateCharacterInfo = (index, data) => {
 
 
 const filterCharacter = (data) => { // If true, let through
-    return true
-    
+
+    if (
+        data.name.toLowerCase().includes("unidentified")
+        ||
+        data.imageURL === ""
+        ||
+        !data.linksAppearances.includes("Star Wars: The Clone Wars")
+        ||
+        !data.linksAppearances.includes("Star Wars: The Bad Batch")
+    ) {
+        return false
+    } else {
+        return true
+    }
+
     const patternIDs = Object.keys(localStorage)
 
     const allGood = []
@@ -179,6 +192,7 @@ const play = async () => {
         const indexedList = JSON.parse(await fetchText(URLs.preIndexed));
         const indexedListOfIndividuals = Object.keys(indexedList)
 
+        // const localAlternatives = ["CT-5555","Ahsoka_Tano","Rafa_Martez"]
         const localAlternatives = []
         while (localAlternatives.length < 3) {
             const name = getRandomName(localAlternatives, indexedListOfIndividuals)
@@ -187,6 +201,7 @@ const play = async () => {
                 localAlternatives.push(name);
             }
         }
+
 
         localAlternatives.forEach((name, index) => {
             index === 0 ? console.log("Loading", localAlternatives) : undefined

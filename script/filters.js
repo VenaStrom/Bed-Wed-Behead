@@ -2,7 +2,7 @@
 
 // Gender
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "gender",
     id = "filterGenderless",
     displayName = "Neither of the above",
@@ -10,7 +10,7 @@ createFilter(
     description = "Include everything that is not tagged as a man or woman."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "gender",
     id = "filterMale",
     displayName = "Males",
@@ -18,7 +18,7 @@ createFilter(
     description = "Include men"
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "gender",
     id = "filterFemale",
     displayName = "Female",
@@ -36,7 +36,7 @@ createFilter(
     description = "Exclude individuals with names that include this text."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "miscellaneous",
     id = "filterUnidentified",
     displayName = "Unidentified",
@@ -44,7 +44,7 @@ createFilter(
     description = "Include individuals which are tagged as unidentified."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "miscellaneous",
     id = "filterImage",
     displayName = "Imageless",
@@ -54,7 +54,7 @@ createFilter(
 
 // Status
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "status",
     id = "filterNonCanon",
     displayName = "Non-canon",
@@ -62,7 +62,7 @@ createFilter(
     description = "Include non-canon individuals."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "status",
     id = "filterLegends",
     displayName = "Legends",
@@ -70,7 +70,7 @@ createFilter(
     description = "Include legends individuals."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "status",
     id = "filterCanon",
     displayName = "Canon",
@@ -88,7 +88,7 @@ createFilter(
     description = "Enter name of media as it appears in the Appearances section of articles on Wookieepedia"
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "appearance",
     id = "filterAhsoka",
     displayName = "Ahsoka",
@@ -96,7 +96,7 @@ createFilter(
     description = "Include individuals who appeared in Ahsoka."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "appearance",
     id = "filterAndor",
     displayName = "Andor",
@@ -104,7 +104,7 @@ createFilter(
     description = "Include individuals who appeared in Andor."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "appearance",
     id = "filterObiWan",
     displayName = "Obi-Wan Kenobi",
@@ -112,7 +112,7 @@ createFilter(
     description = "Include individuals who appeared in Obi-Wan Kenobi."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "appearance",
     id = "filterMandoBoba",
     displayName = "The Mandalorian & The Book of Boba Fett",
@@ -120,7 +120,7 @@ createFilter(
     description = "Include individuals who appeared in The Mandalorian & The Book of Boba Fett."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "appearance",
     id = "filterBadBatch",
     displayName = "The Bad Batch",
@@ -128,7 +128,7 @@ createFilter(
     description = "Include individuals who appeared in The Bad Batch."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "appearance",
     id = "filterRebels",
     displayName = "Rebels",
@@ -136,7 +136,7 @@ createFilter(
     description = "Include individuals who appeared in Rebels."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "appearance",
     id = "filterCloneWars",
     displayName = "The Clone Wars",
@@ -144,7 +144,7 @@ createFilter(
     description = "Include individuals who appeared in The Clone Wars."
 )
 createFilter(
-    defaultValue = true,
+    defaultValue = false,
     category = "appearance",
     id = "filterSkywalkerRogue",
     displayName = "Skywalker saga & Rogue One",
