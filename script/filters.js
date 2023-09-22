@@ -6,7 +6,7 @@ createFilter(
     category = "gender",
     id = "filterGenderless",
     displayName = "Neither of the above",
-    pattern = "cat:Articles_with_unpopulated_pronoun_parameters",
+    pattern = "category:Articles_with_unpopulated_pronoun_parameters,!Males,!Individuals_with_he/him_pronouns,!Females,!Individuals_with_she/her_pronouns",
     description = "Include everything that is not tagged as a man or woman."
 )
 createFilter(
@@ -14,7 +14,7 @@ createFilter(
     category = "gender",
     id = "filterMale",
     displayName = "Males",
-    pattern = "cat:Males",
+    pattern = "category:Males,Individuals_with_he/him_pronouns",
     description = "Include men"
 )
 createFilter(
@@ -22,7 +22,7 @@ createFilter(
     category = "gender",
     id = "filterFemale",
     displayName = "Female",
-    pattern = "cat:Females||Individuals_with_she/her_pronouns",
+    pattern = "category:Females,Individuals_with_she/her_pronouns",
     description = "Include women"
 )
 
@@ -32,7 +32,7 @@ createFilter(
     category = "miscellaneous",
     id = "filterCustomMisc",
     displayName = "Custom",
-    pattern = "",
+    pattern = "string:",
     description = "Exclude individuals with names that include this text."
 )
 createFilter(
@@ -40,7 +40,7 @@ createFilter(
     category = "miscellaneous",
     id = "filterUnidentified",
     displayName = "Unidentified",
-    pattern = "filterUnidentified",
+    pattern = "string:filterUnidentified",
     description = "Include individuals which are tagged as unidentified."
 )
 createFilter(
@@ -48,7 +48,7 @@ createFilter(
     category = "miscellaneous",
     id = "filterImage",
     displayName = "Imageless",
-    pattern = "filterImage",
+    pattern = "string:filterImage",
     description = "Include individuals that do not have an image associated with it."
 )
 
@@ -58,7 +58,7 @@ createFilter(
     category = "status",
     id = "filterNonCanon",
     displayName = "Non-canon",
-    pattern = "cat:Non-canon_Legends_articles",
+    pattern = "category:Non-canon_Legends_articles",
     description = "Include non-canon individuals."
 )
 createFilter(
@@ -66,7 +66,7 @@ createFilter(
     category = "status",
     id = "filterLegends",
     displayName = "Legends",
-    pattern = "cat:Legends_articles",
+    pattern = "category:Legends_articles",
     description = "Include legends individuals."
 )
 createFilter(
@@ -74,7 +74,7 @@ createFilter(
     category = "status",
     id = "filterCanon",
     displayName = "Canon",
-    pattern = "cat:Canon_articles",
+    pattern = "category:Canon_articles",
     description = "Include canon individuals."
 )
 
@@ -84,7 +84,7 @@ createFilter(
     category = "appearance",
     id = "filterCustomAppearance",
     displayName = "Custom",
-    pattern = "",
+    pattern = "string:",
     description = "Enter name of media as it appears in the Appearances section of articles on Wookieepedia"
 )
 createFilter(
@@ -92,7 +92,7 @@ createFilter(
     category = "appearance",
     id = "filterAhsoka",
     displayName = "Ahsoka",
-    pattern = "",
+    pattern = "appearance:Ahsoka",
     description = "Include individuals who appeared in Ahsoka."
 )
 createFilter(
@@ -100,7 +100,7 @@ createFilter(
     category = "appearance",
     id = "filterAndor",
     displayName = "Andor",
-    pattern = "",
+    pattern = "appearance:Andor",
     description = "Include individuals who appeared in Andor."
 )
 createFilter(
@@ -108,7 +108,7 @@ createFilter(
     category = "appearance",
     id = "filterObiWan",
     displayName = "Obi-Wan Kenobi",
-    pattern = "",
+    pattern = "appearance:Kenobi",
     description = "Include individuals who appeared in Obi-Wan Kenobi."
 )
 createFilter(
@@ -116,7 +116,7 @@ createFilter(
     category = "appearance",
     id = "filterMandoBoba",
     displayName = "The Mandalorian & The Book of Boba Fett",
-    pattern = "",
+    pattern = "appearance:TheMandalorian,BOBF",
     description = "Include individuals who appeared in The Mandalorian & The Book of Boba Fett."
 )
 createFilter(
@@ -124,7 +124,7 @@ createFilter(
     category = "appearance",
     id = "filterBadBatch",
     displayName = "The Bad Batch",
-    pattern = "",
+    pattern = "appearance:TBB",
     description = "Include individuals who appeared in The Bad Batch."
 )
 createFilter(
@@ -132,7 +132,7 @@ createFilter(
     category = "appearance",
     id = "filterRebels",
     displayName = "Rebels",
-    pattern = "",
+    pattern = "appearance:Rebels",
     description = "Include individuals who appeared in Rebels."
 )
 createFilter(
@@ -140,7 +140,7 @@ createFilter(
     category = "appearance",
     id = "filterCloneWars",
     displayName = "The Clone Wars",
-    pattern = "",
+    pattern = "appearance:TCW",
     description = "Include individuals who appeared in The Clone Wars."
 )
 createFilter(
@@ -148,6 +148,6 @@ createFilter(
     category = "appearance",
     id = "filterSkywalkerRogue",
     displayName = "Skywalker saga & Rogue One",
-    pattern = "",
+    pattern = "appearance:",
     description = "Include individuals who appear in movies 1 - 9 & Rogue One"
 )

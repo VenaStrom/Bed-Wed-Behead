@@ -142,7 +142,7 @@ const createFilter = (defaultValue, category, id, displayName, pattern, descript
     const localStorageValue = localStorage.getItem(id);
 
     if (localStorageValue === null) {
-        console.error(id, "localStorage is missing");
+        console.warn(id, "localStorage is missing");
         localStorage.setItem(id, defaultValue ? "checked" : "unchecked");
         localStorage.setItem(`${id}%pattern`, pattern);
     }

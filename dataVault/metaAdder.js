@@ -72,6 +72,8 @@
 //     });
 
 
+
+
 // !!!!!!
 // 
 // Append appearances to existing data
@@ -84,8 +86,8 @@ import plimit from "p-limit"
 
 
 const URLs = {
-    input: "dataVault/individuals/preIndexedList.json",
-    output: "dataVault/individuals/testingAppendJSON.json"
+    input: "dataVault/individuals/testingIn.json",
+    output: "dataVault/individuals/testingOut.json"
 }
 
 fs.promises.readFile(URLs.input, "utf-8")
@@ -130,20 +132,30 @@ fs.promises.readFile(URLs.input, "utf-8")
                         const appearanceURL = baseURL + `action=parse&page=${uriName}&format=json&section=${sectionIndex}`
                         const appearanceJSON = await fetchAppearance(appearanceURL)
 
-                        let appearancesArray = []
+                        let templateAppearancesArray = []
                         appearanceJSON.data.parse.templates.forEach(templateObject => {
-                            appearancesArray.push(templateObject["*"])
+                            templateAppearancesArray.push(templateObject["*"])
                         });
 
-                        const appearances = JSON.stringify(appearancesArray).replaceAll("Template:", "").replaceAll("\"", "").replace("[", "").replace("]", "")
+                        let linksAppearancesArray = []
+                        appearanceJSON.data.parse.links.forEach(linkObject => {
+                            linksAppearancesArray.push(linkObject["*"])
+                        });
 
-                        output[uriName].appearances = appearances
-
-                        console.log("[DONE]", index, uriName);
-
-                    } catch (_) {
-
+                        const templateAppearances = JSON.stringify(templateAppearancesArray).replaceAll("Template:", "").replaceAll("\"", "").replace("[", "").replace("]", "")
+                        const linksAppearances = JSON.stringify(linksAppearancesArray).replaceAll("\"", "").replace("[", "").replace("]", "")
+                        
                         output[uriName].appearances = ""
+                        output[uriName].templateAppearances = templateAppearances
+                        output[uriName].linksAppearances = linksAppearances
+                        
+                        console.log("[DONE]", index, uriName);
+                        
+                    } catch (_) {
+                        
+                        output[uriName].appearances = ""
+                        output[uriName].templateAppearances = ""
+                        output[uriName].linksAppearances = ""
 
                         console.log("[MISS]", index, uriName);
                     }

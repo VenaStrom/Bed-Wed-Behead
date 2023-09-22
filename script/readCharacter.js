@@ -27,40 +27,93 @@ const updateCharacterInfo = (index, data) => {
     imageWrapper.children[1].innerHTML = data.name;
 };
 
-const filterCharacter = (data) => { // If true, its fine
 
+const filterCharacter = (data) => { // If true, let through
+    return true
+    
     const patternIDs = Object.keys(localStorage)
 
-    for (let index = 0; index < patternIDs.length; index++) {
-        const patternID = patternIDs[index]
-
-        const patternPlusId = patternID.split("%pattern", 1)
-        const checkboxID = patternPlusId[0]
-        const pattern = localStorage.getItem(patternID).split("cat:")[1]
+    const allGood = []
+    patternIDs.forEach(patternID => {
         if (
-            pattern !== "" // Has a pattern
-            && patternPlusId[1] !== "" // 
-            && localStorage.getItem(checkboxID) === "checked" // Check if option is checked
-            && data.categories.includes(pattern) // If it has a category that is included
+            patternID.includes("%pattern")
+            &&
+            localStorage.getItem(patternID.replace("%pattern", "")) === "checked"
+            &&
+            !patternID.toLowerCase().includes("custom")
         ) {
-            console.log(false);
+            allGood.push(true)
         } else {
-            console.log(true);
-            return true
+            allGood.push(false)
         }
-        return false
-    }
+    })
 
-    // if (data.imageURL ==== "" && localStorage.getItem("filterImage") ==== "unchecked") {
-    //     return false;
-    // }
-    // if (data.name.toLowerCase().includes("unidentified") && localStorage.getItem("filterUnidentified") ==== "unchecked") {
-    //     return false
-    // }
-    // if (data.name.toLowerCase().includes(localStorage.getItem("filterCustomMiscTextInput").toLowerCase()) && localStorage.getItem("filterCustomMisc") ==== "checked") {
-    //     return false
-    // }
-    // return true;
+
+    let letThrough = true
+
+    patternIDs.forEach(patternID => {
+        if (!patternID.includes("%pattern")) { // Look at only the filter pattern entries in local storage
+            return
+        } else {
+
+            const checkboxIDplusPattern = patternID
+            const checkboxID = checkboxIDplusPattern.replace("%pattern", "")
+            const checkboxStatus = localStorage.getItem(checkboxID)
+            const pattern = localStorage.getItem(patternID)
+
+            if (checkboxStatus === "unchecked") { // If the checkbox isn't checked, simply break 
+                return
+            }
+
+            // In name
+            if (pattern.includes("string:")) {
+
+                const localPattern = pattern.replace("string:", "")
+                if (
+                    (localPattern === "filterImage" && data.imageURL === "") // If filter pattern equals "filterImage" and the image is missing, let through
+                    ||
+                    (localPattern === "filterUnidentified" && data.name.toLowerCase().contains("unidentified")) // If the filter pattern is "filterUnidentified" and the name includes "unidentified", let through
+                ) {
+                    return
+                }
+            }
+
+            // Categories
+            if (pattern.includes("category:")) {
+
+                const goodCategories = []
+                const badCategories = []
+                const dataCategories = data.categories.split(",")
+
+                pattern.replace("category:", "").split(",").forEach(category => {
+                    if (category.includes("!")) {
+                        badCategories.push(category)
+                    } else {
+                        goodCategories.push(category.replace("!", ""))
+                    }
+                })
+
+
+                dataCategories.forEach(category => {
+                    if (
+                        !goodCategories.includes(category)
+                        ||
+                        badCategories.includes(category)
+                    ) {
+                        console.log("no!");
+                        letThrough = false
+                    }
+                })
+            }
+
+            // Appearances
+            if (pattern.includes("appearance:")) {
+                const localPattern = pattern.replace("appearance:", "")
+            }
+        }
+    })
+
+    return letThrough
 };
 
 const getRandomName = (checkAgainst, fullListNames) => {
