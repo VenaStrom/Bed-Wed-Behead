@@ -13,15 +13,15 @@ createFilter(
     defaultValue = false,
     category = "gender",
     id = "filterMale",
-    displayName = "Males",
-    pattern = "category:Males,Individuals_with_he/him_pronouns",
+    displayName = "Male characters",
+    pattern = "category:Males,Individuals_with_he/him_pronouns,Clone_troopers",
     description = "Include men"
 )
 createFilter(
     defaultValue = false,
     category = "gender",
     id = "filterFemale",
-    displayName = "Female",
+    displayName = "Female characters",
     pattern = "category:Females,Individuals_with_she/her_pronouns",
     description = "Include women"
 )
@@ -39,7 +39,7 @@ createFilter(
     defaultValue = false,
     category = "miscellaneous",
     id = "filterUnidentified",
-    displayName = "Unidentified",
+    displayName = "Identified characters",
     pattern = "string:filterUnidentified",
     description = "Include individuals which are tagged as unidentified."
 )
@@ -47,7 +47,7 @@ createFilter(
     defaultValue = false,
     category = "miscellaneous",
     id = "filterImage",
-    displayName = "Imageless",
+    displayName = "Characters with pictures",
     pattern = "string:filterImage",
     description = "Include individuals that do not have an image associated with it."
 )

@@ -90,7 +90,7 @@ const URLs = {
     output: "dataVault/individuals/testingOut.json"
 }
 
-fs.promises.readFile(URLs.input, "utf-8")
+fs.promisesdis.readFile(URLs.input, "utf-8")
     .then(async preIndexedList => {
 
         const preIndexedListKeys = Object.keys(JSON.parse(preIndexedList))

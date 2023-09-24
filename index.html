@@ -103,16 +103,33 @@
     </section>
 
 
-    <img onclick="toggleConfigMenu()" src="style/images/icons/icon_settings.png" id="gearIcon" class="icon direction" title="Filters" tabindex="14">
+    <img onclick="toggleConfigMenu()" src="style/images/icons/icon_settings.png" id="gearIcon" class="icon direction"
+        title="Filters" tabindex="14">
 
     <aside id="configMenu" style="display: none;">
         <h2>Filter</h2>
-        
+
         <form id="configForm" onchange="updateConfig()">
-            <p class="filterHeading" id="miscellaneous">Miscellaneous</p>
-            <p class="filterHeading" id="status">Status</p>
-            <p class="filterHeading" id="appearance">Apperance</p>
-            <p class="filterHeading" id="gender">Gender</p>
+            <div id="status" class="filterHeadingWrapper">
+                <u>Include Only</u>
+                <p class="filterHeading">Canonicity</p>
+                <u style="width: 4vw; opacity: 0;">Include Only</u>
+            </div>
+            <div id="appearance" class="filterHeadingWrapper">
+                <u>Include Only</u>
+                <p class="filterHeading">Apperance</p>
+                <u style="width: 4vw; opacity: 0;">Include Only</u>
+            </div>
+            <div id="gender" class="filterHeadingWrapper">
+                <u>Include Only</u>
+                <p class="filterHeading">Gender</p>
+                <u style="width: 4vw; opacity: 0;">Include Only</u>
+            </div>
+            <div id="miscellaneous" class="filterHeadingWrapper">
+                <u>Include Only</u>
+                <p class="filterHeading">Miscellaneous</p>
+                <u style="width: 4vw; opacity: 0;">Include Only</u>
+            </div>
         </form>
     </aside>
 

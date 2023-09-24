@@ -4,22 +4,26 @@ document.addEventListener("keydown", event => {
     if (event.key == " " || event.key == "Enter") {
         event.preventDefault()
 
-        if (event.target.parentElement.classList[0] == "iconWrapper") {
-            select(event.target, event.target.id)
+        const eventTarget = event.target
 
-        } else if (event.target.id.includes("TextInput") && event.key != "Enter") {
-            event.target.value += " "
+        if (eventTarget.parentElement.classList[0] == "iconWrapper") {
+            select(eventTarget, eventTarget.id)
 
-        } else if (event.target.type == "checkbox") {
-            event.target.checked = !event.target.checked
+        } else if (eventTarget.id.includes("TextInput") && event.key != "Enter") {
+            eventTarget.value += " "
+
+        } else if (eventTarget.type == "checkbox") {
+            eventTarget.checked = !eventTarget.checked
             updateConfig()
 
-        } else if (event.target.classList.contains("resetTextInput")) {
-            resetTextInput(event.target)
+        } else if (eventTarget.classList.contains("resetTextInput")) {
+            resetTextInput(eventTarget)
 
-        } else if (event.target.id == "gearIcon") {
+        } else if (eventTarget.id == "gearIcon") {
             toggleConfigMenu()
 
+        } else if (eventTarget.classList.contains("playButton")) {
+            play()
         }
     }
 })

@@ -29,37 +29,51 @@ const updateCharacterInfo = (index, data) => {
 
 
 const filterCharacter = (data) => { // If true, let through
-
-    if (
-        data.name.toLowerCase().includes("unidentified")
-        ||
-        data.imageURL === ""
-        ||
-        !data.linksAppearances.includes("Star Wars: The Clone Wars")
-        ||
-        !data.linksAppearances.includes("Star Wars: The Bad Batch")
-    ) {
-        return false
-    } else {
-        return true
-    }
-
     const patternIDs = Object.keys(localStorage)
 
-    const allGood = []
+    let allUnchecked = true
     patternIDs.forEach(patternID => {
         if (
             patternID.includes("%pattern")
             &&
             localStorage.getItem(patternID.replace("%pattern", "")) === "checked"
-            &&
-            !patternID.toLowerCase().includes("custom")
         ) {
-            allGood.push(true)
+            allUnchecked = allUnchecked && false
         } else {
-            allGood.push(false)
+            allUnchecked = allUnchecked && true
         }
     })
+    if (allUnchecked) {
+        return true
+    }
+
+    const catInclude = (string) => {
+        return data.categories.includes(string)
+    }
+    const getChecked = (string) => {
+        return localStorage.getItem(string) === "checked"
+    }
+
+    if (
+        !(getChecked("filterImage") && data.imageURL === "")
+        &&
+        !(getChecked("filterUnidentified") && data.name.toLowerCase().includes("unidentified"))
+        &&
+        !(getChecked("filterGenderless") && (catInclude("Males") || catInclude("Clone_troopers") || catInclude("Females") || catInclude("Individuals_with_he/him_pronouns") || catInclude("Individuals_with_she/her_pronouns")))
+
+        &&
+        (
+            (getChecked("filterCanon") && catInclude("Canon_articles"))
+            ||
+            (getChecked("filterLegends") && catInclude("Legends_articles"))
+        )
+    ) {
+        console.log(data.categories);
+        return true
+    } else {
+        return false
+    }
+
 
 
     let letThrough = true
