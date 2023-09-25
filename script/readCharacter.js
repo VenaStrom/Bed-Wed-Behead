@@ -47,98 +47,118 @@ const filterCharacter = (data) => { // If true, let through
         return true
     }
 
-    const catInclude = (string) => {
-        return data.categories.includes(string)
+    const dataCategories = data.categories
+    const categoryInclude = (string) => {
+        return dataCategories.includes(string)
+    }
+    const dataAppearance = data.appearances
+    const appearanceInclude = (string) => {
+        return dataAppearance.includes(string)
     }
     const getChecked = (string) => {
         return localStorage.getItem(string) === "checked"
     }
 
-    if (
-        !(getChecked("filterImage") && data.imageURL === "")
-        &&
-        !(getChecked("filterUnidentified") && data.name.toLowerCase().includes("unidentified"))
-        &&
-        !(getChecked("filterGenderless") && (catInclude("Males") || catInclude("Clone_troopers") || catInclude("Females") || catInclude("Individuals_with_he/him_pronouns") || catInclude("Individuals_with_she/her_pronouns")))
+    let letThrough = false
 
-        &&
-        (
-            (getChecked("filterCanon") && catInclude("Canon_articles"))
-            ||
-            (getChecked("filterLegends") && catInclude("Legends_articles"))
-        )
-    ) {
-        console.log(data.categories);
+    // MISC
+    if ((getChecked("filterImage") && data.imageURL === "")) {
         return true
-    } else {
-        return false
+    }
+    if ((getChecked("filterUnidentified") && data.name.toLowerCase().includes("unidentified"))) {
+        return true
+    }
+    if ((getChecked("filterCustomMisc") && data.name.toLowerCase().includes(localStorage.getItem("filterCustomMiscTextInput")) && localStorage.getItem("filterCustomMiscTextInput") !== "")) {
+        return true
     }
 
+    // STATUS
+    if (getChecked("filterCanon") && categoryInclude("Canon_articles")) {
+        return true
+        letThrough = true
+    }
+    if (getChecked("filterLegends") && categoryInclude("Legends_articles")) {
+        return true
+        letThrough = true
+    }
+    if (getChecked("filterNonCanon") && categoryInclude("Non-canon_Legends_articles")) {
+        return true
+        letThrough = true
+    }
 
+    // GENDER
+    const femaleChecks = categoryInclude("Females") || categoryInclude("Individuals_with_she/her_pronouns")
+    if (getChecked("filterFemales") && femaleChecks) {
+        return true
+        letThrough = true
+    }
+    const maleChecks = categoryInclude("Males") || categoryInclude("Individuals_with_he/him_pronouns") || categoryInclude("Clone_troopers") || categoryInclude("Clone_scout_troopers")
+    if (getChecked("filterMales") && maleChecks) {
+        return true
+        letThrough = true
+    }
+    const otherGenderCheck = (!femaleChecks && !maleChecks) && (categoryInclude("Individuals_of_unspecified_gender") || categoryInclude("Individuals_with_zhe/zher_pronouns"))
+    if (getChecked("filterGenderless") && otherGenderCheck) {
+        return true
+        letThrough = true
+    }
 
-    let letThrough = true
+    // APPEARANCE
+    if (getChecked("filterAhsoka") && appearanceInclude("Ahsoka (television series)")) {
+        return true
+        letThrough = true
+    }
+    if (getChecked("filterAndor") && appearanceInclude("Andor (television series)")) {
+        return true
+        letThrough = true
+    }
+    if (getChecked("filterObiWan") && appearanceInclude("Obi-Wan Kenobi (television series)")) {
+        return true
+        letThrough = true
+    }
+    if (getChecked("filterMandoBoba") && (appearanceInclude("The Mandalorian") || appearanceInclude("The Book of Boba Fett"))) {
+        return true
+        letThrough = true
+    }
+    if (getChecked("filterBadBatch") && appearanceInclude("Star Wars:The Bad Batch")) {
+        return true
+        letThrough = true
+    }
+    if (getChecked("filterRebels") && appearanceInclude("Star Wars Rebels")) {
+        return true
+        letThrough = true
+    }
+    if (getChecked("filterCloneWars") && appearanceInclude("Star Wars:The Clone Wars")) {
+        return true
+        letThrough = true
+    }
+    if (getChecked("filterSkywalkerRogue") &&
+        (
+            appearanceInclude("Rogue One:A Star Wars Story")
+            ||
+            appearanceInclude("Star Wars:Episode I The Phantom Menace")
+            ||
+            appearanceInclude("Star Wars:Episode II Attack of the Clones")
+            ||
+            appearanceInclude("Star Wars:Episode III Revenge of the Sith")
+            ||
+            appearanceInclude("Star Wars:Episode IV A New Hope")
+            ||
+            appearanceInclude("Star Wars:Episode V The Empire Strikes Back")
+            ||
+            appearanceInclude("Star Wars:Episode VI Return of the Jedi")
+            ||
+            appearanceInclude("Star Wars:Episode VII The Force Awakens")
+            ||
+            appearanceInclude("Star Wars:Episode VIII The Last Jedi")
+            ||
+            appearanceInclude("Star Wars:Episode IX The Rise of Skywalker")
+        )
+    ) {
+        return true
+        letThrough = true
+    }
 
-    patternIDs.forEach(patternID => {
-        if (!patternID.includes("%pattern")) { // Look at only the filter pattern entries in local storage
-            return
-        } else {
-
-            const checkboxIDplusPattern = patternID
-            const checkboxID = checkboxIDplusPattern.replace("%pattern", "")
-            const checkboxStatus = localStorage.getItem(checkboxID)
-            const pattern = localStorage.getItem(patternID)
-
-            if (checkboxStatus === "unchecked") { // If the checkbox isn't checked, simply break 
-                return
-            }
-
-            // In name
-            if (pattern.includes("string:")) {
-
-                const localPattern = pattern.replace("string:", "")
-                if (
-                    (localPattern === "filterImage" && data.imageURL === "") // If filter pattern equals "filterImage" and the image is missing, let through
-                    ||
-                    (localPattern === "filterUnidentified" && data.name.toLowerCase().contains("unidentified")) // If the filter pattern is "filterUnidentified" and the name includes "unidentified", let through
-                ) {
-                    return
-                }
-            }
-
-            // Categories
-            if (pattern.includes("category:")) {
-
-                const goodCategories = []
-                const badCategories = []
-                const dataCategories = data.categories.split(",")
-
-                pattern.replace("category:", "").split(",").forEach(category => {
-                    if (category.includes("!")) {
-                        badCategories.push(category)
-                    } else {
-                        goodCategories.push(category.replace("!", ""))
-                    }
-                })
-
-
-                dataCategories.forEach(category => {
-                    if (
-                        !goodCategories.includes(category)
-                        ||
-                        badCategories.includes(category)
-                    ) {
-                        console.log("no!");
-                        letThrough = false
-                    }
-                })
-            }
-
-            // Appearances
-            if (pattern.includes("appearance:")) {
-                const localPattern = pattern.replace("appearance:", "")
-            }
-        }
-    })
 
     return letThrough
 };

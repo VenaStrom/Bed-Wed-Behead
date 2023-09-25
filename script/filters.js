@@ -12,7 +12,7 @@ createFilter(
 createFilter(
     defaultValue = false,
     category = "gender",
-    id = "filterMale",
+    id = "filterMales",
     displayName = "Male characters",
     pattern = "category:Males,Individuals_with_he/him_pronouns,Clone_troopers",
     description = "Include men"
@@ -20,7 +20,7 @@ createFilter(
 createFilter(
     defaultValue = false,
     category = "gender",
-    id = "filterFemale",
+    id = "filterFemales",
     displayName = "Female characters",
     pattern = "category:Females,Individuals_with_she/her_pronouns",
     description = "Include women"
