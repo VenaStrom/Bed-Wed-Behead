@@ -10,7 +10,7 @@ fs.promises.readFile("./dataVault/individuals/preIndexedList.json", "utf-8")
         const names = []
 
 
-        keys.forEach(key => {
+        keys.forEach((key, index) => {
             const data = input[key]
 
             const dataCategories = data.categories
@@ -18,21 +18,34 @@ fs.promises.readFile("./dataVault/individuals/preIndexedList.json", "utf-8")
                 return dataCategories.includes(string)
             }
 
-            // const femaleChecks = categoryInclude("Females") || categoryInclude("Individuals_with_she/her_pronouns") // Pronouns?
-            // const maleChecks = categoryInclude("Males") || categoryInclude("Individuals_with_he/him_pronouns") || categoryInclude("Clone_troopers") || categoryInclude("Clone_scout_troopers") // Pronouns?
-            // const otherGenderCheck = (!femaleChecks && !maleChecks) && (categoryInclude("Individuals_of_unspecified_gender") || categoryInclude("Individuals_with_zhe/zher_pronouns"))
 
-            // if (otherGenderCheck && data.imageURL !== "") {
-            if (data.name.toLowerCase().includes("unidentified")) {
-                // if (data.imageURL === "") {
+            const increment = () => {
                 count++
                 names.push(input[key].name)
             }
-            console.log(count);
+            increment.should = true
+            // MISC
+            // if (!(true && "tk" !== "" && data.name.toLowerCase().includes("tk"))) {
+            //     increment.should = increment.should && false 
+            // }
+            if ((true && data.imageURL === "")) {
+                increment.should = increment.should && false 
+            }
+            if ((true && data.name.toLowerCase().includes("unidentified"))) {
+                increment.should = increment.should && false 
+            }
+
+
+            if (increment.should) {
+                increment()
+            }
+
+            console.log(index, count);
         });
 
-        console.log(count);
-        console.log(names);
+        console.log("\n", count, "Charcters passed the filter");
+        console.log((count * 100 / keys.length).toFixed(1), "% of total \n");
+
         fs.promises.writeFile("./dataVault/countFilterOut.json", JSON.stringify(names))
     })
 

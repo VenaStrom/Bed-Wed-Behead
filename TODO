@@ -8,3 +8,4 @@ Strech
 
 TODO
 - Make the filters
+- Remove bad data from doDupes.csv, see testingOut.json
