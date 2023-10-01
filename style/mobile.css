@@ -74,11 +74,10 @@ h1 {
 .iconWrapper div {
     display: flex;
     cursor: pointer;
-    /* padding-left: 1vw;
-    padding-right: 1vw; */
     gap: 1vw;
     align-items: center;
     user-select: none;
+    height: 3rem;
 }
 
 .icon {
@@ -157,7 +156,7 @@ footer p {
     background-color: #000000;
     border: 1px solid #ccc;
     padding: 1vw;
-    padding-right: 1vw;
+    padding-right: 5vw;
     z-index: 1;
     min-width: 20rem;
     height: 75vh;
@@ -197,7 +196,6 @@ footer p {
 
 #configForm input[type=checkbox] {
     cursor: pointer;
-    /* grid-column: 3 / 4; */
 }
 
 .textInputWrapper {
@@ -235,6 +233,7 @@ footer p {
     text-align: center;
     grid-column: 1/4;
     margin: 0;
+    margin-right: 15vw;
 }
 
 .filterHeadingWrapper {
