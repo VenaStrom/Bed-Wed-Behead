@@ -29,6 +29,16 @@ const updateCharacterInfo = (index, data) => {
 
 
 const filterCharacter = (data) => { // If true, let through
+
+    if (
+        data.imageURL === ""
+    ) {
+        return false
+    }
+
+    return true
+
+
     const dataCategories = data.categories
     const dataAppearance = data.appearances
     const isInCategory = (string) => { return dataCategories.includes(string) }
@@ -51,16 +61,6 @@ const filterCharacter = (data) => { // If true, let through
     if (allUnchecked) {
         return true
     }
-
-    if (
-        data.imageURL !== ""
-        &&
-        !data.name.toLowerCase().includes("unidentified")
-    ) {
-        return true
-    }
-
-    return false
 
     const returnFalse = (sender) => {
         console.log(false, sender, data.categories);
