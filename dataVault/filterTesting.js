@@ -46,6 +46,6 @@ fs.promises.readFile("./dataVault/individuals/preIndexedList.json", "utf-8")
         console.log("\n", count, "Charcters passed the filter");
         console.log((count * 100 / keys.length).toFixed(1), "% of total \n");
 
-        fs.promises.writeFile("./dataVault/countFilterOut.json", JSON.stringify(names))
+        fs.promises.writeFile("./dataVault/filterTestingOut.json", JSON.stringify(names))
     })
 

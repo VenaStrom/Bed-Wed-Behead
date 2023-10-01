@@ -52,7 +52,7 @@ const scrape = async (masterCategoryList) => {
         const content = JSON.stringify(pageResult.individuals).replaceAll("https://starwars.fandom.com/wiki/", "").replace("[", "").replace("]", "") + ","
 
         try {
-            fs.writeFileSync("dataVault/ships/rawScrapeOutput.csv", content, { flag: "a" });
+            fs.writeFileSync(URLs.rawOutput, content, { flag: "a" });
         } catch (error) {
             console.error(error);
         }
@@ -86,8 +86,25 @@ const scrape = async (masterCategoryList) => {
     await browser.close();
 };
 
+const URLs = {
+    rawOutput: ""
+}
 
+const linkList = [
+    "https://starwars.fandom.com/wiki/Category:Females",
+    "https://starwars.fandom.com/wiki/Category:Unidentified_females",
+    "https://starwars.fandom.com/wiki/Category:Droids_with_feminine_programming",
+    "https://starwars.fandom.com/wiki/Category:Males",
+    "https://starwars.fandom.com/wiki/Category:Unidentified_males",
+    "https://starwars.fandom.com/wiki/Category:Droids_with_masculine_programming",
+    "https://starwars.fandom.com/wiki/Category:Non-binary_individuals",
+    "https://starwars.fandom.com/wiki/Category:Genderless_individuals",
+    "https://starwars.fandom.com/wiki/Category:Droids_with_no_gender_programming",
+    "https://starwars.fandom.com/wiki/Category:Individuals_of_unspecified_gender",
+    "https://starwars.fandom.com/wiki/Category:Droids_with_unspecified_gender_programming",
+    "https://starwars.fandom.com/wiki/Category:Individuals_of_unidentified_gender",
+]
 // const linkList = ["https://starwars.fandom.com/wiki/Category:clone_troopers", "https://starwars.fandom.com/wiki/Category:Females", "https://starwars.fandom.com/wiki/Category:Males", "https://starwars.fandom.com/wiki/Category:Non-binary_individuals", "https://starwars.fandom.com/wiki/Category:Genderless_individuals", "https://starwars.fandom.com/wiki/Category:Individuals_of_unspecified_gender", "https://starwars.fandom.com/wiki/Category:Individuals_of_unidentified_gender"]
-const linkList = ["https://starwars.fandom.com/wiki/Category:Vehicles"]
+// const linkList = ["https://starwars.fandom.com/wiki/Category:Vehicles"]
 
 scrape(linkList)
