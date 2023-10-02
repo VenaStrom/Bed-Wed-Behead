@@ -158,7 +158,7 @@ footer p {
     padding: 1vw;
     padding-right: 5vw;
     z-index: 1;
-    min-width: 20rem;
+    max-width: 90vw;
     height: 75vh;
 
     overflow-y: scroll;
