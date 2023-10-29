@@ -148,6 +148,8 @@ footer p {
     cursor: pointer;
     font-size: 2rem;
     user-select: none;
+    height: 3.5rem;
+    width:  3.5rem;
 }
 
 #gearIcon:hover {
@@ -164,7 +166,7 @@ footer p {
 
 #configMenu {
     position: absolute;
-    top: 8.5vh;
+    top: 4.5rem;
     right: 0.5vw;
     background-color: #000000;
     border: 1px solid #ccc;
@@ -262,6 +264,10 @@ footer p {
     margin-top: 1vh;
     grid-column: 1/4;
 }
+.filterHeadingWrapper p:first-of-type {
+    border-bottom: 1px solid white;
+}
+
 
 .spinLeft {
     animation: spinLeft 500ms ease-in-out;

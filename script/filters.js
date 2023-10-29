@@ -1,5 +1,3 @@
-
-
 // Gender
 createFilter(
     defaultValue = false,
@@ -7,49 +5,49 @@ createFilter(
     id = "filterGenderless",
     displayName = "Neither of the above",
     pattern = "category:Articles_with_unpopulated_pronoun_parameters,!Males,!Individuals_with_he/him_pronouns,!Females,!Individuals_with_she/her_pronouns",
-    description = "Include everything that is not tagged as a man or woman."
+    description = "Include only individuals who are neither female nor male."
 )
 createFilter(
     defaultValue = false,
     category = "gender",
     id = "filterMales",
-    displayName = "Male characters",
+    displayName = "Male individuals",
     pattern = "category:Males,Individuals_with_he/him_pronouns,Clone_troopers",
-    description = "Include men"
+    description = "Include only male individuals."
 )
 createFilter(
     defaultValue = false,
     category = "gender",
     id = "filterFemales",
-    displayName = "Female characters",
+    displayName = "Female individuals",
     pattern = "category:Females,Individuals_with_she/her_pronouns",
-    description = "Include women"
+    description = "Include only female individuals."
 )
 
 // Miscellaneous
-createFilter(
-    defaultValue = false,
-    category = "miscellaneous",
-    id = "filterCustomMisc",
-    displayName = "Custom",
-    pattern = "string:",
-    description = "Exclude individuals with names that include this text."
-)
+// createFilter(
+//     defaultValue = false,
+//     category = "miscellaneous",
+//     id = "filterCustomMisc",
+//     displayName = "Custom",
+//     pattern = "string:",
+//     description = "Exclude individuals with names that include this text."
+// )
 createFilter(
     defaultValue = false,
     category = "miscellaneous",
     id = "filterUnidentified",
-    displayName = "Identified characters",
+    displayName = "Identified individuals",
     pattern = "string:filterUnidentified",
-    description = "Include individuals which are tagged as unidentified."
+    description = "Include only identified individuals."
 )
 createFilter(
     defaultValue = false,
     category = "miscellaneous",
     id = "filterImage",
-    displayName = "Characters with pictures",
+    displayName = "Individuals with pictures",
     pattern = "string:filterImage",
-    description = "Include individuals that do not have an image associated with it."
+    description = "Include only individuals with pictures."
 )
 
 // Status
@@ -59,7 +57,7 @@ createFilter(
     id = "filterNonCanon",
     displayName = "Non-canon",
     pattern = "category:Non-canon_Legends_articles",
-    description = "Include non-canon individuals."
+    description = "Include only Non-canon individuals."
 )
 createFilter(
     defaultValue = false,
@@ -67,7 +65,7 @@ createFilter(
     id = "filterLegends",
     displayName = "Legends",
     pattern = "category:Legends_articles",
-    description = "Include legends individuals."
+    description = "Include only Legends individuals."
 )
 createFilter(
     defaultValue = false,
@@ -75,7 +73,7 @@ createFilter(
     id = "filterCanon",
     displayName = "Canon",
     pattern = "category:Canon_articles",
-    description = "Include canon individuals."
+    description = "Include only Canon individuals."
 )
 
 // Appearance
@@ -85,7 +83,7 @@ createFilter(
     id = "filterCustomAppearance",
     displayName = "Custom",
     pattern = "string:",
-    description = "Enter name of media as it appears in the Appearances section of articles on Wookieepedia"
+    description = "Enter name of media as it appears in the Appearances section of articles on Wookieepedia."
 )
 createFilter(
     defaultValue = false,
@@ -93,7 +91,7 @@ createFilter(
     id = "filterAhsoka",
     displayName = "Ahsoka",
     pattern = "appearance:Ahsoka",
-    description = "Include individuals who appeared in Ahsoka."
+    description = "Include only individuals who appear in Ahsoka."
 )
 createFilter(
     defaultValue = false,
@@ -101,7 +99,7 @@ createFilter(
     id = "filterAndor",
     displayName = "Andor",
     pattern = "appearance:Andor",
-    description = "Include individuals who appeared in Andor."
+    description = "Include only individuals who appear in Andor."
 )
 createFilter(
     defaultValue = false,
@@ -109,15 +107,15 @@ createFilter(
     id = "filterObiWan",
     displayName = "Obi-Wan Kenobi",
     pattern = "appearance:Kenobi",
-    description = "Include individuals who appeared in Obi-Wan Kenobi."
+    description = "Include only individuals who appear in Obi-Wan Kenobi."
 )
 createFilter(
     defaultValue = false,
     category = "appearance",
     id = "filterMandoBoba",
-    displayName = "The Mandalorian & The Book of Boba Fett",
+    displayName = "The Mandalorian & TBOBF",
     pattern = "appearance:TheMandalorian,BOBF",
-    description = "Include individuals who appeared in The Mandalorian & The Book of Boba Fett."
+    description = "Include only individuals who appear in The Mandalorian or The Book of Boba Fett."
 )
 createFilter(
     defaultValue = false,
@@ -125,7 +123,7 @@ createFilter(
     id = "filterBadBatch",
     displayName = "The Bad Batch",
     pattern = "appearance:TBB",
-    description = "Include individuals who appeared in The Bad Batch."
+    description = "Include only individuals who appear in The Bad Batch."
 )
 createFilter(
     defaultValue = false,
@@ -133,7 +131,7 @@ createFilter(
     id = "filterRebels",
     displayName = "Rebels",
     pattern = "appearance:Rebels",
-    description = "Include individuals who appeared in Rebels."
+    description = "Include only individuals who appear in Rebels."
 )
 createFilter(
     defaultValue = false,
@@ -141,7 +139,7 @@ createFilter(
     id = "filterCloneWars",
     displayName = "The Clone Wars",
     pattern = "appearance:TCW",
-    description = "Include individuals who appeared in The Clone Wars."
+    description = "Include only individuals who appear in The Clone Wars."
 )
 createFilter(
     defaultValue = false,
@@ -149,5 +147,5 @@ createFilter(
     id = "filterSkywalkerRogue",
     displayName = "Skywalker saga & Rogue One",
     pattern = "appearance:",
-    description = "Include individuals who appear in movies 1 - 9 & Rogue One"
+    description = "Include only individuals who appear in episode I-IX or Rogue One."
 )

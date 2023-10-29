@@ -11,6 +11,7 @@ const fetchText = async (url) => {
 };
 
 const fetchJSON = async (url) => {
+    return 
     const response = await fetch(url);
     return await response.json();
 };
@@ -117,6 +118,10 @@ const filterCharacter = (data) => { // If true, let through
             isInCategory("Droids_with_masculine_programming")
             ||
             isInCategory("Clone_troopers")
+            ||
+            isInCategory("Clone_trooper_captains")
+            ||
+            isInCategory("Clone_trooper_commanders")
             ||
             isInCategory("Clone_scout_troopers")
         )
