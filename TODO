@@ -1,11 +1,12 @@
 Strech
-- Stop spamming of playbutton
-- Ask if youd like to use filter after a couple of goes
-- Make the bed1-3, web1-3, and behead1-3 in js instead of html
-- Handle too few individuals in lilst when a lot of filters are applied
-- Remove bad categories eg. Titles of nobility, republic ranks
-- Mobile optimized
+- Stop spamming of playbutton.
+- Ask if youd like to use filter after a couple of goes.
+- Make the bed1-3, web1-3, and behead1-3 in js instead of html.
+- Handle too few individuals in list when a lot of filters are applied.
+- Remove bad categories eg. Titles of nobility, republic ranks.
+- Mobile optimized.
 
 TODO
-- Make the filters
-- Remove bad data from doDupes.csv, see testingOut.json
+- Measure the actual time it takes for every filter category
+- Make the filters.
+- Remove bad data from doDupes.csv, see testingOut.json.

@@ -11,7 +11,6 @@ const fetchText = async (url) => {
 };
 
 const fetchJSON = async (url) => {
-    return 
     const response = await fetch(url);
     return await response.json();
 };
@@ -31,21 +30,26 @@ const updateCharacterInfo = (index, data) => {
 
 const filterCharacter = (data) => { // If true, let through
 
-    if (
-        data.imageURL === ""
-    ) {
-        return false
+    // For debug. Eventually lets a character th
+    if (filterCharacter.count === undefined) {
+        filterCharacter.count = 0
+    } else {
+        filterCharacter.count++
+        console.log("");
+        if (filterCharacter.count % 100 === 0) {
+            filterCharacter.count = 0
+            return true
+        }
     }
 
-    return true
-
-
+    // Helper Functions
     const dataCategories = data.categories
     const dataAppearance = data.appearances
     const isInCategory = (string) => { return dataCategories.includes(string) }
     const appearanceInclude = (string) => { return dataAppearance.includes(string) }
     const isChecked = (string) => { return localStorage.getItem(string) === "checked" }
 
+    // If everything is unchecked, let everything pass
     const patternIDs = Object.keys(localStorage)
     let allUnchecked = true
     patternIDs.forEach(patternID => {
@@ -63,167 +67,173 @@ const filterCharacter = (data) => { // If true, let through
         return true
     }
 
-    const returnFalse = (sender) => {
-        console.log(false, sender, data.categories);
+
+    // Has image and is identified continue, else deny it.
+    if (
+        (isChecked("filterImage") && data.imageURL === "")
+        ||
+        (isChecked("filterUnidentified") && data.name.toLowerCase().includes("unidentified"))
+    ) {
         return false
     }
-    const returnTrue = (sender) => {
-        console.log(true, sender, data.categories);
-        return true
-    }
 
-
-    // MISC
-    const customMiscText = localStorage.getItem("filterCustomMiscTextInput")
-    if ((isChecked("filterCustomMisc") && customMiscText !== "")) {
-        if (!data.name.toLowerCase().includes(customMiscText)) {
-            return returnFalse("filterCustomMisc")
+    // CANONICITY
+    const canonCheck = isChecked("filterCanon")
+    const legendsCheck = isChecked("filterLegends")
+    const nonCanonCheck = isChecked("filterNonCanon")
+    if ( // everything is, or isnt checked, let it pass on  
+        (
+            canonCheck
+            && legendsCheck
+            && nonCanonCheck
+        )
+        ||
+        (
+            !canonCheck
+            && !legendsCheck
+            && !nonCanonCheck
+        )
+    ) {
+        // continue to other filters
+    } else {
+        if ( // if there are some checked and some unchecked, check more closely if it should pass or not
+            (legendsCheck && isInCategory("Legends_articles"))
+            || (canonCheck && isInCategory("Canon_articles"))
+            || (nonCanonCheck && isInCategory("Non-canon_Legends_articles"))
+        ) {
+            // continue
+        } else {
+            return false
         }
     }
-    if ((isChecked("filterImage") && data.imageURL === "")) {
-        return returnFalse("filterImage")
-    }
-    if ((isChecked("filterUnidentified") && data.name.toLowerCase().includes("unidentified"))) {
-        return returnFalse("filterUnidentified")
-    }
 
-    // STATUS
-    if ((isChecked("filterCanon") && isInCategory("Canon_articles"))) {
 
-        return returnTrue("filterCanon")
-    }
-    if ((isChecked("filterLegends") && isInCategory("Legends_articles"))) {
 
-        return returnTrue("filterLegends")
-    }
-    if ((isChecked("filterNonCanon") && isInCategory("Non-canon_Legends_articles"))) {
+    return true
 
-        return returnTrue("filterNonCanon")
-    }
+    // // GENDER
+    // const _femaleChecks = (
+    //     isInCategory("Females")
+    //     ||
+    //     isInCategory("Individuals_with_she/her_pronouns")
+    //     ||
+    //     isInCategory("Droids_with_feminine_programming")
+    // )
+    // const _maleChecks =
+    //     (
+    //         isInCategory("Males")
+    //         ||
+    //         isInCategory("Individuals_with_he/him_pronouns")
+    //         ||
+    //         isInCategory("Droids_with_masculine_programming")
+    //         ||
+    //         isInCategory("Clone_troopers")
+    //         ||
+    //         isInCategory("Clone_trooper_captains")
+    //         ||
+    //         isInCategory("Clone_trooper_commanders")
+    //         ||
+    //         isInCategory("Clone_scout_troopers")
+    //     )
+    // const femaleChecks = (
+    //     _femaleChecks
+    //     &&
+    //     !_maleChecks
+    // )
+    // const maleChecks = (
+    //     _maleChecks
+    //     &&
+    //     !femaleChecks
+    // )
+    // const otherGenderCheck = (
+    //     (
+    //         !_femaleChecks
+    //         &&
+    //         !_maleChecks
+    //     )
+    //     // &&
+    //     // (
+    //     //     isInCategory("Non-binary_individuals")
+    //     //     ||
+    //     //     isInCategory("Genderless_individuals")
+    //     //     ||
+    //     //     isInCategory("Droids_with_no_gender_programming")
+    //     //     ||
+    //     //     isInCategory("Individuals_of_unspecified_gender")
+    //     //     ||
+    //     //     isInCategory("Droids_with_unspecified_gender_programming")
+    //     //     ||
+    //     //     isInCategory("Individuals_of_unidentified_gender")
+    //     // )
+    // )
+    // if ((isChecked("filterFemales") && femaleChecks)) {
 
-    // GENDER
-    const _femaleChecks = (
-        isInCategory("Females")
-        ||
-        isInCategory("Individuals_with_she/her_pronouns")
-        ||
-        isInCategory("Droids_with_feminine_programming")
-    )
-    const _maleChecks =
-        (
-            isInCategory("Males")
-            ||
-            isInCategory("Individuals_with_he/him_pronouns")
-            ||
-            isInCategory("Droids_with_masculine_programming")
-            ||
-            isInCategory("Clone_troopers")
-            ||
-            isInCategory("Clone_trooper_captains")
-            ||
-            isInCategory("Clone_trooper_commanders")
-            ||
-            isInCategory("Clone_scout_troopers")
-        )
-    const femaleChecks = (
-        _femaleChecks
-        &&
-        !_maleChecks
-    )
-    const maleChecks = (
-        _maleChecks
-        &&
-        !femaleChecks
-    )
-    const otherGenderCheck = (
-        (
-            !_femaleChecks
-            &&
-            !_maleChecks
-        )
-        // &&
-        // (
-        //     isInCategory("Non-binary_individuals")
-        //     ||
-        //     isInCategory("Genderless_individuals")
-        //     ||
-        //     isInCategory("Droids_with_no_gender_programming")
-        //     ||
-        //     isInCategory("Individuals_of_unspecified_gender")
-        //     ||
-        //     isInCategory("Droids_with_unspecified_gender_programming")
-        //     ||
-        //     isInCategory("Individuals_of_unidentified_gender")
-        // )
-    )
-    if ((isChecked("filterFemales") && femaleChecks)) {
+    //     return returnTrue("filterFemales")
+    // }
+    // if ((isChecked("filterMales") && maleChecks)) {
 
-        return returnTrue("filterFemales")
-    }
-    if ((isChecked("filterMales") && maleChecks)) {
+    //     return returnTrue("filterMales")
+    // }
+    // if ((isChecked("filterGenderless") && otherGenderCheck)) {
 
-        return returnTrue("filterMales")
-    }
-    if ((isChecked("filterGenderless") && otherGenderCheck)) {
+    //     return returnTrue("filterGenderless")
+    // }
 
-        return returnTrue("filterGenderless")
-    }
+    // // APPEARANCE
+    // if ((isChecked("filterAhsoka") && appearanceInclude("Ahsoka (television series)"))) {
 
-    // APPEARANCE
-    if ((isChecked("filterAhsoka") && appearanceInclude("Ahsoka (television series)"))) {
+    //     return returnTrue("filterAhsoka")
+    // }
+    // if ((isChecked("filterAndor") && appearanceInclude("Andor (television series)"))) {
 
-        return returnTrue("filterAhsoka")
-    }
-    if ((isChecked("filterAndor") && appearanceInclude("Andor (television series)"))) {
+    //     return returnTrue("filterAndor")
+    // }
+    // if ((isChecked("filterObiWan") && appearanceInclude("Obi-Wan Kenobi (television series)"))) {
 
-        return returnTrue("filterAndor")
-    }
-    if ((isChecked("filterObiWan") && appearanceInclude("Obi-Wan Kenobi (television series)"))) {
+    //     return returnTrue("filterObiWan")
+    // }
+    // if ((isChecked("filterMandoBoba") && (appearanceInclude("The Mandalorian") || appearanceInclude("The Book of Boba Fett")))) {
 
-        return returnTrue("filterObiWan")
-    }
-    if ((isChecked("filterMandoBoba") && (appearanceInclude("The Mandalorian") || appearanceInclude("The Book of Boba Fett")))) {
+    //     return returnTrue("filterMandoBoba")
+    // }
+    // if ((isChecked("filterBadBatch") && appearanceInclude("Star Wars:The Bad Batch"))) {
 
-        return returnTrue("filterMandoBoba")
-    }
-    if ((isChecked("filterBadBatch") && appearanceInclude("Star Wars:The Bad Batch"))) {
+    //     return returnTrue("filterBadBatch")
+    // }
+    // if ((isChecked("filterRebels") && appearanceInclude("Star Wars Rebels"))) {
 
-        return returnTrue("filterBadBatch")
-    }
-    if ((isChecked("filterRebels") && appearanceInclude("Star Wars Rebels"))) {
+    //     return returnTrue("filterRebels")
+    // }
+    // if ((isChecked("filterCloneWars") && appearanceInclude("Star Wars:The Clone Wars"))) {
 
-        return returnTrue("filterRebels")
-    }
-    if ((isChecked("filterCloneWars") && appearanceInclude("Star Wars:The Clone Wars"))) {
+    //     return returnTrue("filterCloneWars")
+    // }
+    // if ((isChecked("filterSkywalkerRogue") &&
+    //     (
+    //         appearanceInclude("Rogue One:A Star Wars Story")
+    //         ||
+    //         appearanceInclude("Star Wars:Episode I The Phantom Menace")
+    //         ||
+    //         appearanceInclude("Star Wars:Episode II Attack of the Clones")
+    //         ||
+    //         appearanceInclude("Star Wars:Episode III Revenge of the Sith")
+    //         ||
+    //         appearanceInclude("Star Wars:Episode IV A New Hope")
+    //         ||
+    //         appearanceInclude("Star Wars:Episode V The Empire Strikes Back")
+    //         ||
+    //         appearanceInclude("Star Wars:Episode VI Return of the Jedi")
+    //         ||
+    //         appearanceInclude("Star Wars:Episode VII The Force Awakens")
+    //         ||
+    //         appearanceInclude("Star Wars:Episode VIII The Last Jedi")
+    //         ||
+    //         appearanceInclude("Star Wars:Episode IX The Rise of Skywalker")
+    //     ))
+    // ) {
 
-        return returnTrue("filterCloneWars")
-    }
-    if ((isChecked("filterSkywalkerRogue") &&
-        (
-            appearanceInclude("Rogue One:A Star Wars Story")
-            ||
-            appearanceInclude("Star Wars:Episode I The Phantom Menace")
-            ||
-            appearanceInclude("Star Wars:Episode II Attack of the Clones")
-            ||
-            appearanceInclude("Star Wars:Episode III Revenge of the Sith")
-            ||
-            appearanceInclude("Star Wars:Episode IV A New Hope")
-            ||
-            appearanceInclude("Star Wars:Episode V The Empire Strikes Back")
-            ||
-            appearanceInclude("Star Wars:Episode VI Return of the Jedi")
-            ||
-            appearanceInclude("Star Wars:Episode VII The Force Awakens")
-            ||
-            appearanceInclude("Star Wars:Episode VIII The Last Jedi")
-            ||
-            appearanceInclude("Star Wars:Episode IX The Rise of Skywalker")
-        ))
-    ) {
-
-        return returnTrue("filterSkywalkerRogue")
-    }
+    //     return returnTrue("filterSkywalkerRogue")
+    // }
 
     return false
 };
@@ -265,20 +275,21 @@ const play = async () => {
 
     let tryFetch = true
     const alternatives = [];
-    try {
-        while (tryFetch && alternatives.length < 3) {
-            const name = getRandomName(alternatives, fullListOfIndividuals)
-            const data = await fetchJSON(`http://localhost:3000/api/getPage/${name}`);
-            if (filterCharacter(data)) {
-                alternatives.push(data);
-            }
-        }
-    } catch (_) {
-        tryFetch = false
-    }
 
+    // try {
+    //     while (tryFetch && alternatives.length < 3) {
+    //         const name = getRandomName(alternatives, fullListOfIndividuals)
+    //         const data = await fetchJSON(`http://localhost:3000/api/getPage/${name}`);
+    //         if (filterCharacter(data)) {
+    //             alternatives.push(data);
+    //         }
+    //     }
+    // } catch (_) {
+    //     tryFetch = false
+    // }
+
+    tryFetch = false
     if (tryFetch) {
-
         alternatives.forEach((data, index) => {
             console.log(index === 0 ? ("Fetching", alternatives) : "");
             updateCharacterInfo(index, data)
