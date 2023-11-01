@@ -1,3 +1,4 @@
 {
-    "search.maxResults": 40000
+    "search.maxResults": 40000,
+    "liveServer.settings.port": 5501
 }

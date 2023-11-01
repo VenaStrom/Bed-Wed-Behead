@@ -77,14 +77,14 @@ createFilter(
 )
 
 // Appearance
-createFilter(
-    defaultValue = false,
-    category = "appearance",
-    id = "filterCustomAppearance",
-    displayName = "Custom",
-    pattern = "string:",
-    description = "Enter name of media as it appears in the Appearances section of articles on Wookieepedia."
-)
+// createFilter(
+//     defaultValue = false,
+//     category = "appearance",
+//     id = "filterCustomAppearance",
+//     displayName = "Custom",
+//     pattern = "string:",
+//     description = "Enter name of media as it appears in the Appearances section of articles on Wookieepedia."
+// )
 createFilter(
     defaultValue = false,
     category = "appearance",

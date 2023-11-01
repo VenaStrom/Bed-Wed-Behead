@@ -142,7 +142,7 @@ footer p {
 }
 
 #gearIcon {
-    position: absolute;
+    position: fixed;
     top: 1vh;
     right: 0.5vw;
     cursor: pointer;
@@ -165,7 +165,7 @@ footer p {
 }
 
 #configMenu {
-    position: absolute;
+    position: fixed;
     top: 4.5rem;
     right: 0.5vw;
     background-color: #000000;

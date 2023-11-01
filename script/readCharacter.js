@@ -33,18 +33,28 @@ const filterCharacter = (data) => { // If true, let through
     // For debug. Eventually lets a character th
     if (filterCharacter.count === undefined) {
         filterCharacter.count = 0
+        filterCharacter.metaCount = 1
+        filterCharacter.skip = false
     } else {
         filterCharacter.count++
-        console.log("");
-        if (filterCharacter.count % 100 === 0) {
+
+        if (filterCharacter.count % 84000 === 0 || filterCharacter.skip) {
+            console.log("object");
+            data.imageURL = URLs.placeholderImage
+            data.name = "Error"
             filterCharacter.count = 0
+            filterCharacter.metaCount++
+            if (filterCharacter.metaCount % 3 === 2) {
+                alert("Error: Not enough matches. Please try again. If the error persists, please try other filters.")
+                filterCharacter.skip = true
+            }
             return true
         }
     }
 
     // Helper Functions
     const dataCategories = data.categories
-    const dataAppearance = data.appearances
+    const dataAppearance = data.appearances.split(",")
     const isInCategory = (string) => { return dataCategories.includes(string) }
     const appearanceInclude = (string) => { return dataAppearance.includes(string) }
     const isChecked = (string) => { return localStorage.getItem(string) === "checked" }
@@ -68,7 +78,7 @@ const filterCharacter = (data) => { // If true, let through
     }
 
 
-    // Has image and is identified continue, else deny it.
+    // Miscellaneous
     if (
         (isChecked("filterImage") && data.imageURL === "")
         ||
@@ -83,159 +93,134 @@ const filterCharacter = (data) => { // If true, let through
     const nonCanonCheck = isChecked("filterNonCanon")
     if ( // everything is, or isnt checked, let it pass on  
         (
-            canonCheck
-            && legendsCheck
+            legendsCheck
+            && canonCheck
             && nonCanonCheck
         )
         ||
         (
-            !canonCheck
-            && !legendsCheck
+            !legendsCheck
+            && !canonCheck
             && !nonCanonCheck
         )
     ) {
-        // continue to other filters
+        // Continue to other filters
     } else {
         if ( // if there are some checked and some unchecked, check more closely if it should pass or not
             (legendsCheck && isInCategory("Legends_articles"))
             || (canonCheck && isInCategory("Canon_articles"))
-            || (nonCanonCheck && isInCategory("Non-canon_Legends_articles"))
+            || (nonCanonCheck && (isInCategory("Non-canon_Legends_articles") || isInCategory("Non-canon_articles")))
         ) {
-            // continue
+            // Continue to other filters
         } else {
             return false
         }
     }
 
+    // Appearances
+    const ahsokaCheck = isChecked("filterAhsoka")
+    const andorCheck = isChecked("filterAndor")
+    const obiWanCheck = isChecked("filterObiWan")
+    const mandoBobaCheck = isChecked("filterMandoBoba")
+    const badBatchCheck = isChecked("filterBadBatch")
+    const rebelsCheck = isChecked("filterRebels")
+    const cloneWarsCheck = isChecked("filterCloneWars")
+    const SWScheck = isChecked("filterSkywalkerRogue")
+    if (
+        !ahsokaCheck
+        && !andorCheck
+        && !obiWanCheck
+        && !mandoBobaCheck
+        && !badBatchCheck
+        && !rebelsCheck
+        && !cloneWarsCheck
+        && !SWScheck
+    ) {
+        // Continue to other filters
+    } else {
+        if (
+            (SWScheck && (appearanceInclude("Rogue One:A Star Wars Story") || appearanceInclude("Star Wars:Episode I The Phantom Menace") || appearanceInclude("Star Wars:Episode II Attack of the Clones") || appearanceInclude("Star Wars:Episode III Revenge of the Sith") || appearanceInclude("Star Wars:Episode IV A New Hope") || appearanceInclude("Star Wars:Episode V The Empire Strikes Back") || appearanceInclude("Star Wars:Episode VI Return of the Jedi") || appearanceInclude("Star Wars:Episode VII The Force Awakens") || appearanceInclude("Star Wars:Episode VIII The Last Jedi") || appearanceInclude("Star Wars:Episode IX The Rise of Skywalker")))
+            || (cloneWarsCheck && appearanceInclude("Star Wars:The Clone Wars"))
+            || (rebelsCheck && appearanceInclude("Star Wars Rebels"))
+            || (mandoBobaCheck && (appearanceInclude("The Mandalorian") || appearanceInclude("The Book of Boba Fett")))
+            || (badBatchCheck && appearanceInclude("Star Wars:The Bad Batch"))
+            || (ahsokaCheck && appearanceInclude("Ahsoka (television series)"))
+            || (andorCheck && appearanceInclude("Andor (television series)"))
+            || (obiWanCheck && appearanceInclude("Obi-Wan Kenobi (television series)"))
+        ) {
+            // Continue to other filters
+        } else {
+            return false
+        }
+    }
 
+    // GENDER
+    const femaleCheck = isChecked("filterFemales")
+    const maleCheck = isChecked("filterMales")
+    const neitherCheck = isChecked("filterGenderless")
+    if (
+        !femaleCheck
+        && !maleCheck
+        && !neitherCheck
+    ) {
+        // Continue to other filters
+    } else {
+        const isFemale = (
+            isInCategory("Females")
+            ||
+            isInCategory("Individuals_with_she/her_pronouns")
+            ||
+            isInCategory("Droids_with_feminine_programming")
+        )
+        const isMale = (
+            isInCategory("Males")
+            ||
+            isInCategory("Individuals_with_he/him_pronouns")
+            ||
+            isInCategory("Droids_with_masculine_programming")
+            ||
+            (
+                (
+                    isInCategory("Clone_troopers")
+                    ||
+                    isInCategory("Clone_trooper_captains")
+                    ||
+                    isInCategory("Clone_trooper_commanders")
+                    ||
+                    isInCategory("Clone_scout_troopers")
+                )
+                &&
+                !isFemale // "The Sister Exception" 
+            )
+
+        )
+        const isNeither = (
+            // isInCategory("Non-binary_individuals")
+            // ||
+            // isInCategory("Genderless_individuals")
+            // ||
+            // isInCategory("Droids_with_no_gender_programming")
+            // ||
+            // isInCategory("Individuals_of_unspecified_gender")
+            // ||
+            // isInCategory("Droids_with_unspecified_gender_programming")
+            // ||
+            // isInCategory("Individuals_of_unidentified_gender")
+            !isInCategory("Males") && !isInCategory("Females")
+        )
+
+        if (
+            (maleCheck && isMale)
+            || (femaleCheck && isFemale)
+            || (neitherCheck && isNeither)
+        ) {
+            // Continue to other filters
+        } else {
+            return false
+        }
+    }
 
     return true
-
-    // // GENDER
-    // const _femaleChecks = (
-    //     isInCategory("Females")
-    //     ||
-    //     isInCategory("Individuals_with_she/her_pronouns")
-    //     ||
-    //     isInCategory("Droids_with_feminine_programming")
-    // )
-    // const _maleChecks =
-    //     (
-    //         isInCategory("Males")
-    //         ||
-    //         isInCategory("Individuals_with_he/him_pronouns")
-    //         ||
-    //         isInCategory("Droids_with_masculine_programming")
-    //         ||
-    //         isInCategory("Clone_troopers")
-    //         ||
-    //         isInCategory("Clone_trooper_captains")
-    //         ||
-    //         isInCategory("Clone_trooper_commanders")
-    //         ||
-    //         isInCategory("Clone_scout_troopers")
-    //     )
-    // const femaleChecks = (
-    //     _femaleChecks
-    //     &&
-    //     !_maleChecks
-    // )
-    // const maleChecks = (
-    //     _maleChecks
-    //     &&
-    //     !femaleChecks
-    // )
-    // const otherGenderCheck = (
-    //     (
-    //         !_femaleChecks
-    //         &&
-    //         !_maleChecks
-    //     )
-    //     // &&
-    //     // (
-    //     //     isInCategory("Non-binary_individuals")
-    //     //     ||
-    //     //     isInCategory("Genderless_individuals")
-    //     //     ||
-    //     //     isInCategory("Droids_with_no_gender_programming")
-    //     //     ||
-    //     //     isInCategory("Individuals_of_unspecified_gender")
-    //     //     ||
-    //     //     isInCategory("Droids_with_unspecified_gender_programming")
-    //     //     ||
-    //     //     isInCategory("Individuals_of_unidentified_gender")
-    //     // )
-    // )
-    // if ((isChecked("filterFemales") && femaleChecks)) {
-
-    //     return returnTrue("filterFemales")
-    // }
-    // if ((isChecked("filterMales") && maleChecks)) {
-
-    //     return returnTrue("filterMales")
-    // }
-    // if ((isChecked("filterGenderless") && otherGenderCheck)) {
-
-    //     return returnTrue("filterGenderless")
-    // }
-
-    // // APPEARANCE
-    // if ((isChecked("filterAhsoka") && appearanceInclude("Ahsoka (television series)"))) {
-
-    //     return returnTrue("filterAhsoka")
-    // }
-    // if ((isChecked("filterAndor") && appearanceInclude("Andor (television series)"))) {
-
-    //     return returnTrue("filterAndor")
-    // }
-    // if ((isChecked("filterObiWan") && appearanceInclude("Obi-Wan Kenobi (television series)"))) {
-
-    //     return returnTrue("filterObiWan")
-    // }
-    // if ((isChecked("filterMandoBoba") && (appearanceInclude("The Mandalorian") || appearanceInclude("The Book of Boba Fett")))) {
-
-    //     return returnTrue("filterMandoBoba")
-    // }
-    // if ((isChecked("filterBadBatch") && appearanceInclude("Star Wars:The Bad Batch"))) {
-
-    //     return returnTrue("filterBadBatch")
-    // }
-    // if ((isChecked("filterRebels") && appearanceInclude("Star Wars Rebels"))) {
-
-    //     return returnTrue("filterRebels")
-    // }
-    // if ((isChecked("filterCloneWars") && appearanceInclude("Star Wars:The Clone Wars"))) {
-
-    //     return returnTrue("filterCloneWars")
-    // }
-    // if ((isChecked("filterSkywalkerRogue") &&
-    //     (
-    //         appearanceInclude("Rogue One:A Star Wars Story")
-    //         ||
-    //         appearanceInclude("Star Wars:Episode I The Phantom Menace")
-    //         ||
-    //         appearanceInclude("Star Wars:Episode II Attack of the Clones")
-    //         ||
-    //         appearanceInclude("Star Wars:Episode III Revenge of the Sith")
-    //         ||
-    //         appearanceInclude("Star Wars:Episode IV A New Hope")
-    //         ||
-    //         appearanceInclude("Star Wars:Episode V The Empire Strikes Back")
-    //         ||
-    //         appearanceInclude("Star Wars:Episode VI Return of the Jedi")
-    //         ||
-    //         appearanceInclude("Star Wars:Episode VII The Force Awakens")
-    //         ||
-    //         appearanceInclude("Star Wars:Episode VIII The Last Jedi")
-    //         ||
-    //         appearanceInclude("Star Wars:Episode IX The Rise of Skywalker")
-    //     ))
-    // ) {
-
-    //     return returnTrue("filterSkywalkerRogue")
-    // }
-
-    return false
 };
 
 const getRandomName = (checkAgainst, fullListNames) => {
@@ -266,6 +251,8 @@ const clearSelection = () => {
 }
 
 const play = async () => {
+    filterCharacter.skip = false
+
     clearSelection()
     showFetching()
 
