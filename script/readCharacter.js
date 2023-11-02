@@ -28,14 +28,14 @@ const updateCharacterInfo = (index, data) => {
 };
 
 
-const filterCharacter = (data) => { // If true, let through
+const filterCharacter = (data, debug = false) => { // If true, let through
 
     // For debug. Eventually lets a character th
     if (filterCharacter.count === undefined) {
         filterCharacter.count = 0
         filterCharacter.metaCount = 1
         filterCharacter.skip = false
-    } else {
+    } else if (!debug) {
         filterCharacter.count++
 
         if (filterCharacter.count % 84000 === 0 || filterCharacter.skip) {
@@ -50,6 +50,11 @@ const filterCharacter = (data) => { // If true, let through
             }
             return true
         }
+    }
+
+    // "The Obi-Wan Exception"
+    if (data.name === "Obi-Wan Kenobi") {
+        data.imageURL = "https://static.wikia.nocookie.net/starwars/images/d/d2/ObiWan_hood.jpg"
     }
 
     // Helper Functions
@@ -73,9 +78,7 @@ const filterCharacter = (data) => { // If true, let through
             allUnchecked = allUnchecked && true
         }
     })
-    if (allUnchecked) {
-        return true
-    }
+    if (allUnchecked) { return true }
 
 
     // Miscellaneous
@@ -83,6 +86,8 @@ const filterCharacter = (data) => { // If true, let through
         (isChecked("filterImage") && data.imageURL === "")
         ||
         (isChecked("filterUnidentified") && data.name.toLowerCase().includes("unidentified"))
+        ||
+        (isChecked("filterCommon") && dataAppearance.length < 5)
     ) {
         return false
     }
@@ -251,14 +256,24 @@ const clearSelection = () => {
 }
 
 const play = async () => {
+    countCharacters()
+
+    if (localStorage.getItem("showTip") === null) {
+        localStorage.setItem("showTip", "yes")
+    }
+    if (play.count === undefined) {
+        play.count = 0
+    } else {
+        play.count++
+    }
+    if (play.count === 3 && localStorage.getItem("showTip") === "yes") {
+        localStorage.setItem("showTip", "no")
+        document.getElementById("filterTip").style.display = "grid"
+    }
     filterCharacter.skip = false
 
     clearSelection()
     showFetching()
-
-    const text = await fetchText(URLs.noDupes);
-    const fullListOfIndividuals = text.replaceAll("\"", "").replaceAll(" ", "").split(",");
-    document.getElementById("totalCharacterCount").innerHTML = fullListOfIndividuals.length - 1;
 
     let tryFetch = true
     const alternatives = [];
@@ -289,6 +304,7 @@ const play = async () => {
         const indexedList = JSON.parse(await fetchText(URLs.preIndexed));
         const indexedListOfIndividuals = Object.keys(indexedList)
 
+        // const localAlternatives = ["CT-5555","Ahsoka_Tano","Obi-Wan_Kenobi"]
         // const localAlternatives = ["CT-5555","Ahsoka_Tano","Rafa_Martez"]
         const localAlternatives = []
         while (localAlternatives.length < 3) {
@@ -308,4 +324,20 @@ const play = async () => {
     }
 };
 
+const countCharacters = async () => {
+    const fullList = (await fetchText(URLs.noDupes)).replaceAll("\"", "").split(",")
+    const index = await fetchJSON(URLs.preIndexed)
+
+    let count = 0
+    fullList.forEach(name => {
+        const data = index[name]
+        if (filterCharacter(data, true)) {
+            count++
+        }
+    })
+    document.getElementById("totalCharacterCount").innerHTML = count
+}
+
+countCharacters()
 play();
+

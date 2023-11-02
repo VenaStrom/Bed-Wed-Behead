@@ -114,6 +114,11 @@ h1 {
     align-items: center;
 }
 
+.playButtonWrapper p:last-of-type {
+    margin: 0;
+    margin-top: 1rem;
+}
+
 .playButton {
     font-weight: bold;
     font-size: 2rem;
@@ -127,6 +132,7 @@ h1 {
     border-radius: 1vw;
     width: 9vw;
     padding-bottom: 0.8vh;
+    margin: 0;
     margin-top: 0vh;
 
     scale: .95;
@@ -135,7 +141,9 @@ h1 {
 .playButton:hover {
     scale: 1.05;
 }
-
+footer {
+    margin-top: 5vh;
+}
 footer p {
     font-size: small;
     text-align: center;
@@ -149,7 +157,7 @@ footer p {
     font-size: 2rem;
     user-select: none;
     height: 3.5rem;
-    width:  3.5rem;
+    width: 3.5rem;
 }
 
 #gearIcon:hover {
@@ -261,6 +269,7 @@ footer p {
     margin-top: 1vh;
     grid-column: 1/4;
 }
+
 .filterHeadingWrapper p:first-of-type {
     border-bottom: 1px solid white;
 }
@@ -301,3 +310,71 @@ footer p {
     background-color: #343434;
     opacity: 0.05;
 } */
+
+#filterTip {
+    position: fixed;
+
+    display: grid;
+    grid-template-columns: auto 20%;
+    grid-template-rows: 5rem auto;
+
+    top: 2vh;
+    right: 4.5rem;
+
+    width: 30vw;
+    padding: 0;
+    margin: 0;
+
+    background-color: #ffe81f;
+    color: black;
+
+    border-radius: 2vw;
+
+    opacity: .95;
+
+    display: none;
+}
+
+#filterTip a {
+    color: black;
+}
+
+#filterTip a:hover {
+    filter: opacity(.7);
+}
+
+#filterTip h3 {
+    font-size: 1rem;
+    padding: 0;
+    margin-top: .8rem;
+    margin-left: 1.1rem;
+    margin-bottom: 0;
+    margin-right: 0;
+}
+
+#filterTip p {
+    margin: 0;
+    transform: translateY(-2rem);
+    font-size: 5rem;
+    text-align: center;
+}
+
+#confirmTipButton {
+    grid-column: span 2;
+    text-align: center;
+
+    background-color: black;
+    color: white;
+    padding: .4rem;
+    padding-bottom: .6rem;
+    margin: .8rem;
+    border-radius: 1vw;
+    user-select: none;
+    cursor: pointer;
+    width: 85%;
+    justify-self: center;
+}
+
+#confirmTipButton:hover {
+    scale: 1.05;
+}

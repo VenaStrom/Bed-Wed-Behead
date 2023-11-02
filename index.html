@@ -100,12 +100,20 @@
 
         <div class="playButtonWrapper">
             <p onclick="play()" class="playButton" tabindex="13">Play</p>
+            <p>Character count: <span id="totalCharacterCount">00000</span></p>
         </div>
     </section>
 
+    <div id="filterTip">
+        <h3>Never heard of <a target="_blank"
+                href="https://starwars.fandom.com/wiki/Unidentified_Hebekrr_Minor_magistrate%27s_granddaughter%27s_wife">Unidentified
+                Hebekrr Minor magistrate's granddaughter's wife</a>? Try these filters!</h3>
+        <p>→</p>
+        <div id="confirmTipButton" onclick="document.getElementById('filterTip').style.display = 'none'">Got it!</div>
+    </div>
 
-    <img onclick="toggleConfigMenu()" src="style/images/icons/icon_settings.png" id="gearIcon" class="icon direction"
-        title="Filters" tabindex="14">
+    <img onclick="toggleConfigMenu(); document.getElementById('filterTip').style.display = 'none'"
+        src="style/images/icons/icon_settings.png" id="gearIcon" class="icon direction" title="Filters" tabindex="14">
 
     <aside id="configMenu" style="display: none;">
         <h2>Filter</h2>
@@ -132,7 +140,6 @@
 
 
     <footer>
-        <p>Total character count: <span id="totalCharacterCount">00000</span></p>
         <p>Data sourced from <a href="https://starwars.fandom.com/" target="_blank">Wookieepedia</a></p>
         <p>Licensed under <a target="_blank" href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a></p>
     </footer>

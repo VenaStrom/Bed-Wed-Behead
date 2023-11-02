@@ -36,6 +36,14 @@ createFilter(
 createFilter(
     defaultValue = false,
     category = "miscellaneous",
+    id = "filterCommon",
+    displayName = "Common individuals",
+    pattern = "string:filterCommon",
+    description = "Include only individuals with more than 5 appearences in the 'Appearances' section on Wookieepedia."
+)
+createFilter(
+    defaultValue = false,
+    category = "miscellaneous",
     id = "filterUnidentified",
     displayName = "Identified individuals",
     pattern = "string:filterUnidentified",

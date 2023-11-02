@@ -137,8 +137,8 @@ footer p {
     right: 0.5vw;
     cursor: pointer;
     user-select: none;
-    height: 9vw;
-    width: 9vw;
+    height:3rem;
+    width: 3rem;
 }
 
 #configMenu h2 {
@@ -152,7 +152,7 @@ footer p {
 
 #configMenu {
     position: fixed;
-    top: 6vh;
+    top: 3.5rem;
     right: 0.5vw;
     background-color: #000000;
     border: 1px solid #ccc;
@@ -291,3 +291,73 @@ footer p {
     background-color: #343434;
     opacity: 0.05;
 } */
+
+
+#filterTip {
+    position: fixed;
+
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+
+    top: 1vh;
+    right: 3.5rem;
+
+    width: 70vw;
+    padding: 0;
+    margin: 0;
+
+    background-color: #ffe81f;
+    color: black;
+
+    border-radius: 2vw;
+
+    opacity: .95;
+
+    display: none;
+}
+
+#filterTip a {
+    color: black;
+}
+
+#filterTip a:hover {
+    filter: opacity(.7);
+}
+
+#filterTip h3 {
+    font-size: 1rem;
+    padding: 0;
+    margin-top: .8rem;
+    margin-left: 1.1rem;
+    margin-bottom: 0;
+    margin-right: 0;
+}
+
+#filterTip p {
+    margin: 0;
+    transform: translateY(-10vw);
+    width: 20vw;
+    font-size: 20vw;
+    text-align: center;
+}
+
+#confirmTipButton {
+    grid-column: span 2;
+    text-align: center;
+
+    background-color: black;
+    color: white;
+    padding: .4rem;
+    padding-bottom: .6rem;
+    margin: .8rem;
+    border-radius: 1vw;
+    user-select: none;
+    cursor: pointer;
+    width: 85%;
+    justify-self: center;
+}
+
+#confirmTipButton:hover {
+    scale: 1.05;
+}
