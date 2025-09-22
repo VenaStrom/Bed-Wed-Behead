@@ -1,7 +1,27 @@
+import { useState } from "react";
 import { BedIcon, LinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
+import { ProfileState } from "./types.ts";
 
 export default function App() {
+  const [profiles, setProfiles] = useState<ProfileState[]>([
+    {
+      name: null,
+      wikiLink: null,
+      imageLink: null,
+    },
+    {
+      name: null,
+      wikiLink: null,
+      imageLink: null,
+    },
+    {
+      name: null,
+      wikiLink: null,
+      imageLink: null,
+    }
+  ])
+
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
       {/* Heading */}
@@ -14,37 +34,43 @@ export default function App() {
 
       {/* Profiles */}
       <section className="flex flex-row gap-x-8 justify-center items-center">
-        {new Array(3).fill(0).map((_, i) => (
-          <div className="flex flex-col gap-y-4" key={`profile-column-${i}`}>
-            {/* Profile */}
-            <a
-              href={""}
-              className="flex flex-col justify-center items-center gap-y-2 hover:[&_.link]:underline"
-              target="_blank" rel="noopener"
-            >
-              <img className="size-48 rounded-sm" src="/alien-headshot.png" alt="Headshot of character" />
-              <div className="w-full flex flex-row gap-x-2 items-center justify-end">
-                <span className="w-full text-lg text-center">...</span>
-                <LinkIcon className="size-5 absolute" />
-              </div>
-            </a>
+        {new Array(3).fill(0).map((_, i) => {
+          const profile = profiles[i];
+          return (
+            <div className="flex flex-col gap-y-4" key={`profile-column-${i}`}>
+              {/* Profile */}
+              <a
+                href={profile.wikiLink ?? ""}
+                className={`
+                  flex flex-col justify-center items-center gap-y-2 hover:[&_.link]:underline
+                  ${!profile.wikiLink && "pointer-events-none text-star/60"}
+                `}
+                target="_blank" rel="noopener"
+              >
+                <img className="size-48 rounded-sm" src={profile.imageLink || "/alien-headshot.png"} alt="Headshot of character" />
+                <div className="w-full flex flex-row gap-x-2 items-center justify-end">
+                  <span className="w-full text-lg text-center">{profile.name || "..."}</span>
+                  <LinkIcon className="size-5 absolute" />
+                </div>
+              </a>
 
-            {/* Answer list */}
-            <ul
-              className="flex flex-col gap-y-3"
-            >
-              <li>
-                <OptionButton toggled icon={<BedIcon className="size-10" />} label="Bed" />
-              </li>
-              <li>
-                <OptionButton icon={<WeddingIcon className="size-10 scale-90" />} label="Wed" />
-              </li>
-              <li>
-                <OptionButton icon={<SwordIcon className="size-10 scale-75" />} label="Behead" />
-              </li>
-            </ul>
-          </div>
-        ))}
+              {/* Answer list */}
+              <ul
+                className="flex flex-col gap-y-3"
+              >
+                <li>
+                  <OptionButton icon={<BedIcon className="size-10" />} label="Bed" />
+                </li>
+                <li>
+                  <OptionButton icon={<WeddingIcon className="size-10 scale-90" />} label="Wed" />
+                </li>
+                <li>
+                  <OptionButton icon={<SwordIcon className="size-10 scale-75" />} label="Behead" />
+                </li>
+              </ul>
+            </div>
+          );
+        })}
       </section>
 
       {/* Controls */}
