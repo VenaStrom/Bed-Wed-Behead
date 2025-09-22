@@ -1,4 +1,7 @@
 {
     "search.maxResults": 40000,
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+    "cSpell.words": [
+        "Venator"
+    ]
 }
