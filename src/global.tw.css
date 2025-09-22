@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+}
+
+@layer base {
+  a {
+    @apply text-blue-600 hover:underline;
+    &:visited {
+      @apply text-purple-600;
+    }
+  }
+}
