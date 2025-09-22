@@ -1,79 +1,49 @@
-
+import { BedIcon, LinkIcon, SwordIcon, WeddingIcon } from "./components/icons.tsx";
+import OptionButton from "./components/option-button.tsx";
 
 export default function App() {
   return (<>
-    <main className="flex flex-col items-center">
-      <img src="/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
-      <h1>
-        STAR WARS:
-        <br />
-        Bed Wed & Behead
-      </h1>
+    <main className="flex flex-col items-center gap-y-6 pt-8">
+      <section className="flex flex-col items-center gap-y-2">
+        <img src="/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
+        <h1 className="text-center text-xl italic font-semibold">
+          Bed Wed & Behead
+        </h1>
+      </section>
 
       {/* Profiles */}
       <section className="flex flex-row gap-x-8 justify-center items-center">
         {new Array(3).fill(0).map((_, i) => (
-          <a
-            key={`headshot-${i}`}
-            href={""}
-            className="flex flex-col justify-center items-center gap-y-2"
-            target="_blank" rel="noopener"
-          >
-            <img className="size-48" src="/alien-headshot.png" alt="Headshot of character" />
-            <span className="text-lg">...</span>
-            <img src="/icons/link.svg" alt="" className="size-6" />
-          </a>
+          <div className="flex flex-col gap-y-4" key={`profile-column-${i}`}>
+            {/* Profile */}
+            <a
+              href={""}
+              className="flex flex-col justify-center items-center gap-y-2 hover:[&_.link]:underline"
+              target="_blank" rel="noopener"
+            >
+              <img className="size-48" src="/alien-headshot.png" alt="Headshot of character" />
+              <div className="w-full flex flex-row gap-x-2 items-center justify-end">
+                <span className="w-full text-lg text-center">...</span>
+                <LinkIcon className="size-5 absolute" />
+              </div>
+            </a>
+
+            {/* Answer list */}
+            <ul
+              className="flex flex-col gap-y-3"
+            >
+              <li>
+                <OptionButton toggled icon={<BedIcon className="size-10" />} label="Bed" />
+              </li>
+              <li>
+                <OptionButton icon={<WeddingIcon className="size-10 scale-90" />} label="Wed" />
+              </li>
+              <li>
+                <OptionButton icon={<SwordIcon className="size-10 scale-75" />} label="Behead" />
+              </li>
+            </ul>
+          </div>
         ))}
-      </section>
-
-      {/* Answer boxes */}
-      <section>
-        {/* Beds */}
-        {new Array(3).fill(0).map((_, i) => (
-          <button
-            key={`answer-box-bed-${i}`}
-          >
-            <img src="/icons/bed.svg" alt="Bed" />
-          </button>
-        ))}
-        <button>
-          <img src="style/images/icons/bed_FILL1_wght600_GRAD0_opsz48.png" alt="Bed" />
-          <p>Bed</p>
-        </button>
-        <div tabIndex={6}>
-          <img src="style/images/icons/bed_FILL1_wght600_GRAD0_opsz48.png" alt="Bed" />
-          <p>Bed</p>
-        </div>
-        <div tabIndex={10}>
-          <img src="style/images/icons/bed_FILL1_wght600_GRAD0_opsz48.png" alt="Bed" />
-          <p>Bed</p>
-        </div>
-
-        <div tabIndex={3}>
-          <img src="style/images/icons/favorite_FILL1_wght600_GRAD0_opsz48.png" alt="Wed" />
-          <p>Wed</p>
-        </div>
-        <div tabIndex={7}>
-          <img src="style/images/icons/favorite_FILL1_wght600_GRAD0_opsz48.png" alt="Wed" />
-          <p>Wed</p>
-        </div>
-        <div tabIndex={11}>
-          <img src="style/images/icons/favorite_FILL1_wght600_GRAD0_opsz48.png" alt="Wed" />
-          <p>Wed</p>
-        </div>
-
-        <div tabIndex={4}>
-          <img src="style/images/icons/skull_FILL1_wght600_GRAD0_opsz48.png" alt="Behead" />
-          <p>Behead</p>
-        </div>
-        <div tabIndex={8}>
-          <img src="style/images/icons/skull_FILL1_wght600_GRAD0_opsz48.png" alt="Behead" />
-          <p>Behead</p>§
-        </div>
-        <div tabIndex={12}>
-          <img src="style/images/icons/skull_FILL1_wght600_GRAD0_opsz48.png" alt="Behead" />
-          <p>Behead</p>
-        </div>
       </section>
 
       <div>

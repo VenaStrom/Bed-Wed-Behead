@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
 /* Custom colors */
-/* @theme {
-} */
+@theme {
+  --color-star: #e0e0e0;
+  --color-eclipse-500: #111111;
+  --color-eclipse-700: #0a0a0a;
+  --color-command-300: #fff176;
+  --color-command-400: #ffec4f;
+  --color-command-500: #ffe81f;
+  --color-command-700: #d4b400;
+  --color-hyper-400: #589bff;
+  --color-hyper-500: #2b7fff;
+  --color-jump-400: #c366ff;
+  --color-jump-500: #ad46ff;
+}
 
 @layer base {
   html {
@@ -11,13 +22,17 @@
   }
   body {
     font-family: "Roboto", sans-serif;
-    @apply text-white bg-none font-medium;
+    @apply text-star bg-none font-medium;
   }
 
   a {
-    @apply text-blue-600 hover:underline;
+    @apply cursor-pointer text-hyper-500 hover:underline hover:text-hyper-400;
     &:visited {
-      @apply text-purple-600;
+      @apply text-jump-500 hover:text-jump-400;
     }
+  }
+
+  button {
+    @apply cursor-pointer;
   }
 }
