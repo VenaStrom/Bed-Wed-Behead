@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BedIcon, LinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon } from "./components/icons.tsx";
+import { BedIcon, GearIcon, LinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { ProfileState } from "./types.ts";
 
@@ -20,17 +20,79 @@ export default function App() {
       wikiLink: null,
       imageLink: null,
     }
-  ])
+  ]);
+  const [isFilterPanelExpanded, setFilterPanelOpen] = useState(!false);
 
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
       {/* Heading */}
-      <header className="flex flex-col items-center gap-y-2">
+      <header className="flex flex-col items-center gap-y-2 justify-center">
         <img src="/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
         <h1 className="text-center text-xl italic font-semibold">
           Bed Wed & Behead
         </h1>
       </header>
+
+      {/* Settings */}
+      <div className="w-full absolute flex flex-row justify-end items-center">
+        <button
+          onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
+          className={`
+            z-20
+            px-3 me-6 
+            hover:[&_.icon]:rotate-[120deg] 
+            hover:bg-star hover:text-eclipse-500
+            ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
+          `}
+        >
+          <GearIcon className="icon size-8 transition-all" />
+          Filter
+        </button>
+      </div>
+      <aside
+        className={`
+          bg-eclipse-700
+          absolute top-0 right-0 
+          z-10
+          py-5 px-6
+          w-1/3 h-screen
+          transition-all
+          ${isFilterPanelExpanded ? `translate-x-0` : `translate-x-full`}
+          flex flex-col gap-y-6
+        `}
+      >
+        <p className="text-star text-sm font-normal pb-10">
+          Current character pool {2332}
+        </p>
+
+        <div>
+          <p className="text-lg font-bold">Miscellaneous</p>
+          <ul>
+
+          </ul>
+        </div>
+
+        <div>
+          <p className="text-lg font-bold">Canonicity</p>
+          <ul>
+
+          </ul>
+        </div>
+
+        <div>
+          <p className="text-lg font-bold">Appearances</p>
+          <ul>
+
+          </ul>
+        </div>
+
+        <div>
+          <p className="text-lg font-bold">Gender</p>
+          <ul>
+
+          </ul>
+        </div>
+      </aside>
 
       {/* Profiles */}
       <section className="flex flex-row gap-x-8 justify-center items-center">

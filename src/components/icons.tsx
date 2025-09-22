@@ -30,3 +30,8 @@ export function SpaceshipIcon(props: SVGProps<SVGSVGElement>) {
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>{/* Icon from Ultimate free icons by Streamline - https://creativecommons.org/licenses/by/4.0/ */}<g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"><path d="M5.357 17.931a9.531 9.531 0 0 1 11.12-15.338M2.014 17.863c-1.211 2.122-1.617 3.769-.933 4.454c1.039 1.038 4.288-.43 8.051-3.413m4.307-.754l-3.575-3.575l7.946-7.946a5.05 5.05 0 0 1 2.35-1.328l2.043-.513a.843.843 0 0 1 1.022 1.021l-.511 2.045a5.05 5.05 0 0 1-1.33 2.349z" /><path d="M9.864 14.575L6.936 13.6a.422.422 0 0 1-.165-.7l1.02-1.02a3.38 3.38 0 0 1 3.458-.816l1.598.531zm3.575 3.575l.976 2.929a.42.42 0 0 0 .699.165l1.02-1.021a3.38 3.38 0 0 0 .816-3.457l-.531-1.598z" /></g></svg>
   )
 }
+export function GearIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>{/* Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE */}<path fill="currentColor" d="m9.25 22l-.4-3.2q-.325-.125-.612-.3t-.563-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.338v-.675q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75l-2.575 1.95q.025.175.025.338v.674q0 .163-.05.338l2.575 1.95l-2.75 4.75l-2.95-1.25q-.275.2-.575.375t-.6.3l-.4 3.2zm2.8-6.5q1.45 0 2.475-1.025T15.55 12t-1.025-2.475T12.05 8.5q-1.475 0-2.488 1.025T8.55 12t1.013 2.475T12.05 15.5" /></svg>
+  )
+}
