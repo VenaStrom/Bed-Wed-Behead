@@ -2,35 +2,44 @@
 
 export default function App() {
   return (<>
-    <img src="/public/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
+    <main className="flex flex-col items-center">
+      <img src="/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
+      <h1>
+        STAR WARS:
+        <br />
+        Bed Wed & Behead
+      </h1>
 
-    <h1>
-      STAR WARS:
-      <br />
-      Bed Wed & Behead
-    </h1>
-
-    <section>
       {/* Profiles */}
-      <a target="_blank" rel="noopener" href="" tabIndex={1}>
-        <img src="/public/alien-headshot.png" alt="Alien" />
-        <p>Error</p>
-      </a>
-      <a target="_blank" rel="noopener" href="" tabIndex={5}>
-        <img src="/public/alien-headshot.png" alt="Alien" />
-        <p>Error</p>
-      </a>
-      <a target="_blank" rel="noopener" href="" tabIndex={9}>
-        <img src="/public/alien-headshot.png" alt="Alien" />
-        <p>Error</p>
-      </a>
+      <section className="flex flex-row gap-x-8 justify-center items-center">
+        {new Array(3).fill(0).map((_, i) => (
+          <a
+            key={`headshot-${i}`}
+            href={""}
+            className="flex flex-col justify-center items-center gap-y-2"
+            target="_blank" rel="noopener"
+          >
+            <img className="size-48" src="/alien-headshot.png" alt="Headshot of character" />
+            <span className="text-lg">...</span>
+            <img src="/icons/link.svg" alt="" className="size-6" />
+          </a>
+        ))}
+      </section>
 
-      {/* Answers */}
-      <div>
-        <div tabIndex={2}>
+      {/* Answer boxes */}
+      <section>
+        {/* Beds */}
+        {new Array(3).fill(0).map((_, i) => (
+          <button
+            key={`answer-box-bed-${i}`}
+          >
+            <img src="/icons/bed.svg" alt="Bed" />
+          </button>
+        ))}
+        <button>
           <img src="style/images/icons/bed_FILL1_wght600_GRAD0_opsz48.png" alt="Bed" />
           <p>Bed</p>
-        </div>
+        </button>
         <div tabIndex={6}>
           <img src="style/images/icons/bed_FILL1_wght600_GRAD0_opsz48.png" alt="Bed" />
           <p>Bed</p>
@@ -65,13 +74,13 @@ export default function App() {
           <img src="style/images/icons/skull_FILL1_wght600_GRAD0_opsz48.png" alt="Behead" />
           <p>Behead</p>
         </div>
-      </div>
+      </section>
 
       <div>
         <p tabIndex={13}>Play</p>
         <p>Character count: <span>00000</span></p>
       </div>
-    </section>
+    </main>
 
     <div>
       <h3>

@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
-@theme {
-}
+/* Custom colors */
+/* @theme {
+} */
 
 @layer base {
   html {
@@ -9,7 +10,8 @@
     @apply bg-cover bg-center bg-no-repeat bg-fixed bg-black;
   }
   body {
-    @apply text-white bg-none;
+    font-family: "Roboto", sans-serif;
+    @apply text-white bg-none font-medium;
   }
 
   a {
