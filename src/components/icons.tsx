@@ -20,3 +20,13 @@ export function SwordIcon(props: SVGProps<SVGSVGElement>) {
     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>{/* Icon from Ultimate free icons by Streamline - https://creativecommons.org/licenses/by/4.0/ */}<path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m9.75 16.325l-6.495 6.5a1.469 1.469 0 1 1-2.075-2.08l6.5-6.5M4 14.466L9.534 20m8.444-16.053l2.075 2.075M20 14.466L14.466 20m6.279 2.82a1.467 1.467 0 1 0 2.075-2.075L3.255 1.18A1.467 1.467 0 0 0 1.18 3.255zM6.022 3.947L3.947 6.022M14.25 7.675l6.5-6.495a1.467 1.467 0 0 1 2.07 2.075l-6.5 6.5" /></svg>
   )
 }
+export function RefreshIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>{/* Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE */}<path fill="currentColor" d="M4 20v-2h2.75l-.4-.35q-1.225-1.225-1.787-2.662T4 12.05q0-2.775 1.663-4.937T10 4.25v2.1Q8.2 7 7.1 8.563T6 12.05q0 1.125.425 2.188T7.75 16.2l.25.25V14h2v6zm10-.25v-2.1q1.8-.65 2.9-2.212T18 11.95q0-1.125-.425-2.187T16.25 7.8L16 7.55V10h-2V4h6v2h-2.75l.4.35q1.225 1.225 1.788 2.663T20 11.95q0 2.775-1.662 4.938T14 19.75" /></svg>
+  )
+}
+export function SpaceshipIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>{/* Icon from Ultimate free icons by Streamline - https://creativecommons.org/licenses/by/4.0/ */}<g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"><path d="M5.357 17.931a9.531 9.531 0 0 1 11.12-15.338M2.014 17.863c-1.211 2.122-1.617 3.769-.933 4.454c1.039 1.038 4.288-.43 8.051-3.413m4.307-.754l-3.575-3.575l7.946-7.946a5.05 5.05 0 0 1 2.35-1.328l2.043-.513a.843.843 0 0 1 1.022 1.021l-.511 2.045a5.05 5.05 0 0 1-1.33 2.349z" /><path d="M9.864 14.575L6.936 13.6a.422.422 0 0 1-.165-.7l1.02-1.02a3.38 3.38 0 0 1 3.458-.816l1.598.531zm3.575 3.575l.976 2.929a.42.42 0 0 0 .699.165l1.02-1.021a3.38 3.38 0 0 0 .816-3.457l-.531-1.598z" /></g></svg>
+  )
+}

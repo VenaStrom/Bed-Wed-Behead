@@ -11,10 +11,8 @@ export default function OptionButton({
   return (
     <button
       className={`
-        flex flex-row gap-x-2 justify-start items-center
+        gap-x-2
         text-lg
-        border-2
-        rounded-lg
         bg-eclipse-500
         p-2
         w-full
@@ -22,10 +20,10 @@ export default function OptionButton({
           outline-2
           bg-eclipse-700 
           hover:text-command-400
-          outline-command-500 border-command-500
+          outline-command-500 
           ` : `
           outline-2
-          outline-eclipse-700 hover:outline-command-300
+          outline-transparent hover:outline-command-400
           border-transparent
         `}
       `}

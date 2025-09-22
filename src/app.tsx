@@ -1,15 +1,16 @@
-import { BedIcon, LinkIcon, SwordIcon, WeddingIcon } from "./components/icons.tsx";
+import { BedIcon, LinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 
 export default function App() {
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
-      <section className="flex flex-col items-center gap-y-2">
+      {/* Heading */}
+      <header className="flex flex-col items-center gap-y-2">
         <img src="/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
         <h1 className="text-center text-xl italic font-semibold">
           Bed Wed & Behead
         </h1>
-      </section>
+      </header>
 
       {/* Profiles */}
       <section className="flex flex-row gap-x-8 justify-center items-center">
@@ -46,13 +47,22 @@ export default function App() {
         ))}
       </section>
 
-      <div>
-        <p tabIndex={13}>Play</p>
-        <p>Character count: <span>00000</span></p>
-      </div>
+      {/* Controls */}
+      <section className="w-full flex flex-row justify-center items-center gap-x-10">
+        <button className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180">
+          <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
+          Refresh
+        </button>
+
+        <button className="px-3 hover:bg-jump-500 hover:[&_.icon]:animate-jitter">
+          <SpaceshipIcon className="icon size-8" />
+          Commit
+        </button>
+      </section>
     </main>
 
-    <div>
+    {/* Filter hint */}
+    {/* <div>
       <h3>
         Never heard of
         <a target="_blank" href="https://starwars.fandom.com/wiki/Unidentified_Hebekrr_Minor_magistrate%27s_granddaughter%27s_wife">
@@ -62,10 +72,10 @@ export default function App() {
       </h3>
       <p>→</p>
       <div>Got it!</div>
-    </div>
+    </div> */}
 
-    <img src="style/images/icons/icon_settings.png" title="Filters" tabIndex={14} />
-
+    {/* <img src="style/images/icons/icon_settings.png" title="Filters" tabIndex={14} /> */}
+    {/* 
     <aside>
       <h2>Filter</h2>
 
@@ -87,11 +97,22 @@ export default function App() {
           <p>Gender</p>
         </div>
       </form>
-    </aside>
+    </aside> */}
 
-    <footer>
-      <p>Data sourced from <a href="https://starwars.fandom.com/" target="_blank">Wookieepedia</a></p>
-      <p>Licensed under <a target="_blank" href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a></p>
+    <footer className={`
+      flex flex-row justify-start items-center gap-x-4
+      text-xs italic
+      w-full absolute bottom-1
+      px-2
+    `}>
+      <p className="flex flex-col gap-y-0.5">
+        <span>
+          Licensed under <a target="_blank" href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>
+        </span>
+        <span>
+          Data sourced from <a href="https://starwars.fandom.com/" target="_blank">Wookieepedia</a>
+        </span>
+      </p>
     </footer>
   </>);
 }

@@ -13,16 +13,34 @@
   --color-hyper-500: #2b7fff;
   --color-jump-400: #c366ff;
   --color-jump-500: #ad46ff;
+
+  --animate-jitter: jitter 0.3s infinite;
+
+  @keyframes jitter {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(-1px, 1px);
+    }
+    50% {
+      transform: translate(1px, -1px);
+    }
+    75% {
+      transform: translate(-1px, -1px);
+    }
+  }
 }
 
 @layer base {
   html {
     background-image: url("/stars-quick-ps-6CsREDPUK3Y-unsplash.jpg");
-    @apply bg-cover bg-center bg-no-repeat bg-fixed bg-black;
+    @apply bg-cover bg-center bg-no-repeat bg-fixed bg-black min-h-screen;
   }
   body {
     font-family: "Roboto", sans-serif;
-    @apply text-star bg-none font-medium;
+    @apply text-star bg-none font-medium min-h-[inherit];
   }
 
   a {
@@ -33,6 +51,6 @@
   }
 
   button {
-    @apply cursor-pointer;
+    @apply cursor-pointer flex flex-row justify-start items-center gap-x-1 bg-eclipse-500 p-2 rounded-lg transition-all;
   }
 }
