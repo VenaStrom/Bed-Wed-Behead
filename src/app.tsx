@@ -22,7 +22,7 @@ export default function App() {
               className="flex flex-col justify-center items-center gap-y-2 hover:[&_.link]:underline"
               target="_blank" rel="noopener"
             >
-              <img className="size-48" src="/alien-headshot.png" alt="Headshot of character" />
+              <img className="size-48 rounded-sm" src="/alien-headshot.png" alt="Headshot of character" />
               <div className="w-full flex flex-row gap-x-2 items-center justify-end">
                 <span className="w-full text-lg text-center">...</span>
                 <LinkIcon className="size-5 absolute" />

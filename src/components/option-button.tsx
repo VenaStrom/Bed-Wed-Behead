@@ -11,20 +11,15 @@ export default function OptionButton({
   return (
     <button
       className={`
-        gap-x-2
+        gap-x-2 p-2
         text-lg
-        bg-eclipse-500
-        p-2
         w-full
         ${toggled ? `
-          outline-2
-          bg-eclipse-700 
-          hover:text-command-400
-          outline-command-500 
+          bg-jump-500 text-eclipse-700
+          hover:bg-jump-400
           ` : `
-          outline-2
-          outline-transparent hover:outline-command-400
-          border-transparent
+          bg-eclipse-500
+          hover:bg-command-700 hover:text-eclipse-500
         `}
       `}
     >
