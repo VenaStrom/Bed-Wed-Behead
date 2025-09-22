@@ -6,5 +6,9 @@
     "jsx": "preserve",
     "noEmit": true,
     "allowImportingTsExtensions": true,
-  }
+  },
+  "exclude": [
+    "tools",
+    "node_modules"
+  ]
 }
