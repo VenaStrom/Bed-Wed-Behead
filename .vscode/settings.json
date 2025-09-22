@@ -2,6 +2,7 @@
     "search.maxResults": 40000,
     "liveServer.settings.port": 5501,
     "cSpell.words": [
+        "nodenext",
         "Venator"
     ]
 }
