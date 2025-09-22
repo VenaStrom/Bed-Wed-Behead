@@ -2,7 +2,7 @@
 
 export default function App() {
   return (<>
-    <img src="/public/bedwedbeheadlogo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
+    <img src="/public/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
 
     <h1>
       STAR WARS:
@@ -13,15 +13,15 @@ export default function App() {
     <section>
       {/* Profiles */}
       <a target="_blank" rel="noopener" href="" tabIndex={1}>
-        <img src="style/images/placeholder-alien.png" alt="Alien" />
+        <img src="/public/alien-headshot.png" alt="Alien" />
         <p>Error</p>
       </a>
       <a target="_blank" rel="noopener" href="" tabIndex={5}>
-        <img src="style/images/placeholder-alien.png" alt="Alien" />
+        <img src="/public/alien-headshot.png" alt="Alien" />
         <p>Error</p>
       </a>
       <a target="_blank" rel="noopener" href="" tabIndex={9}>
-        <img src="style/images/placeholder-alien.png" alt="Alien" />
+        <img src="/public/alien-headshot.png" alt="Alien" />
         <p>Error</p>
       </a>
 
@@ -77,7 +77,7 @@ export default function App() {
       <h3>
         Never heard of
         <a target="_blank" href="https://starwars.fandom.com/wiki/Unidentified_Hebekrr_Minor_magistrate%27s_granddaughter%27s_wife">
-          UnidentifiedHebekrr Minor magistrate's granddaughter's wife
+          Unidentified Hebekrr Minor magistrate's granddaughter's wife
         </a>?
         Try these filters!
       </h3>
@@ -114,6 +114,5 @@ export default function App() {
       <p>Data sourced from <a href="https://starwars.fandom.com/" target="_blank">Wookieepedia</a></p>
       <p>Licensed under <a target="_blank" href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a></p>
     </footer>
-  </>
-  );
+  </>);
 }
