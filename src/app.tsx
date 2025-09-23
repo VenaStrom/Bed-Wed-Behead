@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon } from "./components/icons.tsx";
+import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { ProfileState } from "./types.ts";
 
 export default function App() {
-  const [profiles, setProfiles] = useState<ProfileState[]>([
+  const [profiles, setProfiles] = useState<[ProfileState, ProfileState, ProfileState]>([
     {
       name: null,
       wikiLink: null,
@@ -21,7 +21,9 @@ export default function App() {
       imageLink: null,
     }
   ]);
-  const [isFilterPanelExpanded, setFilterPanelOpen] = useState(!false);
+  const [isFilterPanelExpanded, setFilterPanelOpen] = useState(false);
+  const [rolls, setRolls] = useState(0);
+  const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(localStorage.getItem("hasGottenHint")) : false);
 
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
@@ -33,8 +35,51 @@ export default function App() {
         </h1>
       </header>
 
-      {/* Settings button */}
-      <div className="w-full absolute flex flex-row justify-end items-center">
+      {/* Filter button */}
+      <div className="w-full absolute flex flex-row justify-end items-start gap-x-3">
+        {/* Filter hint */}
+        {/* {true && ( */}
+        {!hasGottenHint && !isFilterPanelExpanded && rolls >= 3 && (
+          <div className={`
+            bg-eclipse-500
+            rounded-lg
+            p-3
+            flex flex-col justify-center items-center gap-y-2
+            shadow-eclipse-700 shadow-2xl
+          `}>
+            <div className="flex flex-row justify-start items-center gap-x-2">
+              <span>
+                Never heard of {" "}
+                <a
+                  className="visited:text-shadow-hyper-500"
+                  href="https://starwars.fandom.com/wiki/Unidentified_Hebekrr_Minor_magistrate%27s_granddaughter%27s_wife"
+                  target="_blank"
+                >
+                  Unidentified Hebekrr Minor magistrate's granddaughter's wife
+                </a>?
+              </span>
+
+              <span className="flex flex-row justify-start items-center">
+                Try these filters!
+                <RightArrowIcon className="size-6 ms-2 inline" />
+              </span>
+            </div>
+
+            {/* Confirm hint */}
+            <button
+              onClick={() => {
+                setHasGottenHint(true);
+                localStorage.setItem("hasGottenHint", "true");
+              }}
+              className="bg-eclipse-700 hover:bg-jump-500"
+            >
+              <CheckmarkIcon className="size-6" />
+              Got it!
+            </button>
+          </div>
+        )}
+
+        {/* Toggle filter panel */}
         <button
           onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
           className={`
@@ -49,13 +94,13 @@ export default function App() {
           Filter
         </button>
       </div>
-      {/* Settings modal bg */}
+      {/* Filter modal bg */}
       <div
         hidden={!isFilterPanelExpanded}
         className="z-10 absolute top-0 left-0 min-w-screen w-screen min-h-screen h-screen bg-eclipse-500/20 transition-all"
         onClick={() => setFilterPanelOpen(false)}
       ></div>
-      {/* Settings panel */}
+      {/* Filter panel */}
       <aside
         className={`
           bg-eclipse-700
@@ -84,7 +129,7 @@ export default function App() {
             px-3
             hover:[&_.icon]:rotate-[120deg] 
             hover:bg-star hover:text-eclipse-500
-            ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
+            ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg] hover:bg-star/80` : ``}
           `}
           >
             <GearIcon className="icon size-8 transition-all" />
@@ -92,8 +137,8 @@ export default function App() {
           </button>
         </header>
 
-        <p className="text-star text-sm font-normal">
-          Current character pool {2332}
+        <p className="text-star text-sm font-normal w-full text-center italic">
+          Current character pool is {2332}
         </p>
 
         <div>
@@ -152,13 +197,13 @@ export default function App() {
                 className="flex flex-col gap-y-3"
               >
                 <li>
-                  <OptionButton icon={<BedIcon className="size-10" />} label="Bed" />
+                  <OptionButton icon={<BedIcon className="size-10 scale-105" />} label="Bed" />
                 </li>
                 <li>
-                  <OptionButton icon={<WeddingIcon className="size-10 scale-90" />} label="Wed" />
+                  <OptionButton icon={<WeddingIcon className="size-10 scale-[85%]" />} label="Wed" />
                 </li>
                 <li>
-                  <OptionButton icon={<SwordIcon className="size-10 scale-75" />} label="Behead" />
+                  <OptionButton icon={<SwordIcon className="size-10 scale-[70%]" />} label="Behead" />
                 </li>
               </ul>
             </div>
@@ -179,19 +224,6 @@ export default function App() {
         </button>
       </section>
     </main>
-
-    {/* Filter hint */}
-    {/* <div>
-      <h3>
-        Never heard of
-        <a target="_blank" href="https://starwars.fandom.com/wiki/Unidentified_Hebekrr_Minor_magistrate%27s_granddaughter%27s_wife">
-          Unidentified Hebekrr Minor magistrate's granddaughter's wife
-        </a>?
-        Try these filters!
-      </h3>
-      <p>→</p>
-      <div>Got it!</div>
-    </div> */}
 
     <footer className={`
       flex flex-row justify-start items-center gap-x-4
