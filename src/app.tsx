@@ -38,7 +38,6 @@ export default function App() {
       {/* Filter button */}
       <div className="w-full absolute flex flex-row justify-end items-start gap-x-3">
         {/* Filter hint */}
-        {/* {true && ( */}
         {!hasGottenHint && !isFilterPanelExpanded && rolls >= 3 && (
           <div className={`
             bg-eclipse-500
@@ -213,12 +212,12 @@ export default function App() {
 
       {/* Controls */}
       <section className="w-full flex flex-row justify-center items-center gap-x-10">
-        <button className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180">
+        <button onClick={refresh} className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180">
           <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
           Refresh
         </button>
 
-        <button className="px-3 hover:bg-jump-500 hover:[&_.icon]:animate-jitter">
+        <button onClick={commit} className="px-3 hover:bg-jump-500 hover:[&_.icon]:animate-jitter">
           <SpaceshipIcon className="icon size-8" />
           Commit
         </button>
@@ -241,4 +240,14 @@ export default function App() {
       </p>
     </footer>
   </>);
+
+  function refresh() {
+    setRolls(rolls + 1);
+  }
+
+  function commit() {
+    // Stuff
+
+    refresh();
+  }
 }
