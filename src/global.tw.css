@@ -37,11 +37,11 @@
 @layer base {
   html {
     background-image: url("/stars-quick-ps-6CsREDPUK3Y-unsplash.jpg");
-    @apply bg-cover bg-center bg-no-repeat bg-fixed bg-black min-h-screen;
+    @apply bg-cover bg-center bg-no-repeat bg-fixed bg-black min-h-screen max-w-screen overflow-x-hidden;
   }
   body {
     font-family: "Roboto", sans-serif;
-    @apply text-star bg-none font-medium min-h-[inherit];
+    @apply text-star bg-none font-medium min-h-[inherit] max-w-[inherit] overflow-x-hidden;
   }
 
   a {

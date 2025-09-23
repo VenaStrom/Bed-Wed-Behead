@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BedIcon, GearIcon, LinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon } from "./components/icons.tsx";
+import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { ProfileState } from "./types.ts";
 
@@ -33,12 +33,12 @@ export default function App() {
         </h1>
       </header>
 
-      {/* Settings */}
+      {/* Settings button */}
       <div className="w-full absolute flex flex-row justify-end items-center">
         <button
           onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
           className={`
-            z-20
+            z-10
             px-3 me-6 
             hover:[&_.icon]:rotate-[120deg] 
             hover:bg-star hover:text-eclipse-500
@@ -49,19 +49,50 @@ export default function App() {
           Filter
         </button>
       </div>
+      {/* Settings modal bg */}
+      <div
+        hidden={!isFilterPanelExpanded}
+        className="z-10 absolute top-0 left-0 min-w-screen w-screen min-h-screen h-screen bg-eclipse-500/20 transition-all"
+        onClick={() => setFilterPanelOpen(false)}
+      ></div>
+      {/* Settings panel */}
       <aside
         className={`
           bg-eclipse-700
           absolute top-0 right-0 
-          z-10
+          z-20
           py-5 px-6
-          w-1/3 h-screen
+          w-11/12 md:w-1/3
+          h-screen
           transition-all
           ${isFilterPanelExpanded ? `translate-x-0` : `translate-x-full`}
           flex flex-col gap-y-6
         `}
       >
-        <p className="text-star text-sm font-normal pb-10">
+        <header className="flex flex-row justify-between items-center mt-3.5 sticky top-8">
+          <button className="w-fit px-3 hover:bg-hyper-500">
+            <LinkIcon
+              className="size-8"
+            />
+            Share filter
+          </button>
+
+          <button
+            onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
+            className={`
+            z-10
+            px-3
+            hover:[&_.icon]:rotate-[120deg] 
+            hover:bg-star hover:text-eclipse-500
+            ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
+          `}
+          >
+            <GearIcon className="icon size-8 transition-all" />
+            Close
+          </button>
+        </header>
+
+        <p className="text-star text-sm font-normal">
           Current character pool {2332}
         </p>
 
@@ -112,7 +143,7 @@ export default function App() {
                 <img className="size-48 rounded-sm" src={profile.imageLink || "/alien-headshot.png"} alt="Headshot of character" />
                 <div className="w-full flex flex-row gap-x-2 items-center justify-end">
                   <span className="w-full text-lg text-center">{profile.name || "..."}</span>
-                  <LinkIcon className="size-5 absolute" />
+                  <ExternalLinkIcon className="size-5 absolute" />
                 </div>
               </a>
 
@@ -161,31 +192,6 @@ export default function App() {
       <p>→</p>
       <div>Got it!</div>
     </div> */}
-
-    {/* <img src="style/images/icons/icon_settings.png" title="Filters" tabIndex={14} /> */}
-    {/* 
-    <aside>
-      <h2>Filter</h2>
-
-      <form>
-        <div>
-          <p>Include ONLY</p>
-          <p>Miscellaneous</p>
-        </div>
-        <div>
-          <p>Include ONLY</p>
-          <p>Canonicity</p>
-        </div>
-        <div>
-          <p>Include ONLY</p>
-          <p>Appearances</p>
-        </div>
-        <div>
-          <p>Include ONLY</p>
-          <p>Gender</p>
-        </div>
-      </form>
-    </aside> */}
 
     <footer className={`
       flex flex-row justify-start items-center gap-x-4
