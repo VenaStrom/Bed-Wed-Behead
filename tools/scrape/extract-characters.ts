@@ -1,6 +1,15 @@
 import fs from "node:fs";
+import type { Character } from "../../src/types.ts";
+import Crypto from "node:crypto";
 
-const baseURL = "https://starwars.fandom.com/wiki/";
+function categoryHash(input: string): string {
+  const hash = Crypto.createHash("sha256");
+  const data = hash.update(input, "utf-8");
+  const digest = data.digest("hex");
+  const truncated = digest.slice(0, 8); // First 8 bytes = 64 bits
+
+  return truncated
+}
 
 const characterLinksPath = "tools/out/character-links.pruned.json";
 if (!fs.existsSync(characterLinksPath)) {
@@ -12,42 +21,124 @@ const cacheFolder = "tools/cache/characters";
 if (!fs.existsSync(cacheFolder)) {
   fs.mkdirSync(cacheFolder, { recursive: true });
 }
-
-// Scrape and cache
-for (const route of characterLinks) {
-  const link = baseURL + route;
-  const fsSafeRoute = route.replaceAll("/", "_");
-
-  // If in cache, load from there
-  if (!fs.existsSync(`${cacheFolder}/${fsSafeRoute}.html`)) {
-    // Scrape and save
-    const response = await fetch(link);
-    if (!response.ok) {
-      console.warn(`Failed to fetch ${link}: ${response.statusText}`);
-      continue;
-    }
-    const text = await response.text();
-    fs.writeFileSync(`${cacheFolder}/${fsSafeRoute}.html`, text);
-    console.log(`Saved ${fsSafeRoute}.html`);
-  }
-  else {
-    console.log("Reading from cache:", fsSafeRoute);
-  }
+const infoBoxCacheFolder = `tools/cache/info-boxes`;
+if (!fs.existsSync(infoBoxCacheFolder)) {
+  fs.mkdirSync(infoBoxCacheFolder, { recursive: true });
 }
+
+async function fetchMetadata(uriEncodedName: string) {
+  const fsSafeName = uriEncodedName.replaceAll("/", "_").replaceAll("\\", "_");
+
+  const categoryData = await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&prop=categories&format=json`);
+  const propertiesData = await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&format=json&prop=properties`);
+
+  if (!categoryData.ok) {
+    console.warn(`Failed to fetch categories for ${uriEncodedName}: ${categoryData.statusText}`);
+    return null;
+  }
+  if (!propertiesData.ok) {
+    console.warn(`Failed to fetch properties for ${uriEncodedName}: ${propertiesData.statusText}`);
+    return null;
+  }
+
+  const propertiesJson = await propertiesData.json();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const infoBoxData: { type: string, data: any }[] = JSON.parse(propertiesJson.parse.properties.at(1)["*"]).at(0).data;
+
+  // Save info box to file for later processing
+  fs.writeFileSync(`${infoBoxCacheFolder}/${fsSafeName}.json`, JSON.stringify(infoBoxData, null, 2));
+
+  const name = infoBoxData.find(box => box.type === "title")?.data?.value;
+
+  if (!name) {
+    console.warn(`No name found for ${uriEncodedName}`);
+    return null;
+  }
+
+  const imageURL = infoBoxData.find(box => box.type === "image")?.data?.at(0) || null;
+  if (!imageURL) {
+    console.warn(`No image found for ${uriEncodedName}`);
+  }
+
+  const categoryJson = await categoryData.json();
+  const categories: string[] = categoryJson.parse.categories.map((cat: { "*": string }) => cat["*"].replaceAll("_", " "));
+
+  return {
+    name,
+    imageURL,
+    categories,
+  };
+}
+
+const characters: Character[] = [];
+const categoryLookup: Record<string, string> = {}; // Hash: category name
+const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
+
+for (const route of characterLinks) {
+  const res = await fetchMetadata(characterLinks[25981]);
+  if (!res) continue;
+
+  const { name, categories, imageURL } = res;
+
+  const character: Character = {
+    n: name,
+    r: route,
+    ...(categoryHashes.length > 0 ? { c: categoryHashes } : {}),
+    ...(imageURL ? { i: imageURL } : {}),
+  };
+  break;
+}
+
+// const wikiBaseURL = "https://starwars.fandom.com/wiki/";
+
+// async function downloadHTML(route: string) {
+//   const link = wikiBaseURL + route;
+//   const fsSafeRoute = route.replaceAll("/", "_").replaceAll("\\", "_");
+
+//   // If in cache, load from there
+//   if (!fs.existsSync(`${cacheFolder}/${fsSafeRoute}.html`)) {
+//     // Scrape and save
+//     const response = await fetch(link);
+//     if (!response.ok) {
+//       console.warn(`Failed to fetch ${link}: ${response.statusText}`);
+//       return false;
+//     }
+//     const text = await response.text();
+//     fs.writeFileSync(`${cacheFolder}/${fsSafeRoute}.html`, text);
+//     console.log(`Saved ${fsSafeRoute}.html`);
+//   }
+//   else {
+//     console.log("Reading from cache:", fsSafeRoute);
+//   }
+
+//   return true;
+// }
+
+// let failCount = 0;
+// let activeFetchers = 0;
+// while (characterLinks.length > 0) {
+//   if (activeFetchers >= 10) {
+//     // Wait a bit
+//     await new Promise((resolve) => setTimeout(resolve, 10));
+//     continue;
+//   }
+
+//   const route = characterLinks.shift();
+//   if (!route) break;
+
+//   activeFetchers++;
+//   downloadHTML(route)
+//     .then((result) => {
+//       activeFetchers--;
+//       if (!result) failCount++;
+//       return result;
+//     });
+// }
+
+// console.log("HTML download complete." + (failCount > 0 ? ` Failed to download ${failCount} files.` : ""));
 
 
 // import { JSDOM } from "jsdom";
-// import Crypto from "node:crypto";
-// import type { Character } from "../../src/types.ts";
-
-// function categoryHash(input: string): string {
-//   const hash = Crypto.createHash("sha256");
-//   const data = hash.update(input, "utf-8");
-//   const digest = data.digest("hex");
-//   const truncated = digest.slice(0, 8); // First 8 bytes = 64 bits
-
-//   return truncated
-// }
 
 // const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
 // // Ensure output directory exists
