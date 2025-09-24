@@ -1,5 +1,5 @@
 
-## Running
+## Character Links
 
 ### Initial Scrape
 ```bash
@@ -8,8 +8,8 @@ node tools/scrape-character-links.ts
 # Also saves all scraped HTML files into tools/cache for quicker re-runs
 ```
 
-### Pruning
-Mainly to remove dupes but can be expanded later if needed.
+### Pruning 
+Mainly to remove dupes but also the redundant `/wiki/` prefix but can be expanded later if needed.
 ```bash
 node tools/prune-character-links.ts
 # Reads tools/out/character-links.json and saves pruned version to tools/out/character-links.pruned.json
