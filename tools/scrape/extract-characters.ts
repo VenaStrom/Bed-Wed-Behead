@@ -49,16 +49,12 @@ async function fetchMetadata(uriEncodedName: string) {
   fs.writeFileSync(`${infoBoxCacheFolder}/${fsSafeName}.json`, JSON.stringify(infoBoxData, null, 2));
 
   const name = infoBoxData.find(box => box.type === "title")?.data?.value;
-
   if (!name) {
     console.warn(`No name found for ${uriEncodedName}`);
     return null;
   }
 
-  const imageURL = infoBoxData.find(box => box.type === "image")?.data?.at(0) || null;
-  if (!imageURL) {
-    console.warn(`No image found for ${uriEncodedName}`);
-  }
+  const imageURL: string | null = infoBoxData.find(box => box.type === "image")?.data?.at(0).url || null;
 
   const categoryJson = await categoryData.json();
   const categories: string[] = categoryJson.parse.categories.map((cat: { "*": string }) => cat["*"].replaceAll("_", " "));
@@ -70,157 +66,41 @@ async function fetchMetadata(uriEncodedName: string) {
   };
 }
 
+const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
 const characters: Character[] = [];
 const categoryLookup: Record<string, string> = {}; // Hash: category name
 const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
 
 for (const route of characterLinks) {
-  const res = await fetchMetadata(characterLinks[25981]);
+  const res = await fetchMetadata(route);
   if (!res) continue;
 
   const { name, categories, imageURL } = res;
+
+  const categoryHashes = categories.map(categoryHash);
+  for (const category of categories) {
+    const hash = categoryHash(category);
+    if (!categoryLookup[hash]) {
+      categoryLookup[hash] = category;
+      categoryLookupReverse[category] = hash;
+    }
+  }
+
 
   const character: Character = {
     n: name,
     r: route,
     ...(categoryHashes.length > 0 ? { c: categoryHashes } : {}),
-    ...(imageURL ? { i: imageURL } : {}),
+    ...(imageURL ? { i: imageURL.replace(imageBaseURL, "") } : {}),
   };
+
+  characters.push(character);
+
   break;
 }
 
-// const wikiBaseURL = "https://starwars.fandom.com/wiki/";
+console.log("Characters fetched:", characters.length);
 
-// async function downloadHTML(route: string) {
-//   const link = wikiBaseURL + route;
-//   const fsSafeRoute = route.replaceAll("/", "_").replaceAll("\\", "_");
-
-//   // If in cache, load from there
-//   if (!fs.existsSync(`${cacheFolder}/${fsSafeRoute}.html`)) {
-//     // Scrape and save
-//     const response = await fetch(link);
-//     if (!response.ok) {
-//       console.warn(`Failed to fetch ${link}: ${response.statusText}`);
-//       return false;
-//     }
-//     const text = await response.text();
-//     fs.writeFileSync(`${cacheFolder}/${fsSafeRoute}.html`, text);
-//     console.log(`Saved ${fsSafeRoute}.html`);
-//   }
-//   else {
-//     console.log("Reading from cache:", fsSafeRoute);
-//   }
-
-//   return true;
-// }
-
-// let failCount = 0;
-// let activeFetchers = 0;
-// while (characterLinks.length > 0) {
-//   if (activeFetchers >= 10) {
-//     // Wait a bit
-//     await new Promise((resolve) => setTimeout(resolve, 10));
-//     continue;
-//   }
-
-//   const route = characterLinks.shift();
-//   if (!route) break;
-
-//   activeFetchers++;
-//   downloadHTML(route)
-//     .then((result) => {
-//       activeFetchers--;
-//       if (!result) failCount++;
-//       return result;
-//     });
-// }
-
-// console.log("HTML download complete." + (failCount > 0 ? ` Failed to download ${failCount} files.` : ""));
-
-
-// import { JSDOM } from "jsdom";
-
-// const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
-// // Ensure output directory exists
-// const outFolder = "tools/out";
-// if (!fs.existsSync(outFolder)) {
-//   fs.mkdirSync(outFolder, { recursive: true });
-// }
-// const charactersFile = `${outFolder}/characters.json`;
-// const categoriesFile = `${outFolder}/categories.json`;
-
-// // route: Character data
-// const characters: Record<string, Character> = {};
-
-// /** Hash: category name */
-// const categoriesLookup: Record<string, string> = {};
-// /** Name: hash */
-// const categoriesLookupReverse: Record<string, string> = {};
-
-
-// // Parse and extract
-// const html = fs.readFileSync(`${cacheFolder}/${fsSafeRoute}.html`, "utf-8");
-// const dom = new JSDOM(html);
-// const document = dom.window.document;
-
-// const name = document.querySelector(".page-header__title")?.textContent?.trim() || null;
-// if (!name) {
-//   console.warn(`No name found for ${link}`);
-//   continue;
-// }
-// const categoryNames = Array.from(document.querySelectorAll("li.category.normal"))
-//   .map(el => el as HTMLLIElement)
-//   .map(e => e.dataset.name || null)
-//   .filter(Boolean) as string[];
-
-// for (const name of categoryNames) {
-//   const categoryHash = catHash(name);
-//   if (!categoriesLookup[categoryHash]) {
-//     categoriesLookup[categoryHash] = name;
-//     categoriesLookupReverse[name] = categoryHash;
-//   }
-// }
-// const categoryHashes = categoryNames.map(c => categoriesLookupReverse[c]);
-
-// let imageURL = document.head.querySelector("meta[property='og:image']")?.getAttribute("content")
-//   || document.querySelector("img.pi-image-thumbnail")?.getAttribute("src")
-//   || null;
-
-// if (imageURL) {
-//   const cleanedImageURL = new URL(imageURL);
-//   cleanedImageURL.searchParams.delete("cb");
-//   const minifiedURL = cleanedImageURL.href.replace(imageBaseURL, "");
-//   imageURL = minifiedURL;
-// }
-
-// if (characters[route]) {
-//   // This should really never happen
-//   console.warn(`Duplicate character found: ${route} (${name})`);
-//   throw new Error("Duplicate character " + route);
-// }
-
-// // Compile character
-// characters[route] = {
-//   // Pretty name
-//   n: name,
-//   // Route
-//   r: route,
-//   // Categories
-//   ...(categoryNames.length > 0 ? { c: categoryHashes } : {}),
-//   // Image URL
-//   ...(imageURL ? { i: imageURL } : {}),
-// }
-
-// // Partial write
-// fs.writeFileSync(charactersFile, JSON.stringify(characters));
-// fs.writeFileSync(categoriesFile, JSON.stringify(categoriesLookup));
-
-// // Cleanup
-// dom.window.close();
-// if (global.gc) {
-//   global.gc();
-// }
-
-// Write final output
-// fs.writeFileSync(charactersFile, JSON.stringify(characters, null, 2));
-// fs.writeFileSync(categoriesFile, JSON.stringify(categoriesLookup, null, 2));
+fs.writeFileSync("tools/out/characters.json", JSON.stringify(characters, null, 2));
+fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup, null, 2));
+fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse, null, 2));
