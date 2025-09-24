@@ -30,3 +30,10 @@ The minimized file is structured like this:
 but with no whitespace. Without further compression the size difference is almost 1/2. 1.1 MB -> 600 KB 
 
 ## Scraping Character Details
+```bash
+node tools/scrape/extract-characters.ts
+# Reads tools/out/character-links.pruned.json and scrapes each character page
+# Saves character details to tools/out/characters.json
+# Saves category lookup to tools/out/categories.json
+```
+The lookup is a mapping of category hash (sha256 truncated to 64 bits) to category name for more compact storage.

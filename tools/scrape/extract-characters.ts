@@ -43,9 +43,10 @@ const categoriesLookupReverse: Record<string, string> = {};
 
 for (const route of characterLinks) {
   const link = baseURL + route;
+  const fsSafeRoute = route.replaceAll("/", "_");
 
   // If in cache, load from there
-  if (!fs.existsSync(`${cacheFolder}/${route}.html`)) {
+  if (!fs.existsSync(`${cacheFolder}/${fsSafeRoute}.html`)) {
     // Scrape and save
     const response = await fetch(link);
     if (!response.ok) {
@@ -53,12 +54,12 @@ for (const route of characterLinks) {
       continue;
     }
     const text = await response.text();
-    fs.writeFileSync(`${cacheFolder}/${route}.html`, text);
-    console.log(`Saved ${route}.html`);
+    fs.writeFileSync(`${cacheFolder}/${fsSafeRoute}.html`, text);
+    console.log(`Saved ${fsSafeRoute}.html`);
   }
 
   // Parse and extract
-  const html = fs.readFileSync(`${cacheFolder}/${route}.html`, "utf-8");
+  const html = fs.readFileSync(`${cacheFolder}/${fsSafeRoute}.html`, "utf-8");
   const dom = new JSDOM(html);
   const document = dom.window.document;
 
@@ -77,10 +78,6 @@ for (const route of characterLinks) {
     if (!categoriesLookup[categoryHash]) {
       categoriesLookup[categoryHash] = name;
       categoriesLookupReverse[name] = categoryHash;
-    }
-    else {
-      console.log("WTF, hash collision?", name, categoriesLookup[categoryHash]);
-      throw new Error("Hash collision");
     }
   }
   const categoryHashes = categoryNames.map(c => categoriesLookupReverse[c]);
@@ -115,10 +112,10 @@ for (const route of characterLinks) {
   }
 
   // Partial write
-  fs.writeFileSync(charactersFile, JSON.stringify(characters, null, 2));
-
-  break; // TODO debug only
+  fs.writeFileSync(charactersFile, JSON.stringify(characters));
+  fs.writeFileSync(categoriesFile, JSON.stringify(categoriesLookup));
 }
 
 // Write final output
 fs.writeFileSync(charactersFile, JSON.stringify(characters, null, 2));
+fs.writeFileSync(categoriesFile, JSON.stringify(categoriesLookup, null, 2));
