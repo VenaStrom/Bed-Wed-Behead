@@ -4,3 +4,15 @@ export type ProfileState = {
   wikiLink: string | null;
   imageLink: string | null;
 };
+
+/** 
+ * `n`: name
+ * `r`: wiki route
+ * `i`: image link (optional)
+ */
+export type Character = {
+  n: string;
+  // Only the path part of the URL, e.g. Luke_Skywalker excluding https://starwars.fandom.com/wiki/
+  r: string;
+  i?: string | undefined; // Omit if not present for size optimization
+};

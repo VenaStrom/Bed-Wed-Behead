@@ -13,7 +13,7 @@ if (!fs.existsSync(prunedCharacterLinksFile)) {
 console.log("Minimizing character links...");
 
 const characterLinks: string[] = JSON.parse(fs.readFileSync(prunedCharacterLinksFile, "utf-8"));
-const minimizedLinks = characterLinks.map(link => link.replace("/wiki/", "")).sort();
+const minimizedLinks = characterLinks.sort();
 
 const singleLineLinks = minimizedLinks.join(joiningCharacter);
 
@@ -22,6 +22,7 @@ const testLinks = singleLineLinks.split(joiningCharacter);
 if (testLinks.length !== minimizedLinks.length) {
   console.error("Error: Mismatch in link counts after minimization.");
   console.log(`Original count: ${minimizedLinks.length}, After split count: ${testLinks.length}`);
+  console.log("Try changing the joining character to something else. It's a const declared at the top of this file.");
   process.exit(1);
 }
 

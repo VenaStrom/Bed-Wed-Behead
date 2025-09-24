@@ -17,7 +17,7 @@ const categoryLinks = [
 const characterLinks: string[] = [];
 
 // Ensure output directory exists
-const cacheFolder = "tools/cache";
+const cacheFolder = "tools/cache/categories";
 if (!fs.existsSync(cacheFolder)) {
   fs.mkdirSync(cacheFolder, { recursive: true });
 }

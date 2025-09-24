@@ -11,7 +11,7 @@ if (!fs.existsSync(characterLinksFile)) {
 console.log("Pruning character links...");
 
 const characterLinks: string[] = JSON.parse(fs.readFileSync(characterLinksFile, "utf-8"));
-const uniqueLinks = Array.from(new Set(characterLinks)).sort();
+const uniqueLinks = Array.from(new Set(characterLinks)).map(link => link.replace("/wiki/", "")).sort();
 
 // How many dupes?
 const dupesCount = characterLinks.length - uniqueLinks.length;
