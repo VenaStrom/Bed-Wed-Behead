@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import type { Character } from "../../src/types.ts";
 import Crypto from "node:crypto";
+import { stdout } from "node:process";
 
 function categoryHash(input: string): string {
   const hash = Crypto.createHash("sha256");
@@ -21,43 +22,83 @@ const cacheFolder = "tools/cache/characters";
 if (!fs.existsSync(cacheFolder)) {
   fs.mkdirSync(cacheFolder, { recursive: true });
 }
-const infoBoxCacheFolder = `tools/cache/info-boxes`;
-if (!fs.existsSync(infoBoxCacheFolder)) {
-  fs.mkdirSync(infoBoxCacheFolder, { recursive: true });
+const categoryFetchCache = `tools/cache/fetched-categories`;
+if (!fs.existsSync(categoryFetchCache)) {
+  fs.mkdirSync(categoryFetchCache, { recursive: true });
+}
+const propertiesFetchCache = `tools/cache/fetched-properties`;
+if (!fs.existsSync(propertiesFetchCache)) {
+  fs.mkdirSync(propertiesFetchCache, { recursive: true });
 }
 
 async function fetchMetadata(uriEncodedName: string) {
   const fsSafeName = uriEncodedName.replaceAll("/", "_").replaceAll("\\", "_");
 
-  const categoryData = await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&prop=categories&format=json`);
-  const propertiesData = await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&format=json&prop=properties`);
+  const categoryCachePath = `${categoryFetchCache}/${fsSafeName}.json`;
+  const propertiesCachePath = `${propertiesFetchCache}/${fsSafeName}.json`;
 
-  if (!categoryData.ok) {
-    console.warn(`Failed to fetch categories for ${uriEncodedName}: ${categoryData.statusText}`);
+  // Fetch or read cache
+  const categoryRes = fs.existsSync(categoryCachePath)
+    ? { ok: true, json: async () => JSON.parse(fs.readFileSync(categoryCachePath, "utf-8")), statusText: "From Cache" }
+    : await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&prop=categories&format=json`);
+  const propertiesRes = fs.existsSync(propertiesCachePath)
+    ? { ok: true, json: async () => JSON.parse(fs.readFileSync(propertiesCachePath, "utf-8")), statusText: "From Cache" }
+    : await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&format=json&prop=properties`);
+
+  // Logging
+  if (fs.existsSync(categoryCachePath) && fs.existsSync(propertiesCachePath)) {
+    stdout.write(" (cache)");
+  }
+  else {
+    stdout.write(" (fetch)");
+  }
+
+  if (!categoryRes.ok) {
+    console.warn(`Failed to fetch categories for ${uriEncodedName}: ${categoryRes.statusText}`);
     return null;
   }
-  if (!propertiesData.ok) {
-    console.warn(`Failed to fetch properties for ${uriEncodedName}: ${propertiesData.statusText}`);
+  if (!propertiesRes.ok) {
+    console.warn(`Failed to fetch properties for ${uriEncodedName}: ${propertiesRes.statusText}`);
     return null;
   }
 
-  const propertiesJson = await propertiesData.json();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const infoBoxData: { type: string, data: any }[] = JSON.parse(propertiesJson.parse.properties.at(1)["*"]).at(0).data;
+  const categoryJSON = await categoryRes.json();
+  const propertiesJSON = await propertiesRes.json();
 
-  // Save info box to file for later processing
-  fs.writeFileSync(`${infoBoxCacheFolder}/${fsSafeName}.json`, JSON.stringify(infoBoxData, null, 2));
+  // Save fetched data to cache
+  if (!fs.existsSync(categoryCachePath)) {
+    fs.writeFileSync(categoryCachePath, JSON.stringify(categoryJSON));
+    stdout.write(" (cached)");
+  }
+  if (!fs.existsSync(propertiesCachePath)) {
+    fs.writeFileSync(propertiesCachePath, JSON.stringify(propertiesJSON));
+    stdout.write(" (cached)");
+  }
 
-  const name = infoBoxData.find(box => box.type === "title")?.data?.value;
+  const categories: string[] = categoryJSON.parse.categories.map((cat: { "*": string }) => cat["*"].replaceAll("_", " "));
+  const hasInfobox = propertiesJSON.parse.properties.findIndex((prop: { name: string, "*": any }) => prop.name === "infoboxes") !== -1;
+  if (!hasInfobox) {
+    console.warn(`No infobox found for ${uriEncodedName}`);
+    const name = categoryJSON.parse.title;
+    return {
+      name,
+      imageURL: null,
+      categories,
+    };
+  }
+
+  const infoboxData: { type: string, data: any }[] = JSON.parse(
+    propertiesJSON.parse.properties.find((prop: { name: string, "*": any }) => prop.name === "infoboxes")["*"],
+  ).at(0).data; // Go past the parser_tag_version wrapper
+
+  // Prefer getting the name from the infobox title, as it's more likely to be correct than the page title
+  const name = infoboxData.find(box => box.type === "title")?.data?.value || categoryJSON.parse.title || null;
   if (!name) {
     console.warn(`No name found for ${uriEncodedName}`);
     return null;
   }
 
-  const imageURL: string | null = infoBoxData.find(box => box.type === "image")?.data?.at(0).url || null;
-
-  const categoryJson = await categoryData.json();
-  const categories: string[] = categoryJson.parse.categories.map((cat: { "*": string }) => cat["*"].replaceAll("_", " "));
+  const imageURL: string | null = infoboxData.find(box => box.type === "image")?.data?.at(0)?.url || null;
 
   return {
     name,
@@ -72,6 +113,8 @@ const categoryLookup: Record<string, string> = {}; // Hash: category name
 const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
 
 for (const route of characterLinks) {
+  console.log(`Working on "${route}"`);
+
   const res = await fetchMetadata(route);
   if (!res) continue;
 
@@ -86,7 +129,6 @@ for (const route of characterLinks) {
     }
   }
 
-
   const character: Character = {
     n: name,
     r: route,
@@ -95,8 +137,6 @@ for (const route of characterLinks) {
   };
 
   characters.push(character);
-
-  break;
 }
 
 console.log("Characters fetched:", characters.length);
