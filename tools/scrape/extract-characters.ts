@@ -113,20 +113,9 @@ async function fetchMetadata(uriEncodedName: string) {
   };
 }
 
-const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
-const characters: Character[] = [];
-const categoryLookup: Record<string, string> = {}; // Hash: category name
-const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
-
-let i = -1;
-for (const route of characterLinks) {
-  i++;
-  const percentProgress = ((i + 1) / characterLinks.length * 100).toFixed(2);
-
-  stdout.write(`\n-${percentProgress.padStart(6, " ")}% "${route}"`);
-
+async function saveCharacter(route: string) {
   const res = await fetchMetadata(route);
-  if (!res) continue;
+  if (!res) return null;
 
   const { name, categories, imageURL } = res;
 
@@ -152,6 +141,33 @@ for (const route of characterLinks) {
   fs.writeFileSync("tools/out/characters.json", JSON.stringify(characters));
   fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
   fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
+}
+
+const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
+const characters: Character[] = [];
+const categoryLookup: Record<string, string> = {}; // Hash: category name
+const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
+
+let i = -1;
+let fetchCount = 0;
+while (characterLinks.length > 0) {
+  if (fetchCount >= 10) {
+    await new Promise((resolve) => setTimeout(resolve, 50)); // Wait a little before retrying
+    continue;
+  }
+
+  const route = characterLinks.shift();
+  if (!route) break;
+
+  i++;
+  const percentProgress = (i / characterLinks.length * 100).toFixed(2);
+
+  stdout.write(`\n${percentProgress.padStart(6, " ")}% - "${route}"\t\t`);
+
+  fetchCount++;
+  saveCharacter(route).then(()=>{
+    fetchCount--;
+  });
 }
 
 console.log("Characters fetched:", characters.length);
