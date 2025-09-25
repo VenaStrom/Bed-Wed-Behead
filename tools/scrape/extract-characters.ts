@@ -37,21 +37,22 @@ async function fetchMetadata(uriEncodedName: string) {
   const categoryCachePath = `${categoryFetchCache}/${fsSafeName}.json`;
   const propertiesCachePath = `${propertiesFetchCache}/${fsSafeName}.json`;
 
-  // Fetch or read cache
-  const categoryRes = fs.existsSync(categoryCachePath)
-    ? { ok: true, json: async () => JSON.parse(fs.readFileSync(categoryCachePath, "utf-8")), statusText: "From Cache" }
-    : await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&prop=categories&format=json`);
-  const propertiesRes = fs.existsSync(propertiesCachePath)
-    ? { ok: true, json: async () => JSON.parse(fs.readFileSync(propertiesCachePath, "utf-8")), statusText: "From Cache" }
-    : await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&format=json&prop=properties`);
-
-  // Logging
-  if (fs.existsSync(categoryCachePath) && fs.existsSync(propertiesCachePath)) {
-    stdout.write(" (cache)");
+  if (!fs.existsSync(categoryCachePath) || !fs.existsSync(propertiesCachePath)) {
+    stdout.write(" 🌐");
   }
   else {
-    stdout.write(" (fetch)");
+    stdout.write(" 📖");
   }
+
+  const fetchers: (() => Promise<{ ok: boolean, json: () => Promise<any>, statusText: string }>)[] = [];
+  if (!fs.existsSync(categoryCachePath)) fetchers.push(async () => await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&prop=categories&format=json`));
+  else fetchers.push(async () => { return { ok: true, json: async () => JSON.parse(fs.readFileSync(categoryCachePath, "utf-8")), statusText: "From Cache" }; });
+  if (!fs.existsSync(propertiesCachePath)) fetchers.push(async () => await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&format=json&prop=properties`));
+  else fetchers.push(async () => { return { ok: true, json: async () => JSON.parse(fs.readFileSync(propertiesCachePath, "utf-8")), statusText: "From Cache" }; });
+
+  stdout.write(" .");
+  const [categoryRes, propertiesRes] = await Promise.all(fetchers.map(f => f()));
+  stdout.write(".");
 
   if (!categoryRes.ok) {
     console.warn(`Failed to fetch categories for ${uriEncodedName}: ${categoryRes.statusText}`);
@@ -64,21 +65,20 @@ async function fetchMetadata(uriEncodedName: string) {
 
   const categoryJSON = await categoryRes.json();
   const propertiesJSON = await propertiesRes.json();
+  stdout.write(".");
 
   // Save fetched data to cache
-  if (!fs.existsSync(categoryCachePath)) {
+  if (!fs.existsSync(categoryCachePath) || !fs.existsSync(propertiesCachePath)) {
     fs.writeFileSync(categoryCachePath, JSON.stringify(categoryJSON));
-    stdout.write(" (cached)");
-  }
-  if (!fs.existsSync(propertiesCachePath)) {
     fs.writeFileSync(propertiesCachePath, JSON.stringify(propertiesJSON));
-    stdout.write(" (cached)");
+    stdout.write(" 📝 ");
   }
+  stdout.write(".");
 
   const categories: string[] = categoryJSON.parse.categories.map((cat: { "*": string }) => cat["*"].replaceAll("_", " "));
   const hasInfobox = propertiesJSON.parse.properties.findIndex((prop: { name: string, "*": any }) => prop.name === "infoboxes") !== -1;
   if (!hasInfobox) {
-    console.warn(`No infobox found for ${uriEncodedName}`);
+    stdout.write(" ⚠️");
     const name = categoryJSON.parse.title;
     return {
       name,
@@ -87,9 +87,13 @@ async function fetchMetadata(uriEncodedName: string) {
     };
   }
 
+  stdout.write(".");
+
   const infoboxData: { type: string, data: any }[] = JSON.parse(
     propertiesJSON.parse.properties.find((prop: { name: string, "*": any }) => prop.name === "infoboxes")["*"],
   ).at(0).data; // Go past the parser_tag_version wrapper
+
+  stdout.write(".");
 
   // Prefer getting the name from the infobox title, as it's more likely to be correct than the page title
   const name = infoboxData.find(box => box.type === "title")?.data?.value || categoryJSON.parse.title || null;
@@ -99,6 +103,8 @@ async function fetchMetadata(uriEncodedName: string) {
   }
 
   const imageURL: string | null = infoboxData.find(box => box.type === "image")?.data?.at(0)?.url || null;
+
+  stdout.write(" ✔️");
 
   return {
     name,
@@ -112,8 +118,12 @@ const characters: Character[] = [];
 const categoryLookup: Record<string, string> = {}; // Hash: category name
 const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
 
+let i = -1;
 for (const route of characterLinks) {
-  console.log(`Working on "${route}"`);
+  i++;
+  const percentProgress = ((i + 1) / characterLinks.length * 100).toFixed(2);
+
+  stdout.write(`\n-${percentProgress.padStart(6, " ")}% "${route}"`);
 
   const res = await fetchMetadata(route);
   if (!res) continue;
@@ -137,6 +147,11 @@ for (const route of characterLinks) {
   };
 
   characters.push(character);
+
+  // Partial write
+  fs.writeFileSync("tools/out/characters.json", JSON.stringify(characters));
+  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
+  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
 }
 
 console.log("Characters fetched:", characters.length);
@@ -144,3 +159,10 @@ console.log("Characters fetched:", characters.length);
 fs.writeFileSync("tools/out/characters.json", JSON.stringify(characters, null, 2));
 fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup, null, 2));
 fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse, null, 2));
+
+process.on("beforeExit", (code) => {
+  console.log(`\nProcess beforeExit, writing to files. Code: ${code}`);
+  fs.writeFileSync("tools/out/characters.json", JSON.stringify(characters));
+  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
+  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
+});
