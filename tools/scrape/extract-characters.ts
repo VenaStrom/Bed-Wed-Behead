@@ -37,12 +37,12 @@ async function fetchMetadata(uriEncodedName: string) {
   const categoryCachePath = `${categoryFetchCache}/${fsSafeName}.json`;
   const propertiesCachePath = `${propertiesFetchCache}/${fsSafeName}.json`;
 
-  if (!fs.existsSync(categoryCachePath) || !fs.existsSync(propertiesCachePath)) {
-    stdout.write(" 🌐");
-  }
-  else {
-    stdout.write(" 📖");
-  }
+  // if (!fs.existsSync(categoryCachePath) || !fs.existsSync(propertiesCachePath)) {
+  //   stdout.write(" 🌐");
+  // }
+  // else {
+  //   stdout.write(" 📖");
+  // }
 
   const fetchers: (() => Promise<{ ok: boolean, json: () => Promise<any>, statusText: string }>)[] = [];
   if (!fs.existsSync(categoryCachePath)) fetchers.push(async () => await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&prop=categories&format=json`));
@@ -50,9 +50,9 @@ async function fetchMetadata(uriEncodedName: string) {
   if (!fs.existsSync(propertiesCachePath)) fetchers.push(async () => await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&format=json&prop=properties`));
   else fetchers.push(async () => { return { ok: true, json: async () => JSON.parse(fs.readFileSync(propertiesCachePath, "utf-8")), statusText: "From Cache" }; });
 
-  stdout.write(" .");
+  // stdout.write(" .");
   const [categoryRes, propertiesRes] = await Promise.all(fetchers.map(f => f()));
-  stdout.write(".");
+  // stdout.write(".");
 
   if (!categoryRes.ok) {
     console.warn(`Failed to fetch categories for ${uriEncodedName}: ${categoryRes.statusText}`);
@@ -65,15 +65,15 @@ async function fetchMetadata(uriEncodedName: string) {
 
   const categoryJSON = await categoryRes.json();
   const propertiesJSON = await propertiesRes.json();
-  stdout.write(".");
+  // stdout.write(".");
 
   // Save fetched data to cache
   if (!fs.existsSync(categoryCachePath) || !fs.existsSync(propertiesCachePath)) {
     fs.writeFileSync(categoryCachePath, JSON.stringify(categoryJSON));
     fs.writeFileSync(propertiesCachePath, JSON.stringify(propertiesJSON));
-    stdout.write(" 📝 ");
+    // stdout.write(" 📝 ");
   }
-  stdout.write(".");
+  // stdout.write(".");
 
   const categories: string[] = categoryJSON.parse.categories.map((cat: { "*": string }) => cat["*"].replaceAll("_", " "));
   const hasInfobox = propertiesJSON.parse.properties.findIndex((prop: { name: string, "*": any }) => prop.name === "infoboxes") !== -1;
@@ -87,13 +87,13 @@ async function fetchMetadata(uriEncodedName: string) {
     };
   }
 
-  stdout.write(".");
+  // stdout.write(".");
 
   const infoboxData: { type: string, data: any }[] = JSON.parse(
     propertiesJSON.parse.properties.find((prop: { name: string, "*": any }) => prop.name === "infoboxes")["*"],
   ).at(0).data; // Go past the parser_tag_version wrapper
 
-  stdout.write(".");
+  // stdout.write(".");
 
   // Prefer getting the name from the infobox title, as it's more likely to be correct than the page title
   const name = infoboxData.find(box => box.type === "title")?.data?.value || categoryJSON.parse.title || null;
@@ -104,7 +104,7 @@ async function fetchMetadata(uriEncodedName: string) {
 
   const imageURL: string | null = infoboxData.find(box => box.type === "image")?.data?.at(0)?.url || null;
 
-  stdout.write(" ✔️");
+  // stdout.write(" ✔️");
 
   return {
     name,
@@ -112,6 +112,11 @@ async function fetchMetadata(uriEncodedName: string) {
     categories,
   };
 }
+
+const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
+const characters: Character[] = [];
+const categoryLookup: Record<string, string> = {}; // Hash: category name
+const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
 
 async function saveCharacter(route: string) {
   const res = await fetchMetadata(route);
@@ -136,38 +141,44 @@ async function saveCharacter(route: string) {
   };
 
   characters.push(character);
-
-  // Partial write
-  fs.writeFileSync("tools/out/characters.json", JSON.stringify(characters));
-  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
-  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
 }
 
-const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
-const characters: Character[] = [];
-const categoryLookup: Record<string, string> = {}; // Hash: category name
-const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
+const batchSize = 100;
+const routeBatch: (() => Promise<void>)[] = new Array(Math.floor(characterLinks.length / batchSize))
+  .fill(0)
+  .map(() =>
+    async () => {
+      const batch = characterLinks.splice(0, batchSize);
+      await Promise.all(batch.map(route => saveCharacter(route)));
+    }
+  );
+const totalBatches = routeBatch.length;
 
 let i = -1;
-let fetchCount = 0;
-while (characterLinks.length > 0) {
-  if (fetchCount >= 10) {
+let activeFetches = 0;
+while (routeBatch.length > 0) {
+  if (activeFetches >= 10) {
     await new Promise((resolve) => setTimeout(resolve, 50)); // Wait a little before retrying
     continue;
   }
+  activeFetches++;
 
-  const route = characterLinks.shift();
-  if (!route) break;
+  const batchPromise = routeBatch.shift();
+  if (!batchPromise) break;
 
   i++;
-  const percentProgress = (i / characterLinks.length * 100).toFixed(2);
+  const percentProgress = ((i / totalBatches) * 100).toFixed(2);
 
-  stdout.write(`\n${percentProgress.padStart(6, " ")}% - "${route}"\t\t`);
+  stdout.write(`\n${percentProgress.padStart(6, " ")}% - "Batch ${i}"\t\t`);
 
-  fetchCount++;
-  saveCharacter(route).then(()=>{
-    fetchCount--;
-  });
+  await batchPromise();
+
+  activeFetches--;
+
+  // Partial write after each batch
+  fs.writeFileSync("tools/out/characters.json", JSON.stringify(characters));
+  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
+  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
 }
 
 console.log("Characters fetched:", characters.length);
@@ -177,7 +188,13 @@ fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup
 fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse, null, 2));
 
 process.on("beforeExit", (code) => {
-  console.log(`\nProcess beforeExit, writing to files. Code: ${code}`);
+  console.log("\nProcess exit, writing to files. Code:", code);
+  fs.writeFileSync("tools/out/characters.json", JSON.stringify(characters));
+  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
+  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
+});
+process.on("exit", (code) => {
+  console.log("\nProcess exit, writing to files. Code:", code);
   fs.writeFileSync("tools/out/characters.json", JSON.stringify(characters));
   fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
   fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
