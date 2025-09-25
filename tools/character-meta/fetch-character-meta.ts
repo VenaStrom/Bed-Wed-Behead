@@ -134,6 +134,13 @@ const routeBatch: (() => Promise<void>)[] = new Array(Math.floor(characterLinks.
       await Promise.all(batch.map(route => saveCharacter(route)));
     }
   );
+// Push remaining links as the last batch
+if (characterLinks.length > 0) {
+  routeBatch.push(async () => {
+    await Promise.all(characterLinks.map(route => saveCharacter(route)));
+    characterLinks.splice(0, characterLinks.length); // Clear remaining links
+  });
+}
 const totalBatches = routeBatch.length;
 
 let i = -1;
