@@ -1,7 +1,7 @@
 import fs from "node:fs";
 
 const prunedCharacterLinksFile = "tools/out/character-links.pruned.json";
-const minimizeCharacterLinksFile = "tools/out/character-links.minimized.json";
+const minimizeCharacterLinksFile = "tools/out/character-links.min.json";
 
 const joiningCharacter = "?";
 

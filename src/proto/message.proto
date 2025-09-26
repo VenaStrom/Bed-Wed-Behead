@@ -1,0 +1,8 @@
+syntax="proto3";
+
+message Character {
+  string name = 1; // pretty name
+  string route = 2; // wiki route
+  optional string image = 3; // Image route, omit if not present for size optimization
+  optional repeated string categories = 4
+}
