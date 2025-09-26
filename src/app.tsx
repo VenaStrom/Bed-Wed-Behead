@@ -5,9 +5,11 @@ import type { Character, ProfileState } from "./types.ts";
 import { protoDecode } from "./proto/proto.ts";
 import { base64ToUint8Array } from "./functions/baseConverter.ts";
 
-import characterLinksMin from "../public/db/characters-links.min.json" with { type: "json" };
+// import characterLinksMin from "../public/db/characters-links.min.json" with { type: "json" };
+const characterLinksMin = await import("./db/characters-links.min.json", { assert: { type: "json" } }).then(mod => mod.default);
 const characterLinks: string[] = characterLinksMin.singleLineData.split(characterLinksMin.joiningCharacter);
-import characterDataBase64 from "../public/db/characters.min.json" with { type: "json" };
+// import characterDataBase64 from "../public/db/characters.min.json" with { type: "json" };
+const characterDataBase64 = await import("./db/characters.min.json", { assert: { type: "json" } }).then(mod => mod.default);
 const characterData = await protoDecode(base64ToUint8Array(characterDataBase64 as string));
 const characterMap: Record<string, Character> = {};
 for (const char of characterData) {
