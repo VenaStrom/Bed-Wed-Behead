@@ -116,10 +116,10 @@ async function saveCharacter(route: string) {
   }
 
   const character: Character = {
-    n: name,
-    r: route,
-    ...(categoryHashes.length > 0 ? { c: categoryHashes } : {}),
-    ...(imageURL ? { i: imageURL.replace(imageBaseURL, "") } : {}),
+    name: name,
+    route: route,
+    ...(categoryHashes.length > 0 ? { categories: categoryHashes } : {}),
+    ...(imageURL ? { image: imageURL.replace(imageBaseURL, "") } : {}),
   };
 
   characters.push(character);

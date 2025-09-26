@@ -1,25 +1,11 @@
 import fs from "node:fs";
-import type { Character, CharacterMinimized } from "../../src/types.ts";
+import type { Character } from "../../src/types.ts";
+import { protoEncode } from "../../src/proto/proto.ts";
+import { } from "../../src/proto/generated.js";
 
-const charactersRaw: Character[] = JSON.parse(fs.readFileSync("tools/out/characters.raw.json", "utf-8"));
+const characters: Character[] = JSON.parse(fs.readFileSync("tools/out/characters.raw.json", "utf-8"));
 const outPath = "tools/out/characters.min.json";
 
-// Minimizing will entail making it into a lookup table with optimized stringified props
-const charactersMinimized: Record<string, CharacterMinimized> = {};
-const categoryJoiner = "|";
-
-for (const char of charactersRaw) {
-  charactersMinimized[char.r] = {
-    n: char.n,
-    r: char.r,
-    ...(char.i && { i: char.i }),
-    ...(char.c && { c: char.c.join(categoryJoiner) }),
-  };
-}
-
-const outWithMeta = {
-  joiner: categoryJoiner,
-  characters: charactersMinimized,
-}
-
-fs.writeFileSync(outPath, JSON.stringify(outWithMeta), "utf-8");
+const encodedCharacters = await protoEncode(characters);
+console.log(encodedCharacters.length);
+fs.writeFileSync(outPath, JSON.stringify({ meta: "Characters encoded with protobuf", bin: encodedCharacters.toString() }, null, 2), "utf-8");
