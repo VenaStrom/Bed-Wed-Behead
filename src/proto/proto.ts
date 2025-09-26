@@ -1,7 +1,9 @@
 import protobuf from "protobufjs";
 import type { Character } from "../types.ts";
 
-const protoPath = "src/proto/message.proto";
+const protoPath = typeof window !== "undefined"
+  ? "/message.proto"
+  : "public/message.proto";
 
 export async function protoEncode(characters: { characters: Character[] }): Promise<Uint8Array> {
   const root = await protobuf.load(protoPath);
