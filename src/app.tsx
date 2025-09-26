@@ -276,7 +276,7 @@ export default function App() {
     `}>
       <p className="flex flex-col gap-y-0.5">
         <span>
-          Licensed under <a target="_blank" href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>
+          Licensed under <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA</a>
         </span>
         <span>
           Data sourced from <a href="https://starwars.fandom.com/" target="_blank">Wookieepedia</a>
