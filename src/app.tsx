@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon } from "./components/icons.tsx";
+import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { ProfileState } from "./types.ts";
+import characterLinksMin from "../public/db/characters-links.min.json" with { type: "json" };
+const characterLinks: string[] = characterLinksMin.singleLineData.split(characterLinksMin.joiningCharacter);
+
+const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
+const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
 
 export default function App() {
   const [profiles, setProfiles] = useState<[ProfileState, ProfileState, ProfileState]>([
@@ -24,6 +29,16 @@ export default function App() {
   const [isFilterPanelExpanded, setFilterPanelOpen] = useState(false);
   const [rolls, setRolls] = useState(0);
   const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(localStorage.getItem("hasGottenHint")) : false);
+
+  function refresh() {
+    setRolls(rolls + 1);
+  }
+
+  function commit() {
+    // Stuff
+
+    refresh();
+  }
 
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
@@ -106,7 +121,7 @@ export default function App() {
           absolute top-0 right-0 
           z-20
           py-5 px-6
-          w-11/12 md:w-1/3
+          w-11/12 md:w-2/5
           h-screen
           transition-all
           ${isFilterPanelExpanded ? `translate-x-0` : `translate-x-full`}
@@ -125,14 +140,14 @@ export default function App() {
             onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
             className={`
             z-10
-            px-3
-            hover:[&_.icon]:rotate-[120deg] 
-            hover:bg-star hover:text-eclipse-500
-            ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg] hover:bg-star/80` : ``}
+            ps-5
+            pe-2
+            bg-star hover:bg-eclipse-500
+            text-eclipse-500 hover:text-jump-500
           `}
           >
-            <GearIcon className="icon size-8 transition-all" />
             Close
+            <CloseIcon className="size-8 transition-all" />
           </button>
         </header>
 
@@ -240,14 +255,4 @@ export default function App() {
       </p>
     </footer>
   </>);
-
-  function refresh() {
-    setRolls(rolls + 1);
-  }
-
-  function commit() {
-    // Stuff
-
-    refresh();
-  }
 }

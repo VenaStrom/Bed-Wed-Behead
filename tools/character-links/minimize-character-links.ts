@@ -31,4 +31,4 @@ console.log(`Original size: ${JSON.stringify(characterLinks, null, 2).length} ch
 console.log(`Minimized size: ${singleLineLinks.length} characters`);
 console.log(`~ ${singleLineLinks.length / 1024} KB`);
 
-fs.writeFileSync(minimizeCharacterLinksFile, JSON.stringify({ singleLineData: singleLineLinks, joiningCharacter }));
+fs.writeFileSync(minimizeCharacterLinksFile, JSON.stringify({ joiningCharacter, singleLineData: singleLineLinks }));
