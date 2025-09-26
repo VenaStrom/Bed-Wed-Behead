@@ -1,6 +1,12 @@
 import { defineConfig, UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import fs from "node:fs";
+
+// Copy static files to public directory
+fs.cpSync("tools/out/category-lookup.json", "public/db/category-lookup.json", { force: true, recursive: true });
+fs.cpSync("tools/out/characters.min.json", "public/db/characters.min.json", { force: true, recursive: true });
+fs.cpSync("tools/out/character-links.min.json", "public/db/characters-links.min.json", { force: true, recursive: true });
 
 // https://vite.dev/config/
 export default defineConfig({
