@@ -1,20 +1,9 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import type { Character, ProfileState } from "./types.ts";
 import { protoDecode } from "./proto/proto.ts";
 import { base64ToUint8Array } from "./functions/baseConverter.ts";
-
-// import characterLinksMin from "../public/db/characters-links.min.json" with { type: "json" };
-const characterLinksMin = await import("./db/characters-links.min.json", { assert: { type: "json" } }).then(mod => mod.default);
-const characterLinks: string[] = characterLinksMin.singleLineData.split(characterLinksMin.joiningCharacter);
-// import characterDataBase64 from "../public/db/characters.min.json" with { type: "json" };
-const characterDataBase64 = await import("./db/characters.min.json", { assert: { type: "json" } }).then(mod => mod.default);
-const characterData = await protoDecode(base64ToUint8Array(characterDataBase64 as string));
-const characterMap: Record<string, Character> = {};
-for (const char of characterData) {
-  characterMap[char.route] = char;
-}
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
@@ -37,9 +26,38 @@ export default function App() {
       imageLink: null,
     }
   ]);
+  // UI state and control state
   const [isFilterPanelExpanded, setFilterPanelOpen] = useState(false);
   const [rolls, setRolls] = useState(0);
   const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(localStorage.getItem("hasGottenHint")) : false);
+  const [hasFetchedCharData, setHasFetchedCharData] = useState(false);
+
+  // Character names
+  const [minCharNamesFetchTime, setMinCharNamesFetchTime] = useState<number>(Date.now());
+  const [minimizedCharacterNames, setMinimizedCharacterNames] = useState<string[] | null>(null);
+  const characterNames: string[] | null = useMemo(() => minimizedCharacterNames || null, [minimizedCharacterNames]);
+  // Character details
+  const [minCharFetchTime, setMinCharFetchTime] = useState<number>(Date.now());
+  const [minimizedCharacters, setMinimizedCharacters] = useState<Character[] | null>(null);
+  const characters: Character[] | null = useMemo(() => minimizedCharacters || null, [minimizedCharacters]);
+
+  // Fetch character data
+  useEffect(() => {
+    if (hasFetchedCharData) return;
+    setHasFetchedCharData(true);
+
+    fetch("/db/characters-links.min.json")
+      .then(res => res.json())
+      .then(min => min.singleLineData.split(min.joiningCharacter))
+      .then(expanded => setMinimizedCharacterNames(expanded))
+      .then(() => setMinCharNamesFetchTime(Date.now() - minCharNamesFetchTime));
+
+    fetch("/db/characters.min.json")
+      .then(res => res.json())
+      .then(base64 => protoDecode(base64ToUint8Array(base64 as string)))
+      .then(chars => setMinimizedCharacters(chars))
+      .then(() => setMinCharFetchTime(Date.now() - minCharFetchTime));
+  }, [hasFetchedCharData, minCharFetchTime, minCharNamesFetchTime]);
 
   function refresh() {
     setRolls(rolls + 1);
@@ -251,7 +269,7 @@ export default function App() {
     </main>
 
     <footer className={`
-      flex flex-row justify-start items-center gap-x-4
+      flex flex-row justify-between items-end gap-x-4
       text-xs italic
       w-full absolute bottom-1
       px-2
@@ -262,6 +280,18 @@ export default function App() {
         </span>
         <span>
           Data sourced from <a href="https://starwars.fandom.com/" target="_blank">Wookieepedia</a>
+        </span>
+      </p>
+
+      <p className="w-[24ch] flex flex-col gap-y-0.5">
+        <span>
+          {!characterNames && "Loading character names..."}
+        </span>
+        <span>
+          {!characters && "Loading character data..."}
+        </span>
+        <span className="">
+          Characters loaded: {characterNames ? characterNames.length : "Loading..."}
         </span>
       </p>
     </footer>

@@ -165,26 +165,26 @@ while (routeBatch.length > 0) {
   activeFetches--;
 
   // Partial write after each batch
-  fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters, null, 2));
-  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup, null, 2));
-  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse, null, 2));
+  fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters));
+  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
+  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
 }
 
 console.log("Characters fetched:", characters.length);
 
-fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters, null, 2));
-fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup, null, 2));
-fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse, null, 2));
+fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters));
+fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
+fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
 
 process.on("beforeExit", (code) => {
   console.log("\nProcess exit, writing to files. Code:", code);
-  fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters, null, 2));
-  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup, null, 2));
-  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse, null, 2));
+  fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters));
+  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
+  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
 });
 process.on("exit", (code) => {
   console.log("\nProcess exit, writing to files. Code:", code);
-  fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters, null, 2));
-  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup, null, 2));
-  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse, null, 2));
+  fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters));
+  fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
+  fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
 });
