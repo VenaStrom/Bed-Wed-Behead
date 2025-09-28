@@ -50,13 +50,23 @@ export default function App() {
       .then(res => res.json())
       .then(min => min.singleLineData.split(min.joiningCharacter))
       .then(expanded => setMinimizedCharacterNames(expanded))
-      .then(() => setMinCharNamesFetchTime(Date.now() - minCharNamesFetchTime));
+      .then(() => console.log(`Fetched characters-links.min.json in ${Date.now() - minCharNamesFetchTime} ms`))
+      .then(() => setMinCharNamesFetchTime(Date.now() - minCharNamesFetchTime))
+      .catch((e) => {
+        console.error(e);
+        alert("A critical error occurred while fetching character names")
+      });
 
     fetch("/db/characters.min.json")
       .then(res => res.json())
       .then(base64 => protoDecode(base64ToUint8Array(base64 as string)))
       .then(chars => setMinimizedCharacters(chars))
-      .then(() => setMinCharFetchTime(Date.now() - minCharFetchTime));
+      .then(() => console.log(`Fetched characters.min.json in ${Date.now() - minCharFetchTime} ms`))
+      .then(() => setMinCharFetchTime(Date.now() - minCharFetchTime))
+      .catch((e) => {
+        console.error(e);
+        alert("A critical error occurred while fetching character data")
+      });
   }, [hasFetchedCharData, minCharFetchTime, minCharNamesFetchTime]);
 
   function refresh() {
