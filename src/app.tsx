@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
-import type { Character, ProfileState } from "./types.ts";
+import { BWBChoice, type Character, type ProfileState } from "./types.ts";
 import { protoDecode } from "./proto/proto.ts";
 import { base64ToUint8Array } from "./functions/baseConverter.ts";
 
@@ -14,16 +14,19 @@ export default function App() {
       name: null,
       wikiLink: null,
       imageLink: null,
+      selectedOption: null,
     },
     {
       name: null,
       wikiLink: null,
       imageLink: null,
+      selectedOption: null,
     },
     {
       name: null,
       wikiLink: null,
       imageLink: null,
+      selectedOption: null,
     }
   ]);
   // UI state and control state
@@ -163,7 +166,7 @@ export default function App() {
           w-11/12 md:w-2/5
           h-screen
           transition-all
-          ${isFilterPanelExpanded ? `translate-x-0` : `translate-x-full`}
+          ${isFilterPanelExpanded ? `translate-x-0` : `translate-x-full *:hidden`}
           flex flex-col gap-y-6
         `}
       >
@@ -250,13 +253,31 @@ export default function App() {
                 className="flex flex-col gap-y-3"
               >
                 <li>
-                  <OptionButton icon={<BedIcon className="size-10 scale-105" />} label="Bed" />
+                  <OptionButton
+                    profiles={profiles}
+                    profilesSetter={setProfiles}
+                    profileIndex={i}
+                    label={BWBChoice.BED}
+                    icon={<BedIcon className="size-10 scale-105" />}
+                  />
                 </li>
                 <li>
-                  <OptionButton icon={<WeddingIcon className="size-10 scale-[85%]" />} label="Wed" />
+                  <OptionButton
+                    profiles={profiles}
+                    profilesSetter={setProfiles}
+                    profileIndex={i}
+                    label={BWBChoice.WED}
+                    icon={<WeddingIcon className="size-10 scale-[85%]" />}
+                  />
                 </li>
                 <li>
-                  <OptionButton icon={<SwordIcon className="size-10 scale-[70%]" />} label="Behead" />
+                  <OptionButton
+                    profiles={profiles}
+                    profilesSetter={setProfiles}
+                    profileIndex={i}
+                    label={BWBChoice.BEHEAD}
+                    icon={<SwordIcon className="size-10 scale-[70%]" />}
+                  />
                 </li>
               </ul>
             </div>

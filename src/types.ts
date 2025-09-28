@@ -3,7 +3,16 @@ export type ProfileState = {
   name: string | null;
   wikiLink: string | null;
   imageLink: string | null;
+  selectedOption: BWBChoice[keyof BWBChoice] | null;
 };
+
+/** Acts as an enum for logic but also as labels for the options */
+export const BWBChoice = {
+  BED: "Bed",
+  WED: "Wed",
+  BEHEAD: "Behead",
+} as const;
+export type BWBChoice = typeof BWBChoice[keyof typeof BWBChoice];
 
 export type Character = {
   name: string;
