@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon } from "./components/icons.tsx";
+import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import type { Character, ProfileState } from "./types.ts";
 import { protoDecode } from "./proto/proto.ts";
@@ -283,15 +283,21 @@ export default function App() {
         </span>
       </p>
 
-      <p className="w-[24ch] flex flex-col gap-y-0.5">
-        <span>
+      <p className="w-[26ch] flex flex-col gap-y-0.5">
+        <span className="italic text-star/70">
           {!characterNames && "Loading character names..."}
         </span>
-        <span>
+        <span className="italic text-star/70">
           {!characters && "Loading character data..."}
         </span>
-        <span className="">
-          Characters loaded: {characterNames ? characterNames.length : "Loading..."}
+        <span>
+          Characters loaded:
+          {" "}
+          {/* Loading... while names are fetched */}
+          {characterNames ? characterNames.length : "loading..."}
+          {" "}
+          {/* Spinner while data is being fetched */}
+          {!characters && <SpinnerIcon className="size-3 inline ms-1" />}
         </span>
       </p>
     </footer>
