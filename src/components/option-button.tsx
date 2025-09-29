@@ -49,26 +49,15 @@ export default function OptionButton({
             selectedOption: label,
           };
 
-          const selectionCount = newProfiles.filter(p => p.selectedOption !== null).length;
+          const otherProfileIndexes = [0, 1, 2].filter((i) => i !== profileIndex);
 
-          if (selectionCount === 3) {
-            const conflictingIndex = newProfiles.findIndex((p, i) => i !== profileIndex && p.selectedOption === label);
-            if (conflictingIndex) {
-              newProfiles[conflictingIndex] = {
-                ...newProfiles[conflictingIndex],
-                selectedOption: profiles[profileIndex].selectedOption,
-              }
-            }
-          }
-          else {
-            for (let i = 0; i < newProfiles.length; i++) {
-              if (i !== profileIndex && newProfiles[i].selectedOption === label) {
-                newProfiles[i] = {
-                  ...newProfiles[i],
-                  selectedOption: null,
-                };
-              }
-            }
+          if (otherProfileIndexes.some((i) => newProfiles[i].selectedOption === label)) {
+            // If another profile has the same option, swap it with the current profile's option
+            const otherProfileIndex = otherProfileIndexes.find((i) => newProfiles[i].selectedOption === label)!;
+            newProfiles[otherProfileIndex] = {
+              ...newProfiles[otherProfileIndex],
+              selectedOption: profiles[profileIndex].selectedOption,
+            };
           }
 
           profilesSetter(newProfiles);
