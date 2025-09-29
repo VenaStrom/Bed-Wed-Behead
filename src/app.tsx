@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, InfoIcon } from "./components/icons.tsx";
+import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
 import { protoDecode } from "./proto/proto.ts";
