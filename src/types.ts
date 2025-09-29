@@ -5,6 +5,13 @@ export type ProfileState = {
   imageLink: string | null;
   selectedOption: BWBChoice[keyof BWBChoice] | null;
 };
+export type ProfileStates = [ProfileState, ProfileState, ProfileState];
+export const emptyProfile: ProfileState = {
+  name: null,
+  wikiLink: null,
+  imageLink: null,
+  selectedOption: null,
+} as const;
 
 /** Acts as an enum for logic but also as labels for the options */
 export const BWBChoice = {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
-import { BWBChoice, type Character, type ProfileState } from "./types.ts";
+import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
 import { protoDecode } from "./proto/proto.ts";
 import { base64ToUint8Array } from "./functions/baseConverter.ts";
 
@@ -9,30 +9,12 @@ const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
 
 export default function App() {
-  const [profiles, setProfiles] = useState<[ProfileState, ProfileState, ProfileState]>([
-    {
-      name: null,
-      wikiLink: null,
-      imageLink: null,
-      selectedOption: null,
-    },
-    {
-      name: null,
-      wikiLink: null,
-      imageLink: null,
-      selectedOption: null,
-    },
-    {
-      name: null,
-      wikiLink: null,
-      imageLink: null,
-      selectedOption: null,
-    }
-  ]);
+  const [profiles, setProfiles] = useState<ProfileStates>([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
+
   // UI state and control state
   const [isFilterPanelExpanded, setFilterPanelOpen] = useState(false);
   const [rolls, setRolls] = useState(0);
-  const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(localStorage.getItem("hasGottenHint")) : false);
+  const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(sessionStorage.getItem("hasGottenHint")) : false);
   const [hasFetchedCharData, setHasFetchedCharData] = useState(false);
 
   // Character names
@@ -72,11 +54,26 @@ export default function App() {
       });
   }, [hasFetchedCharData, minCharFetchTime, minCharNamesFetchTime]);
 
+  // TODO: use to allow for single character rerolls.
+  // function clearProfile(index: number) {
+  //   const newProfiles = [...profiles];
+  //   newProfiles[index] = { ...emptyProfile };
+  //   setProfiles(newProfiles as ProfileStates);
+  // }
+
+  function clearProfiles() {
+    setProfiles([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
+  }
+
   function refresh() {
     setRolls(rolls + 1);
+
+    clearProfiles();
   }
 
   function commit() {
+    setRolls(rolls + 1);
+
     // Stuff
 
     refresh();
@@ -125,7 +122,7 @@ export default function App() {
             <button
               onClick={() => {
                 setHasGottenHint(true);
-                localStorage.setItem("hasGottenHint", "true");
+                sessionStorage.setItem("hasGottenHint", "true");
               }}
               className="bg-eclipse-700 hover:bg-jump-500"
             >
@@ -194,7 +191,7 @@ export default function App() {
         </header>
 
         <p className="text-star text-sm font-normal w-full text-center italic">
-          Current character pool is {2332}
+          Current character pool is {characterNames?.length ?? "loading..."}
         </p>
 
         <div>
@@ -224,6 +221,15 @@ export default function App() {
 
           </ul>
         </div>
+
+        <div className="flex-1"></div>
+
+        {/* Stats */}
+        <div className="text-xs text-star/70 italic flex flex-col gap-y-1 w-full">
+          <span className="text-center">
+            You have <span title="Refreshed or committed" className="underline decoration-dotted cursor-help">played</span> {rolls} times this <span title="Resets on page refresh" className="underline decoration-dotted cursor-help">session</span>
+          </span>
+        </div>
       </aside>
 
       {/* Profiles */}
@@ -234,14 +240,14 @@ export default function App() {
             <div className="flex flex-col gap-y-4" key={`profile-column-${i}`}>
               {/* Profile */}
               <a
-                href={profile.wikiLink ?? ""}
+                href={profile.wikiLink ? wikiBaseUrl + profile.wikiLink : undefined}
                 className={`
                   flex flex-col justify-center items-center gap-y-2 hover:[&_.link]:underline
                   ${!profile.wikiLink && "pointer-events-none text-star/60"}
                 `}
                 target="_blank" rel="noopener"
               >
-                <img className="size-48 rounded-sm" src={profile.imageLink || "/alien-headshot.png"} alt="Headshot of character" />
+                <img className="size-48 rounded-sm" src={profile.imageLink ? imageBaseURL + profile.imageLink : "/alien-headshot.png"} alt="Headshot of character" />
                 <div className="w-full flex flex-row gap-x-2 items-center justify-end">
                   <span className="w-full text-lg text-center">{profile.name || "..."}</span>
                   <ExternalLinkIcon className="size-5 absolute" />
@@ -297,7 +303,7 @@ export default function App() {
           Commit
         </button>
       </section>
-    </main>
+    </main >
 
     <footer className={`
       flex flex-row justify-between items-end gap-x-4
