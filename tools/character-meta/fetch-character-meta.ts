@@ -79,6 +79,8 @@ async function fetchMetadata(uriEncodedName: string) {
     propertiesJSON.parse.properties.find((prop: { name: string, "*": any }) => prop.name === "infoboxes")["*"],
   ).at(0).data; // Go past the parser_tag_version wrapper
 
+  fs.writeFileSync(`tools/cache/infoboxes/${fsSafeName}.json`, JSON.stringify(infoboxData, null, 2));
+
   // Prefer getting the name from the infobox title, as it's more likely to be correct than the page title
   const name = infoboxData.find(box => box.type === "title")?.data?.value || categoryJSON.parse.title || null;
   if (!name) {
