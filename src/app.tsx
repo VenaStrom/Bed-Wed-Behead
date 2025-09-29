@@ -4,7 +4,7 @@ import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
 import { protoDecode } from "./proto/proto.ts";
 import { base64ToUint8Array } from "./functions/baseConverter.ts";
-import { defaultFilters, Filter } from "./functions/filters.ts";
+import { defaultFilters, Filter } from "./functions/filters.tsx";
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
@@ -56,9 +56,16 @@ export default function App() {
   }, [hasFetchedCharData, minCharFetchTime, minCharNamesFetchTime]);
 
   // Filter
+  const loadedFiler = typeof window !== "undefined" && window.localStorage.getItem("bwb-filters") ? JSON.parse(window.localStorage.getItem("bwb-filters") as string) : null;
   const [filter, setFilter] = useState<Filter>(
     typeof window !== "undefined" && window.localStorage.getItem("bwb-filters")
-      ? JSON.parse(window.localStorage.getItem("bwb-filters") as string)
+      ? [...defaultFilters].map(defaultCat => ({
+        ...defaultCat,
+        filters: defaultCat.filters.map(defaultFil => ({
+          ...defaultFil,
+          state: Boolean(loadedFiler.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.filters.find((savedFil: { id: string; state: boolean; }) => savedFil.id === defaultFil.id)?.state ?? defaultFil.state),
+        }))
+      }))
       : defaultFilters
   );
 
@@ -248,14 +255,6 @@ export default function App() {
             </ul>
           </div>
         )}
-
-        <div>
-          <p className="text-lg font-bold">Canonicity</p>
-          <ul>
-
-          </ul>
-        </div>
-
         <div>
           <p className="text-lg font-bold">Appearances</p>
           <ul>
