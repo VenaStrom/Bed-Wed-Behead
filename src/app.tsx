@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon } from "./components/icons.tsx";
+import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, InfoIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
 import { protoDecode } from "./proto/proto.ts";
 import { base64ToUint8Array } from "./functions/baseConverter.ts";
+import { defaultFilters, Filter } from "./functions/filters.ts";
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
@@ -53,6 +54,20 @@ export default function App() {
         alert("A critical error occurred while fetching character data")
       });
   }, [hasFetchedCharData, minCharFetchTime, minCharNamesFetchTime]);
+
+  // Filter
+  const [filter, setFilter] = useState<Filter>(
+    typeof window !== "undefined" && window.localStorage.getItem("bwb-filters")
+      ? JSON.parse(window.localStorage.getItem("bwb-filters") as string)
+      : defaultFilters
+  );
+
+  // Save filter to localStorage on change
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("bwb-filters", JSON.stringify(filter));
+    }
+  }, [filter]);
 
   // TODO: use to allow for single character rerolls.
   // function clearProfile(index: number) {
@@ -194,12 +209,45 @@ export default function App() {
           Current character pool is {characterNames?.length ?? "loading..."}
         </p>
 
-        <div>
-          <p className="text-lg font-bold">Miscellaneous</p>
-          <ul>
+        {filter.map((category) =>
+          <div key={`filter-category-${category.id}`} className="flex flex-col">
+            <p className="text-lg font-bold">{category.label}</p>
 
-          </ul>
-        </div>
+            <ul className="flex flex-col gap-y-1">
+              {category.filters.map((f) =>
+                <li key={`filter-${f.id}`} className="flex flex-row justify-start items-center gap-x-3">
+                  <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer">
+                    <input
+                      checked={f.state}
+                      type="checkbox"
+                      onChange={() => {
+                        const newFilter = filter.map((cat) => {
+                          if (cat.id !== category.id) return cat;
+
+                          return {
+                            ...cat,
+                            filters: cat.filters.map((fil) => {
+                              if (fil.id !== f.id) return fil;
+
+                              return { ...fil, state: !fil.state };
+                            }),
+                          };
+                        });
+
+                        setFilter(newFilter);
+                      }}
+                    />
+
+                    <div className="flex flex-col gap-y-0.5">
+                      <span>{f.label}</span>
+                      <span className="text-xs italic text-star/70">{f.help}</span>
+                    </div>
+                  </label>
+                </li>
+              )}
+            </ul>
+          </div>
+        )}
 
         <div>
           <p className="text-lg font-bold">Canonicity</p>
@@ -225,7 +273,7 @@ export default function App() {
         <div className="flex-1"></div>
 
         {/* Stats */}
-        <div className="text-xs text-star/70 italic flex flex-col gap-y-1 w-full">
+        < div className="text-xs text-star/70 italic flex flex-col gap-y-1 w-full" >
           <span className="text-center">
             You have <span title="Refreshed or committed" className="underline decoration-dotted cursor-help">played</span> {rolls} times this <span title="Resets on page refresh" className="underline decoration-dotted cursor-help">session</span>
           </span>

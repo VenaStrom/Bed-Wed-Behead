@@ -55,4 +55,8 @@
   ._button {
     @apply cursor-pointer flex flex-row justify-start items-center gap-x-1 bg-eclipse-500 p-2 rounded-lg transition-all;
   }
+
+  input[type="checkbox"] {
+    @apply cursor-pointer size-5 accent-command-500;
+  }
 }
