@@ -8,4 +8,8 @@
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
+  "include": [
+    "./**/*.ts",
+    "./node_modules/types-mediawiki-api",
+  ]
 }

@@ -2,6 +2,7 @@ import fs from "node:fs";
 import type { Character } from "../../src/types.ts";
 import Crypto from "node:crypto";
 import { stdout } from "node:process";
+import type { MWPageParseResponse } from "../types.ts";
 
 function categoryHash(input: string): string {
   const hash = Crypto.createHash("sha256");
@@ -9,7 +10,7 @@ function categoryHash(input: string): string {
   const digest = data.digest("hex");
   const truncated = digest.slice(0, 8); // First 8 bytes = 64 bits
 
-  return truncated
+  return truncated;
 }
 
 const characterLinksPath = "tools/out/character-links.pruned.json";
@@ -37,7 +38,7 @@ async function fetchMetadata(uriEncodedName: string) {
   const categoryCachePath = `${categoryFetchCache}/${fsSafeName}.json`;
   const propertiesCachePath = `${propertiesFetchCache}/${fsSafeName}.json`;
 
-  const fetchers: (() => Promise<{ ok: boolean, json: () => Promise<any>, statusText: string }>)[] = [];
+  const fetchers: (() => Promise<{ ok: boolean, json: () => Promise<{ parse: MWPageParseResponse }>, statusText: string }>)[] = [];
   if (!fs.existsSync(categoryCachePath)) fetchers.push(async () => await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&prop=categories&format=json`));
   else fetchers.push(async () => { return { ok: true, json: async () => JSON.parse(fs.readFileSync(categoryCachePath, "utf-8")), statusText: "From Cache" }; });
   if (!fs.existsSync(propertiesCachePath)) fetchers.push(async () => await fetch(`https://starwars.fandom.com/api.php?action=parse&page=${uriEncodedName}&format=json&prop=properties`));

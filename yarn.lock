@@ -855,6 +855,13 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.8.tgz#958b91c991b1867ced318bedea0e215ee050726e"
   integrity sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==
 
+"@types/jquery@*", "@types/jquery@^3.5.5":
+  version "3.5.33"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.33.tgz#f42f40bac3edd84abdc9f6297d28e570fe463b35"
+  integrity sha512-SeyVJXlCZpEki5F0ghuYe+L+PprQta6nRZqhONt9F13dWBtR/ftoaIbdRQ7cis7womE+X2LKhsDdDtkkDhJS6g==
+  dependencies:
+    "@types/sizzle" "*"
+
 "@types/jsdom@^21.1.7":
   version "21.1.7"
   resolved "https://registry.yarnpkg.com/@types/jsdom/-/jsdom-21.1.7.tgz#9edcb09e0b07ce876e7833922d3274149c898cfa"
@@ -876,6 +883,19 @@
   dependencies:
     undici-types "~7.12.0"
 
+"@types/oojs-ui@^0.46.0":
+  version "0.46.4"
+  resolved "https://registry.yarnpkg.com/@types/oojs-ui/-/oojs-ui-0.46.4.tgz#b5644bb615d6eb234fb69f73d897823c8db1d1bb"
+  integrity sha512-tpQyPjxr6FhMRNaactbjNXkr4uCsKNQMOVNJiAO5AvzxoPddChNZp4gG37Pm80jAeDP11k9ww4durnEjzqqKsQ==
+  dependencies:
+    "@types/jquery" "*"
+    "@types/oojs" "*"
+
+"@types/oojs@*":
+  version "7.0.7"
+  resolved "https://registry.yarnpkg.com/@types/oojs/-/oojs-7.0.7.tgz#1a191fda2242eb2e1714f6ab6f0f41c3a7c3ff79"
+  integrity sha512-l99Ab1s+EhCWR/38z5VI3aimTT9QZNjpd3JlJnECHXq6uJ/osLchkkhVfY7ANeOMVT978LawYO4JyOYPQO7VLQ==
+
 "@types/react-dom@^19.1.9":
   version "19.1.9"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-19.1.9.tgz#5ab695fce1e804184767932365ae6569c11b4b4b"
@@ -887,6 +907,11 @@
   integrity sha512-hHkbU/eoO3EG5/MZkuFSKmYqPbSVk5byPFa3e7y/8TybHiLMACgI8seVYlicwk7H5K/rI2px9xrQp/C+AUDTiQ==
   dependencies:
     csstype "^3.0.2"
+
+"@types/sizzle@*":
+  version "2.3.10"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.10.tgz#277a542aff6776d8a9b15f2ac682a663e3e94bbd"
+  integrity sha512-TC0dmN0K8YcWEAEfiPi5gJP14eJe30TTGjkvek3iM/1NdHHsdCA/Td6GvNndMOo/iSnIsZ4HuuhrYPDAmbxzww==
 
 "@types/tough-cookie@*":
   version "4.0.5"
@@ -2144,6 +2169,20 @@ type-check@^0.4.0, type-check@~0.4.0:
   integrity sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==
   dependencies:
     prelude-ls "^1.2.1"
+
+types-mediawiki-api@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/types-mediawiki-api/-/types-mediawiki-api-2.0.0.tgz#9f860a44b8f9f9d764f4aec7610ea031b3d3efab"
+  integrity sha512-JeAm+5vD0Fe131UBt8ihJyRtXQlO4Zj180mOE3fcsdBLchqn1+ZfWBvJhBknd+hMalJ2H4DmsTzmbtDRB/sSYQ==
+
+types-mediawiki@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/types-mediawiki/-/types-mediawiki-2.0.0.tgz#493dbc35572a68c423307000bf12a8db9c1fb41f"
+  integrity sha512-zeT4IpaIHiazDJP9d67/vTBOAZbmSOLTDmFMNKaPjao7TEeW0used/SligN1T+17YydHtHSQuDheLPAnE/qDrA==
+  dependencies:
+    "@types/jquery" "^3.5.5"
+    "@types/oojs-ui" "^0.46.0"
+    types-mediawiki-api "^2.0.0"
 
 typescript-eslint@^8.44.0:
   version "8.44.1"
