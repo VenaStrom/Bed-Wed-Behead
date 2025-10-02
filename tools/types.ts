@@ -1,5 +1,5 @@
 
-export type MWParsePageResponse = Partial<{
+export type MWParsePage = Partial<{
   title: string;
   pageid: number;
   revid: number;

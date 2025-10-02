@@ -2,7 +2,7 @@ import fs from "node:fs";
 import type { Character } from "../../src/types.ts";
 import Crypto from "node:crypto";
 import { stdout } from "node:process";
-import type { MWParsePageResponse } from "../types.ts";
+import type { MWParsePage } from "../types.ts";
 
 const apiBaseURL = "https://starwars.fandom.com/api.php?format=json&action=parse&page=";
 
@@ -26,42 +26,50 @@ const allDomsInCache = fs.readdirSync(domCacheFolder);
 
 async function fetchAndSaveCharacterDataToFile(characterName: string) {
   const fsSafeName = characterName.replaceAll("/", "_").replaceAll("\\", "_");
-  const cachePath = `${apiResponseCacheFolder}/${fsSafeName}.json`;
+  const metaCachePath = `${apiResponseCacheFolder}/${fsSafeName}.json`;
+  const domCachePath = `${domCacheFolder}/${fsSafeName}.html`;
 
-  let apiResponse: MWParsePageResponse | null = null;
+  let parseResponse: MWParsePage | null = null;
 
   if (allNamesInCache.includes(`${fsSafeName}.json`) && allDomsInCache.includes(`${fsSafeName}.html`)) {
     // Read from cache
-    const cachedData = fs.readFileSync(cachePath, "utf-8");
-    apiResponse = JSON.parse(cachedData) as MWParsePageResponse;
-    apiResponse.text = { "*": fs.readFileSync(`${domCacheFolder}/${fsSafeName}.html`, "utf-8") };
+    const cachedData = fs.readFileSync(metaCachePath, "utf-8");
+    parseResponse = JSON.parse(cachedData) as MWParsePage;
+    parseResponse.text = { "*": fs.readFileSync(domCachePath, "utf-8") };
   }
   else {
     // Fetch from API
-    const response = (await (await fetch(apiBaseURL + characterName, { headers: { "Accept-Encoding": "gzip" } })).json()).parse;
+    const response = (await (await fetch(apiBaseURL + characterName, {
+      headers: { "Accept-Encoding": "gzip" }
+    })).json()).parse;
+
     if (!response) {
       console.log(`No data found for ${characterName}`);
-      return null;
+      return false;
     }
-    apiResponse = response || null;
+    parseResponse = response || null;
   }
 
-  if (!apiResponse) {
-    console.log(`Somehow no data was retrieved for ${characterName}`);
-    return null;
+  if (!parseResponse) {
+    console.log(`Somehow no data was retrieved for ${characterName} 🤷‍♀️`);
+    return false;
   }
 
   // Save the dom separately
+  if (!allDomsInCache.includes(`${fsSafeName}.html`) && parseResponse.text && parseResponse.text["*"]) {
+    fs.writeFileSync(domCachePath, parseResponse.text["*"]);
+  }
 
-  // Save to cache
-  if (!allNamesInCache.includes(`${fsSafeName}.json`)) fs.writeFileSync(cachePath, JSON.stringify(apiResponse));
+  // Save to parse result to cache
+  if (!allNamesInCache.includes(`${fsSafeName}.json`)) {
+    fs.writeFileSync(metaCachePath, JSON.stringify({ ...parseResponse, text: undefined }));
+  }
+
+  return true;
 }
 
-const fetchPromises = characterLinks.slice(0, 1).map(name => fetchAndSaveCharacterDataToFile(name));
-// await Promise.all(fetchPromises);
-
-
-await fetchPromises[0]
+const fetchPromises = characterLinks.slice(0, 10).map(name => fetchAndSaveCharacterDataToFile(name));
+await Promise.all(fetchPromises);
 
 
 // const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
