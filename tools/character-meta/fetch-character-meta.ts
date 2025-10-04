@@ -69,7 +69,6 @@ const concurrencyLimit = 20;
 let activeFetches = 0;
 
 const taskFactories = characterLinks
-  .slice(0, 1000) // Temporary limit for testing TODO - remove
   .map((name) => () => fetchAndSaveCharacterDataToFile(name));
 
 let eta = "-";
@@ -125,12 +124,25 @@ while (activeFetches > 0) {
 }
 
 console.log("All character metadata fetched and saved.");
-console.log(fs.readdirSync(apiResponseCacheFolder).length, "files in API response cache");
-console.log(fs.readdirSync(domCacheFolder).length, "files in DOM cache");
+
+const metaCount = fs.readdirSync(apiResponseCacheFolder).length;
+const metaSizeMB = (fs.readdirSync(apiResponseCacheFolder).reduce((acc, file) => {
+  const stats = fs.statSync(`${apiResponseCacheFolder}/${file}`);
+  return acc + stats.size;
+}, 0) / (1024 * 1024)).toFixed(2);
+console.log(`\x1b[33m${metaCount}\x1b[0m files in API response cache (\x1b[35m${metaSizeMB} MB\x1b[0m)`);
+
+const domCount = fs.readdirSync(domCacheFolder).length;
+const domSizeMB = (fs.readdirSync(domCacheFolder).reduce((acc, file) => {
+  const stats = fs.statSync(`${domCacheFolder}/${file}`);
+  return acc + stats.size;
+}, 0) / (1024 * 1024)).toFixed(2);
+console.log(`\x1b[33m${domCount}\x1b[0m files in DOM cache (\x1b[35m${domSizeMB} MB\x1b[0m)`);
 
 if (errors.length > 0) {
   console.log(`${errors.length} errors occurred:`);
   console.log(errors.join("\n"));
-} else {
+}
+else {
   console.log("No errors occurred.");
 }
