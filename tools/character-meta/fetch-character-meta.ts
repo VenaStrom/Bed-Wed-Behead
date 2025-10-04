@@ -72,34 +72,65 @@ const taskFactories = characterLinks
   .slice(0, 1000) // Temporary limit for testing TODO - remove
   .map((name) => () => fetchAndSaveCharacterDataToFile(name));
 
-console.log("Active fetches:", activeFetches, "Remaining:", taskFactories.length);
+let eta = "-";
+let lastMeasured = { count: taskFactories.length, time: performance.now() };
+const etaUpdater = setInterval(() => {
+  if (taskFactories.length === 0 && activeFetches === 0) {
+    clearInterval(etaUpdater);
+    process.stdout.write("\n");
+    return;
+  }
+
+  const now = performance.now();
+  const completed = lastMeasured.count - taskFactories.length;
+  if (completed > 0) {
+    const timePerItem = (now - lastMeasured.time) / completed;
+    const remaining = taskFactories.length;
+    const etaMs = remaining * timePerItem;
+    const dateString = new Date(etaMs).toLocaleTimeString("sv-SE", { timeZone: "UTC" });
+
+    eta = dateString;
+    lastMeasured = { count: taskFactories.length, time: now };
+  }
+  process.stdout.write(`\rETA: ${eta} | Active: ${activeFetches} | Remaining: ${taskFactories.length}   `);
+}, 100);
+
+const errors: string[] = [];
+
 while (taskFactories.length) {
   if (activeFetches < concurrencyLimit) {
-    console.log("Active fetches:", activeFetches, "Remaining:", taskFactories.length);
+
     const factory = taskFactories.shift();
+
     if (factory) {
       activeFetches++;
-      const promise = factory(); // start the fetch here
+      const promise = factory();
+
       promise.then(({ name, success }) => {
         activeFetches--;
-        if (success) console.log(`Fetched and saved data for ${name}`);
-        else console.log(`Failed to fetch data for ${name}`);
+        if (success) void null; // Silent on success
+        else errors.push(name);
       }).catch((err) => {
         activeFetches--;
-        console.log(`Error fetching: ${err}`);
+        errors.push(`${err.toString()}`);
       });
     }
-  } else {
-    // small sleep to avoid a tight busy loop
-    await new Promise((resolve) => setTimeout(resolve, 50));
-  }
+  } else await new Promise((resolve) => setTimeout(resolve, 50));
+
 }
 
 // Wait for all fetches to complete
 while (activeFetches > 0) {
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 50));
 }
 
 console.log("All character metadata fetched and saved.");
 console.log(fs.readdirSync(apiResponseCacheFolder).length, "files in API response cache");
 console.log(fs.readdirSync(domCacheFolder).length, "files in DOM cache");
+
+if (errors.length > 0) {
+  console.log(`${errors.length} errors occurred:`);
+  console.log(errors.join("\n"));
+} else {
+  console.log("No errors occurred.");
+}
