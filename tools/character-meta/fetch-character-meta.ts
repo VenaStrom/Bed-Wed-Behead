@@ -65,14 +65,18 @@ async function fetchAndSaveCharacterDataToFile(characterName: string) {
   return { name: characterName, success: true };
 }
 
-const concurrencyLimit = 20;
+const concurrencyLimit = 100;
 let activeFetches = 0;
 
 const taskFactories = characterLinks
   .map((name) => () => fetchAndSaveCharacterDataToFile(name));
 
-let eta = "-";
+let eta = "--:--:--";
+// Use an exponential moving average (EMA) to smooth time-per-item estimates.
+// alpha controls smoothing: closer to 1 follows recent changes closely; closer to 0 smooths more.
+const ETA_ALPHA = 0.15;
 let lastMeasured = { count: taskFactories.length, time: performance.now() };
+let emaTimePerItem: number | null = null; // milliseconds per item
 const etaUpdater = setInterval(() => {
   if (taskFactories.length === 0 && activeFetches === 0) {
     clearInterval(etaUpdater);
@@ -83,14 +87,33 @@ const etaUpdater = setInterval(() => {
   const now = performance.now();
   const completed = lastMeasured.count - taskFactories.length;
   if (completed > 0) {
-    const timePerItem = (now - lastMeasured.time) / completed;
-    const remaining = taskFactories.length;
-    const etaMs = remaining * timePerItem;
-    const dateString = new Date(etaMs).toLocaleTimeString("sv-SE", { timeZone: "UTC" });
+    const instantTimePerItem = (now - lastMeasured.time) / completed;
 
-    eta = dateString;
+    if (emaTimePerItem === null) {
+      // Seed EMA with first measured value
+      emaTimePerItem = instantTimePerItem;
+    } else {
+      // EMA update: ema = alpha * instant + (1 - alpha) * ema
+      emaTimePerItem = ETA_ALPHA * instantTimePerItem + (1 - ETA_ALPHA) * emaTimePerItem;
+    }
+
+    // Compute remaining ETA using the smoothed time-per-item
+    const remaining = taskFactories.length;
+    let etaMs = emaTimePerItem * remaining;
+
+    // Guard against bad values
+    if (!Number.isFinite(etaMs) || etaMs < 0) etaMs = 0;
+
+    // Format ETA as HH:MM:SS from milliseconds
+    const totalSeconds = Math.ceil(etaMs / 1000);
+    const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, "0");
+    const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, "0");
+    const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+    eta = `${hours}:${minutes}:${seconds}`;
+
     lastMeasured = { count: taskFactories.length, time: now };
   }
+
   process.stdout.write(`\rETA: ${eta} | Active: ${activeFetches} | Remaining: ${taskFactories.length}   `);
 }, 100);
 
