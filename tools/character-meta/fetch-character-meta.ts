@@ -1,7 +1,4 @@
 import fs from "node:fs";
-import type { Character } from "../../src/types.ts";
-import Crypto from "node:crypto";
-import { stdout } from "node:process";
 import type { MWParsePage } from "../types.ts";
 
 const apiBaseURL = "https://starwars.fandom.com/api.php?format=json&action=parse&page=";
@@ -45,14 +42,14 @@ async function fetchAndSaveCharacterDataToFile(characterName: string) {
 
     if (!response) {
       console.log(`No data found for ${characterName}`);
-      return false;
+      return { name: characterName, success: false };
     }
     parseResponse = response || null;
   }
 
   if (!parseResponse) {
     console.log(`Somehow no data was retrieved for ${characterName} 🤷‍♀️`);
-    return false;
+    return { name: characterName, success: false };
   }
 
   // Save the dom separately
@@ -65,112 +62,44 @@ async function fetchAndSaveCharacterDataToFile(characterName: string) {
     fs.writeFileSync(metaCachePath, JSON.stringify({ ...parseResponse, text: undefined }));
   }
 
-  return true;
+  return { name: characterName, success: true };
 }
 
-const fetchPromises = characterLinks.slice(0, 10).map(name => fetchAndSaveCharacterDataToFile(name));
-await Promise.all(fetchPromises);
+const concurrencyLimit = 20;
+let activeFetches = 0;
 
+const taskFactories = characterLinks
+  .slice(0, 1000) // Temporary limit for testing TODO - remove
+  .map((name) => () => fetchAndSaveCharacterDataToFile(name));
 
-// const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
-// const characters: Character[] = [];
-// const categoryLookup: Record<string, string> = {}; // Hash: category name
-// const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
-
-// async function saveCharacter(route: string) {
-//   const res = await fetchMetadata(route);
-//   if (!res) return null;
-
-//   const { name, categories, imageURL } = res;
-
-//   const categoryHashes = categories.map(categoryHash);
-//   for (const category of categories) {
-//     const hash = categoryHash(category);
-//     if (!categoryLookup[hash]) {
-//       categoryLookup[hash] = category;
-//       categoryLookupReverse[category] = hash;
-//     }
-//   }
-
-//   const character: Character = {
-//     name: name,
-//     route: route,
-//     ...(categoryHashes.length > 0 ? { categories: categoryHashes } : {}),
-//     ...(imageURL ? { image: imageURL.replace(imageBaseURL, "") } : {}),
-//   };
-
-//   characters.push(character);
-// }
-
-// const batchSize = 100;
-// const routeBatch: (() => Promise<void>)[] = new Array(Math.floor(characterLinks.length / batchSize))
-//   .fill(0)
-//   .map(() =>
-//     async () => {
-//       const batch = characterLinks.splice(0, batchSize);
-//       await Promise.all(batch.map(route => saveCharacter(route)));
-//     }
-//   );
-// // Push remaining links as the last batch
-// if (characterLinks.length > 0) {
-//   routeBatch.push(async () => {
-//     await Promise.all(characterLinks.map(route => saveCharacter(route)));
-//     characterLinks.splice(0, characterLinks.length); // Clear remaining links
-//   });
-// }
-// const totalBatches = routeBatch.length;
-
-// let i = -1;
-// let activeFetches = 0;
-// while (routeBatch.length > 0) {
-//   if (activeFetches >= 10) {
-//     await new Promise((resolve) => setTimeout(resolve, 50)); // Wait a little before retrying
-//     continue;
-//   }
-//   activeFetches++;
-
-//   const batchPromise = routeBatch.shift();
-//   if (!batchPromise) break;
-
-//   i++;
-//   const percentProgress = ((i / totalBatches) * 100).toFixed(2);
-
-//   stdout.write(`\n${percentProgress.padStart(6, " ")}% - "Batch ${i}"\t\t`);
-
-//   await batchPromise();
-
-//   activeFetches--;
-
-//   // Partial write after each batch
-//   fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters));
-//   fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
-//   fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
-// }
-
-// console.log("Characters fetched:", characters.length);
-
-// fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters));
-// fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
-// fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
-
-// process.on("beforeExit", (code) => {
-//   console.log("\nProcess exit, writing to files. Code:", code);
-//   fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters));
-//   fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
-//   fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
-// });
-// process.on("exit", (code) => {
-//   console.log("\nProcess exit, writing to files. Code:", code);
-//   fs.writeFileSync("tools/out/characters.raw.json", JSON.stringify(characters));
-//   fs.writeFileSync("tools/out/category-lookup.json", JSON.stringify(categoryLookup));
-//   fs.writeFileSync("tools/out/category-lookup-reverse.json", JSON.stringify(categoryLookupReverse));
-// });
-
-function categoryHash(input: string): string {
-  const hash = Crypto.createHash("sha256");
-  const data = hash.update(input, "utf-8");
-  const digest = data.digest("hex");
-  const truncated = digest.slice(0, 8); // First 8 bytes = 64 bits
-
-  return truncated;
+console.log("Active fetches:", activeFetches, "Remaining:", taskFactories.length);
+while (taskFactories.length) {
+  if (activeFetches < concurrencyLimit) {
+    console.log("Active fetches:", activeFetches, "Remaining:", taskFactories.length);
+    const factory = taskFactories.shift();
+    if (factory) {
+      activeFetches++;
+      const promise = factory(); // start the fetch here
+      promise.then(({ name, success }) => {
+        activeFetches--;
+        if (success) console.log(`Fetched and saved data for ${name}`);
+        else console.log(`Failed to fetch data for ${name}`);
+      }).catch((err) => {
+        activeFetches--;
+        console.log(`Error fetching: ${err}`);
+      });
+    }
+  } else {
+    // small sleep to avoid a tight busy loop
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
 }
+
+// Wait for all fetches to complete
+while (activeFetches > 0) {
+  await new Promise(resolve => setTimeout(resolve, 100));
+}
+
+console.log("All character metadata fetched and saved.");
+console.log(fs.readdirSync(apiResponseCacheFolder).length, "files in API response cache");
+console.log(fs.readdirSync(domCacheFolder).length, "files in DOM cache");
