@@ -27,4 +27,5 @@ export type Character = {
   route: string;
   image?: string | undefined; // Omit if not present for size optimization. Only the route part of the URL. Excludes "https://static.wikia.nocookie.net/starwars/images/"
   categories?: string[] | undefined;
+  appearance?: string[] | undefined; // Hash list
 };

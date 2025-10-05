@@ -1,10 +1,11 @@
 syntax="proto2";
 
 message Character {
-  required string name = 1; // pretty name
-  required string route = 2; // wiki route
+  required string name = 1; // Pretty name
+  required string route = 2; // Wiki route
   optional string image = 3; // Image route, omit if not present for size optimization
-  repeated string categories = 4;
+  repeated string categories = 4; // Hash array
+  repeated string appearance = 5; // Hash array
 }
 
 message CharacterList {
