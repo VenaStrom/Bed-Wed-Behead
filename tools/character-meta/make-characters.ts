@@ -74,12 +74,15 @@ async function makeCharacter(characterRoute: string) {
   /*
   * DOM crawling
   */
-  const lineWithAppearance = domFile.split("\n").findIndex(l => l.includes('id="Appearances"')) || null;
-  const smallerDOM = lineWithAppearance ? domFile.slice(lineWithAppearance) : null;
+  const startLine = domFile.split("\n").findIndex(l => l.includes('id="Appearances"')) || null;
+  const endLine = domFile.split("\n").findIndex(l => l.includes('id="Sources"')) || null;
+  let smallerDOM = null;
+  if (startLine && endLine && startLine < endLine) smallerDOM = domFile.split("\n").slice(startLine, endLine).join("\n");
+  else if (startLine) smallerDOM = domFile.split("\n").slice(startLine).join("\n");
+
   if (!smallerDOM) console.warn(`No "Appearances" section found in DOM for ${characterRoute}, skipping appearances`);
   else {
-    const dom = new JSDOM(smallerDOM);
-    const document = dom.window.document;
+    const document = JSDOM.fragment(smallerDOM);
 
     const canonAppearances = getAppearancesFromDOM(document, "#Appearances");
     for (const canonAppearance of canonAppearances) {
@@ -112,30 +115,47 @@ async function makeCharacter(characterRoute: string) {
   processed++;
 }
 
-await makeCharacter("Padm%C3%A9_Amidala");
+// await makeCharacter("Padm%C3%A9_Amidala");
 
-// for (let i = 0; i < characterLinks.length; i++) {
-//   const link = characterLinks[i];
-//   try {
-//     await makeCharacter(link);
-//   }
-//   catch (e) {
-//     console.error("Error processing character:", link, e);
-//   }
-// }
+for (let i = 0; i < characterLinks.length; i++) {
+  const link = characterLinks[i];
+  try {
+    await makeCharacter(link);
+  }
+  catch (e) {
+    console.error("Error processing character:", link, e);
+  }
+
+  if (i % 1000 === 0) {
+    saveToFiles();
+  }
+}
+
+process.on("unhandledRejection", () => {
+  saveToFiles();
+  process.exit(1);
+});
+
+process.on("exit", () => {
+  saveToFiles();
+  process.exit(0);
+});
 
 fs.appendFileSync(outPath, "\n]", "utf-8");
-fs.writeFileSync(categoryLookupPath, JSON.stringify(categoryLookup, null, 2), "utf-8");
-fs.writeFileSync(canonAppearanceLookupPath, JSON.stringify(canonAppearanceLookup, null, 2), "utf-8");
-fs.writeFileSync(nonCanonAppearanceLookupPath, JSON.stringify(nonCanonAppearanceLookup, null, 2), "utf-8");
-fs.writeFileSync(legendsAppearanceLookupPath, JSON.stringify(legendsAppearanceLookup, null, 2), "utf-8");
-fs.writeFileSync(nonCanonLegendsAppearanceLookupPath, JSON.stringify(nonCanonLegendsAppearanceLookup, null, 2), "utf-8");
 console.log(`\nFinished ${outPath}`);
-console.log(`Wrote ${categoryLookupPath}`);
-console.log(`Wrote ${canonAppearanceLookupPath}`);
-console.log(`Wrote ${nonCanonAppearanceLookupPath}`);
-console.log(`Wrote ${legendsAppearanceLookupPath}`);
-console.log(`Wrote ${nonCanonLegendsAppearanceLookupPath}`);
+
+function saveToFiles() {
+  fs.writeFileSync(categoryLookupPath, JSON.stringify(categoryLookup, null, 2), "utf-8");
+  fs.writeFileSync(canonAppearanceLookupPath, JSON.stringify(canonAppearanceLookup, null, 2), "utf-8");
+  fs.writeFileSync(nonCanonAppearanceLookupPath, JSON.stringify(nonCanonAppearanceLookup, null, 2), "utf-8");
+  fs.writeFileSync(legendsAppearanceLookupPath, JSON.stringify(legendsAppearanceLookup, null, 2), "utf-8");
+  fs.writeFileSync(nonCanonLegendsAppearanceLookupPath, JSON.stringify(nonCanonLegendsAppearanceLookup, null, 2), "utf-8");
+  console.log(`Wrote ${categoryLookupPath}`);
+  console.log(`Wrote ${canonAppearanceLookupPath}`);
+  console.log(`Wrote ${nonCanonAppearanceLookupPath}`);
+  console.log(`Wrote ${legendsAppearanceLookupPath}`);
+  console.log(`Wrote ${nonCanonLegendsAppearanceLookupPath}`);
+}
 
 function hash64bit(input: string): string {
   const hash = Crypto.createHash("sha256");
@@ -146,7 +166,7 @@ function hash64bit(input: string): string {
   return truncated;
 }
 
-function getAppearancesFromDOM(document: Document, selector: string): string[] {
+function getAppearancesFromDOM(document: Document | DocumentFragment, selector: string): string[] {
   const appearanceElements = document.querySelector(selector)
     ?.parentElement?.nextElementSibling
     ?.querySelectorAll("li a") || [];
