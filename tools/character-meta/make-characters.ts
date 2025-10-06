@@ -42,7 +42,9 @@ async function makeCharacter(characterRoute: string) {
 
   const character: Partial<Character> = { route: characterRoute };
 
-  // Get pretty name and categories from metadata file
+  /*
+   * Get pretty name and categories from metadata file
+   */
   const meta = JSON.parse(metaFile) as MWParsePage;
 
   const title = meta.title;
@@ -70,8 +72,8 @@ async function makeCharacter(characterRoute: string) {
   const isCanonArticle = categories.includes("Canon_articles");
 
   /*
-   * DOM crawling
-   */
+  * DOM crawling
+  */
   const lineWithAppearance = domFile.split("\n").findIndex(l => l.includes('id="Appearances"')) || null;
   const smallerDOM = lineWithAppearance ? domFile.slice(lineWithAppearance) : null;
   if (!smallerDOM) console.warn(`No "Appearances" section found in DOM for ${characterRoute}, skipping appearances`);
