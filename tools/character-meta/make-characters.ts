@@ -131,7 +131,9 @@ for (let i = 0; i < characterLinks.length; i++) {
   }
 }
 
-process.on("unhandledRejection", () => {
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection at:", reason);
+  console.info("Saving to file before exit...");
   saveToFiles();
   process.exit(1);
 });
@@ -140,7 +142,6 @@ process.on("exit", () => {
   saveToFiles();
   process.exit(0);
 });
-
 
 function saveToFiles() {
   fs.writeFileSync(outPath, JSON.stringify(characters, null, 2), "utf-8");
