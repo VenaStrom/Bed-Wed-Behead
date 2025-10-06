@@ -90,6 +90,8 @@ async function makeCharacter(characterRoute: string) {
       if (isCanonArticle && !canonAppearanceLookup[hash]) canonAppearanceLookup[hash] = canonAppearance;
       if (!isCanonArticle && !legendsAppearanceLookup[hash]) legendsAppearanceLookup[hash] = canonAppearance;
     }
+    if (isCanonArticle) character.canonAppearances = canonAppearances.map(hash64bit);
+    else character.legendsAppearances = canonAppearances.map(hash64bit);
 
     const nonCanonAppearances = getAppearancesFromDOM(document, "#Non-canon_appearances");
     for (const nonCanonAppearance of nonCanonAppearances) {
@@ -97,6 +99,8 @@ async function makeCharacter(characterRoute: string) {
       if (isCanonArticle && !nonCanonAppearanceLookup[hash]) nonCanonAppearanceLookup[hash] = nonCanonAppearance;
       if (!isCanonArticle && !nonCanonLegendsAppearanceLookup[hash]) nonCanonLegendsAppearanceLookup[hash] = nonCanonAppearance;
     }
+    if (isCanonArticle) character.nonCanonAppearances = nonCanonAppearances.map(hash64bit);
+    else character.nonCanonLegendsAppearances = nonCanonAppearances.map(hash64bit);
   }
 
   const prunedCharacter: Character = {
@@ -104,18 +108,16 @@ async function makeCharacter(characterRoute: string) {
     route: character.route,
     ...character.image ? { image: character.image } : {},
     ...character.categories ? { categories: character.categories } : {},
-    ...isCanonArticle && character.canonAppearances ? { canonAppearances: character.canonAppearances } : {},
-    ...isCanonArticle && character.nonCanonAppearances ? { nonCanonAppearances: character.nonCanonAppearances } : {},
-    ...!isCanonArticle && character.legendsAppearances ? { legendsAppearances: character.legendsAppearances } : {},
-    ...!isCanonArticle && character.nonCanonLegendsAppearances ? { nonCanonLegendsAppearances: character.nonCanonLegendsAppearances } : {},
+    ...isCanonArticle && character.canonAppearances?.length ? { canonAppearances: character.canonAppearances } : {},
+    ...isCanonArticle && character.nonCanonAppearances?.length ? { nonCanonAppearances: character.nonCanonAppearances } : {},
+    ...!isCanonArticle && character.legendsAppearances?.length ? { legendsAppearances: character.legendsAppearances } : {},
+    ...!isCanonArticle && character.nonCanonLegendsAppearances?.length ? { nonCanonLegendsAppearances: character.nonCanonLegendsAppearances } : {},
   } as Character; // Since Partial<Character> may still have undefined fields
 
   // Append to file
   fs.appendFileSync(outPath, (processed === 1 ? "\n\t" : ",\n\t") + JSON.stringify(prunedCharacter, null, 2).replace(/\n/g, "\n\t"), "utf-8");
   processed++;
 }
-
-// await makeCharacter("Padm%C3%A9_Amidala");
 
 for (let i = 0; i < characterLinks.length; i++) {
   const link = characterLinks[i];
