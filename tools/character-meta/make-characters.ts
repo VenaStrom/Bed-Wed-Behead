@@ -1,9 +1,8 @@
 import fs from "node:fs";
 import Crypto from "node:crypto";
+import { JSDOM } from "jsdom";
 import type { Character } from "../../src/types.ts";
 import type { MWParsePage } from "../types.ts";
-
-import { JSDOM } from "jsdom";
 
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
 
@@ -18,14 +17,16 @@ const characterLinks: string[] = JSON.parse(fs.readFileSync(characterLinksPath, 
 
 const outPath = "tools/out/characters.raw.json";
 const categoryLookupPath = "tools/out/category-lookup.json";
-const categoryLookupReversePath = "tools/out/category-lookup-reverse.json";
-const appearanceLookupPath = "tools/out/appearance-lookup.json";
-const appearanceLookupReversePath = "tools/out/appearance-lookup-reverse.json";
+const canonAppearanceLookupPath = "tools/out/appearance-canon-lookup.json";
+const nonCanonAppearanceLookupPath = "tools/out/appearance-non-canon-lookup.json";
+const legendsAppearanceLookupPath = "tools/out/appearance-legends-lookup.json";
+const nonCanonLegendsAppearanceLookupPath = "tools/out/appearance-non-canon-legends-lookup.json";
 
 const categoryLookup: Record<string, string> = {}; // Hash: category name
-const categoryLookupReverse: Record<string, string> = {}; // Category name: hash
-const appearanceLookup: Record<string, string> = {}; // Hash: appearance name
-const appearanceLookupReverse: Record<string, string> = {}; // Appearance name: hash
+const canonAppearanceLookup: Record<string, string> = {}; // Hash: appearance name
+const nonCanonAppearanceLookup: Record<string, string> = {}; // Hash: appearance name
+const legendsAppearanceLookup: Record<string, string> = {}; // Hash: appearance name
+const nonCanonLegendsAppearanceLookup: Record<string, string> = {}; // Hash: appearance name
 
 // Wipe character file to start appending to it
 fs.writeFileSync(outPath, "[", "utf-8");
@@ -52,10 +53,7 @@ async function makeCharacter(characterRoute: string) {
   character.categories = categories.map(hash64bit);
   for (const category of categories) {
     const hash = hash64bit(category);
-    if (!categoryLookup[hash]) {
-      categoryLookup[hash] = category;
-      categoryLookupReverse[category] = hash;
-    }
+    if (!categoryLookup[hash]) categoryLookup[hash] = category;
   }
 
   const infoboxImg = JSON.parse(meta.properties?.find(p => p.name === "infoboxes")?.["*"] || "{}")?.[0]?.data?.find((box: { type: string, data: object }) => box.type === "image")?.data?.[0]?.url || null;
@@ -69,22 +67,30 @@ async function makeCharacter(characterRoute: string) {
     }
   }
 
-  // Get image and appearance from DOM file
-  const dom = new JSDOM(domFile);
-  const document = dom.window.document;
+  const isCanonArticle = categories.includes("Canon_articles");
 
-  const appearanceElements = document.querySelector("#Appearances")?.parentElement?.nextElementSibling?.querySelectorAll("li a") || [];
-  const appearances = [...new Set(Array.from(appearanceElements)
-    .map(a => a.textContent?.trim() || "")
-    .filter(n => n))];
+  /*
+   * DOM crawling
+   */
+  const lineWithAppearance = domFile.split("\n").findIndex(l => l.includes('id="Appearances"')) || null;
+  const smallerDOM = lineWithAppearance ? domFile.slice(lineWithAppearance) : null;
+  if (!smallerDOM) console.warn(`No "Appearances" section found in DOM for ${characterRoute}, skipping appearances`);
+  else {
+    const dom = new JSDOM(smallerDOM);
+    const document = dom.window.document;
 
-  character.appearance = appearances.map(hash64bit);
+    const canonAppearances = getAppearancesFromDOM(document, "#Appearances");
+    for (const canonAppearance of canonAppearances) {
+      const hash = hash64bit(canonAppearance);
+      if (isCanonArticle && !canonAppearanceLookup[hash]) canonAppearanceLookup[hash] = canonAppearance;
+      if (!isCanonArticle && !legendsAppearanceLookup[hash]) legendsAppearanceLookup[hash] = canonAppearance;
+    }
 
-  for (const appearance of appearances) {
-    const hash = hash64bit(appearance);
-    if (!appearanceLookup[hash]) {
-      appearanceLookup[hash] = appearance;
-      appearanceLookupReverse[appearance] = hash;
+    const nonCanonAppearances = getAppearancesFromDOM(document, "#Non-canon_appearances");
+    for (const nonCanonAppearance of nonCanonAppearances) {
+      const hash = hash64bit(nonCanonAppearance);
+      if (isCanonArticle && !nonCanonAppearanceLookup[hash]) nonCanonAppearanceLookup[hash] = nonCanonAppearance;
+      if (!isCanonArticle && !nonCanonLegendsAppearanceLookup[hash]) nonCanonLegendsAppearanceLookup[hash] = nonCanonAppearance;
     }
   }
 
@@ -92,8 +98,11 @@ async function makeCharacter(characterRoute: string) {
     name: character.name,
     route: character.route,
     ...character.image ? { image: character.image } : {},
-    ...character.appearance ? { appearance: character.appearance } : {},
     ...character.categories ? { categories: character.categories } : {},
+    ...isCanonArticle && character.canonAppearances ? { canonAppearances: character.canonAppearances } : {},
+    ...isCanonArticle && character.nonCanonAppearances ? { nonCanonAppearances: character.nonCanonAppearances } : {},
+    ...!isCanonArticle && character.legendsAppearances ? { legendsAppearances: character.legendsAppearances } : {},
+    ...!isCanonArticle && character.nonCanonLegendsAppearances ? { nonCanonLegendsAppearances: character.nonCanonLegendsAppearances } : {},
   } as Character; // Since Partial<Character> may still have undefined fields
 
   // Append to file
@@ -106,32 +115,25 @@ await makeCharacter("Padm%C3%A9_Amidala");
 // for (let i = 0; i < characterLinks.length; i++) {
 //   const link = characterLinks[i];
 //   try {
-//     makeCharacter(link);
+//     await makeCharacter(link);
 //   }
 //   catch (e) {
 //     console.error("Error processing character:", link, e);
-//   }
-
-//   // Write to file every 10 characters
-//   if (i % 10 === 0) {
-//     fs.writeFileSync(outPath, JSON.stringify(characters, null, 2), "utf-8");
-//     fs.writeFileSync(categoryLookupPath, JSON.stringify(categoryLookup, null, 2), "utf-8");
-//     fs.writeFileSync(categoryLookupReversePath, JSON.stringify(categoryLookupReverse, null, 2), "utf-8");
-//     fs.writeFileSync(appearanceLookupPath, JSON.stringify(appearanceLookup, null, 2), "utf-8");
-//     fs.writeFileSync(appearanceLookupReversePath, JSON.stringify(appearanceLookupReverse, null, 2), "utf-8");
 //   }
 // }
 
 fs.appendFileSync(outPath, "\n]", "utf-8");
 fs.writeFileSync(categoryLookupPath, JSON.stringify(categoryLookup, null, 2), "utf-8");
-fs.writeFileSync(categoryLookupReversePath, JSON.stringify(categoryLookupReverse, null, 2), "utf-8");
-fs.writeFileSync(appearanceLookupPath, JSON.stringify(appearanceLookup, null, 2), "utf-8");
-fs.writeFileSync(appearanceLookupReversePath, JSON.stringify(appearanceLookupReverse, null, 2), "utf-8");
+fs.writeFileSync(canonAppearanceLookupPath, JSON.stringify(canonAppearanceLookup, null, 2), "utf-8");
+fs.writeFileSync(nonCanonAppearanceLookupPath, JSON.stringify(nonCanonAppearanceLookup, null, 2), "utf-8");
+fs.writeFileSync(legendsAppearanceLookupPath, JSON.stringify(legendsAppearanceLookup, null, 2), "utf-8");
+fs.writeFileSync(nonCanonLegendsAppearanceLookupPath, JSON.stringify(nonCanonLegendsAppearanceLookup, null, 2), "utf-8");
 console.log(`\nFinished ${outPath}`);
 console.log(`Wrote ${categoryLookupPath}`);
-console.log(`Wrote ${categoryLookupReversePath}`);
-console.log(`Wrote ${appearanceLookupPath}`);
-console.log(`Wrote ${appearanceLookupReversePath}\n`);
+console.log(`Wrote ${canonAppearanceLookupPath}`);
+console.log(`Wrote ${nonCanonAppearanceLookupPath}`);
+console.log(`Wrote ${legendsAppearanceLookupPath}`);
+console.log(`Wrote ${nonCanonLegendsAppearanceLookupPath}`);
 
 function hash64bit(input: string): string {
   const hash = Crypto.createHash("sha256");
@@ -140,4 +142,16 @@ function hash64bit(input: string): string {
   const truncated = digest.slice(0, 8); // First 8 bytes = 64 bits
 
   return truncated;
+}
+
+function getAppearancesFromDOM(document: Document, selector: string): string[] {
+  const appearanceElements = document.querySelector(selector)
+    ?.parentElement?.nextElementSibling
+    ?.querySelectorAll("li a") || [];
+
+  const appearances = [...new Set([...appearanceElements]
+    .map(a => a.getAttribute("title")))]
+    .filter(Boolean) as string[];
+
+  return appearances;
 }
