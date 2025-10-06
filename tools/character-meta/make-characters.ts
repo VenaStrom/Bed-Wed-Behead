@@ -22,14 +22,12 @@ const nonCanonAppearanceLookupPath = "tools/out/appearance-non-canon-lookup.json
 const legendsAppearanceLookupPath = "tools/out/appearance-legends-lookup.json";
 const nonCanonLegendsAppearanceLookupPath = "tools/out/appearance-non-canon-legends-lookup.json";
 
+const characters: Character[] = [];
 const categoryLookup: Record<string, string> = {}; // Hash: category name
 const canonAppearanceLookup: Record<string, string> = {}; // Hash: appearance name
 const nonCanonAppearanceLookup: Record<string, string> = {}; // Hash: appearance name
 const legendsAppearanceLookup: Record<string, string> = {}; // Hash: appearance name
 const nonCanonLegendsAppearanceLookup: Record<string, string> = {}; // Hash: appearance name
-
-// Wipe character file to start appending to it
-fs.writeFileSync(outPath, "[", "utf-8");
 
 let processed = 1;
 async function makeCharacter(characterRoute: string) {
@@ -114,8 +112,8 @@ async function makeCharacter(characterRoute: string) {
     ...!isCanonArticle && character.nonCanonLegendsAppearances?.length ? { nonCanonLegendsAppearances: character.nonCanonLegendsAppearances } : {},
   } as Character; // Since Partial<Character> may still have undefined fields
 
-  // Append to file
-  fs.appendFileSync(outPath, (processed === 1 ? "\n\t" : ",\n\t") + JSON.stringify(prunedCharacter, null, 2).replace(/\n/g, "\n\t"), "utf-8");
+  characters.push(prunedCharacter);
+
   processed++;
 }
 
@@ -143,10 +141,9 @@ process.on("exit", () => {
   process.exit(0);
 });
 
-fs.appendFileSync(outPath, "\n]", "utf-8");
-console.log(`\nFinished ${outPath}`);
 
 function saveToFiles() {
+  fs.writeFileSync(outPath, JSON.stringify(characters, null, 2), "utf-8");
   fs.writeFileSync(categoryLookupPath, JSON.stringify(categoryLookup, null, 2), "utf-8");
   fs.writeFileSync(canonAppearanceLookupPath, JSON.stringify(canonAppearanceLookup, null, 2), "utf-8");
   fs.writeFileSync(nonCanonAppearanceLookupPath, JSON.stringify(nonCanonAppearanceLookup, null, 2), "utf-8");
