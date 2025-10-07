@@ -17,13 +17,13 @@ export default function App() {
   const [hasFetchedCharData, setHasFetchedCharData] = useState(false);
 
   // Character names
-  const [minCharNamesFetchTime, setMinCharNamesFetchTime] = useState<number>(Date.now());
-  const [minimizedCharacterNames, setMinimizedCharacterNames] = useState<string[] | null>(null);
-  const characterNames: string[] | null = useMemo(() => minimizedCharacterNames || null, [minimizedCharacterNames]);
+  const [characterNamesFetchTime, setCharacterNamesFetchTime] = useState<number>(Date.now());
+  const [characterNames, setCharacterNames] = useState<string[] | null>(null);
   // Character details
-  const [minCharFetchTime, setMinCharFetchTime] = useState<number>(Date.now());
-  const [minimizedCharacters, setMinimizedCharacters] = useState<Character[] | null>(null);
-  const characters: Character[] | null = useMemo(() => minimizedCharacters || null, [minimizedCharacters]);
+  const [charactersFetchTime, setCharactersFetchTime] = useState<number>(Date.now());
+  const [characters, setCharacters] = useState<Character[] | null>(null);
+  // Category lookup table
+  
 
   // Fetch character data
   useEffect(() => {
@@ -33,9 +33,9 @@ export default function App() {
     fetch("/db/characters-links.min.json")
       .then(res => res.json())
       .then(min => min.singleLineData.split(min.joiningCharacter))
-      .then(expanded => setMinimizedCharacterNames(expanded))
-      .then(() => console.log(`Fetched characters-links.min.json in ${Date.now() - minCharNamesFetchTime} ms`))
-      .then(() => setMinCharNamesFetchTime(Date.now() - minCharNamesFetchTime))
+      .then(expanded => setCharacterNames(expanded))
+      .then(() => console.log(`Fetched characters-links.min.json in ${Date.now() - characterNamesFetchTime} ms`))
+      .then(() => setCharacterNamesFetchTime(Date.now() - characterNamesFetchTime))
       .catch((e) => {
         console.error(e);
         alert("A critical error occurred while fetching character names")
@@ -43,14 +43,14 @@ export default function App() {
 
     fetch("/db/characters.min.json")
       .then(res => res.json())
-      .then(chars => setMinimizedCharacters(chars))
-      .then(() => console.log(`Fetched characters.min.json in ${Date.now() - minCharFetchTime} ms`))
-      .then(() => setMinCharFetchTime(Date.now() - minCharFetchTime))
+      .then(chars => setCharacters(chars))
+      .then(() => console.log(`Fetched characters.min.json in ${Date.now() - charactersFetchTime} ms`))
+      .then(() => setCharactersFetchTime(Date.now() - charactersFetchTime))
       .catch((e) => {
         console.error(e);
         alert("A critical error occurred while fetching character data")
       });
-  }, [hasFetchedCharData, minCharFetchTime, minCharNamesFetchTime]);
+  }, [hasFetchedCharData, charactersFetchTime, characterNamesFetchTime]);
 
   // Filter
   const loadedFiler = typeof window !== "undefined" && window.localStorage.getItem("bwb-filters") ? JSON.parse(window.localStorage.getItem("bwb-filters") as string) : null;

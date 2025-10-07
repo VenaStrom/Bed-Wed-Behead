@@ -16,11 +16,11 @@ if (!fs.existsSync(characterLinksPath)) {
 const characterLinks: string[] = JSON.parse(fs.readFileSync(characterLinksPath, "utf-8"));
 
 const outPath = "tools/out/characters.raw.json";
-const categoryLookupPath = "tools/out/category-lookup.json";
-const canonAppearanceLookupPath = "tools/out/appearance-canon-lookup.json";
-const nonCanonAppearanceLookupPath = "tools/out/appearance-non-canon-lookup.json";
-const legendsAppearanceLookupPath = "tools/out/appearance-legends-lookup.json";
-const nonCanonLegendsAppearanceLookupPath = "tools/out/appearance-non-canon-legends-lookup.json";
+const categoryLookupPath = "tools/out/category-lookup.raw.json";
+const canonAppearanceLookupPath = "tools/out/appearance-canon-lookup.raw.json";
+const nonCanonAppearanceLookupPath = "tools/out/appearance-non-canon-lookup.raw.json";
+const legendsAppearanceLookupPath = "tools/out/appearance-legends-lookup.raw.json";
+const nonCanonLegendsAppearanceLookupPath = "tools/out/appearance-non-canon-legends-lookup.raw.json";
 
 const characters: Character[] = [];
 const categoryLookup: Record<string, string> = {}; // Hash: category name
