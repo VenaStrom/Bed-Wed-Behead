@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
@@ -16,14 +16,35 @@ export default function App() {
   const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(sessionStorage.getItem("hasGottenHint")) : false);
   const [hasFetchedCharData, setHasFetchedCharData] = useState(false);
 
-  // Character names
-  const [characterNamesFetchTime, setCharacterNamesFetchTime] = useState<number>(Date.now());
+  const [fetchTimes, setFetchTimes] = useState<{
+    characterNames: number;
+    characters: number;
+    categoryLookup: number;
+    appearanceCLookup: number;
+    appearanceNCLookup: number;
+    appearanceLLookup: number;
+    appearanceNCLLookup: number;
+  }>({
+    characterNames: Date.now(),
+    characters: Date.now(),
+    categoryLookup: Date.now(),
+    appearanceCLookup: Date.now(),
+    appearanceNCLookup: Date.now(),
+    appearanceLLookup: Date.now(),
+    appearanceNCLLookup: Date.now(),
+  });
   const [characterNames, setCharacterNames] = useState<string[] | null>(null);
-  // Character details
-  const [charactersFetchTime, setCharactersFetchTime] = useState<number>(Date.now());
   const [characters, setCharacters] = useState<Character[] | null>(null);
-  // Category lookup table
-  
+  const [categoryLookup, setCategoryLookup] = useState<Record<string, string> | null>(null);
+  /** Appearances in Canon */
+  const [appearanceCLookup, setAppearanceCLookup] = useState<Record<string, string> | null>(null);
+  /** Appearances in Non-Canon */
+  const [appearanceNCLookup, setAppearanceNCLookup] = useState<Record<string, string> | null>(null);
+  /** Appearances in Legends */
+  const [appearanceLLookup, setAppearanceLLookup] = useState<Record<string, string> | null>(null);
+  /** Appearances in Non-Canon Legends */
+  const [appearanceNCLLookup, setAppearanceNCLLookup] = useState<Record<string, string> | null>(null);
+
 
   // Fetch character data
   useEffect(() => {
@@ -34,8 +55,8 @@ export default function App() {
       .then(res => res.json())
       .then(min => min.singleLineData.split(min.joiningCharacter))
       .then(expanded => setCharacterNames(expanded))
-      .then(() => console.log(`Fetched characters-links.min.json in ${Date.now() - characterNamesFetchTime} ms`))
-      .then(() => setCharacterNamesFetchTime(Date.now() - characterNamesFetchTime))
+      .then(() => console.log(`Fetched characters-links.min.json in ${Date.now() - fetchTimes.characterNames} ms`))
+      .then(() => setFetchTimes(times => ({ ...times, characterNames: Date.now() - times.characterNames })))
       .catch((e) => {
         console.error(e);
         alert("A critical error occurred while fetching character names")
@@ -44,23 +65,74 @@ export default function App() {
     fetch("/db/characters.min.json")
       .then(res => res.json())
       .then(chars => setCharacters(chars))
-      .then(() => console.log(`Fetched characters.min.json in ${Date.now() - charactersFetchTime} ms`))
-      .then(() => setCharactersFetchTime(Date.now() - charactersFetchTime))
+      .then(() => console.log(`Fetched characters.min.json in ${Date.now() - fetchTimes.characters} ms`))
+      .then(() => setFetchTimes(times => ({ ...times, characters: Date.now() - times.characters })))
       .catch((e) => {
         console.error(e);
         alert("A critical error occurred while fetching character data")
       });
-  }, [hasFetchedCharData, charactersFetchTime, characterNamesFetchTime]);
+
+    fetch("/db/category-lookup.min.json")
+      .then(res => res.json())
+      .then(lookup => setCategoryLookup(lookup))
+      .then(() => console.log(`Fetched category-lookup.min.json in ${Date.now() - fetchTimes.categoryLookup} ms`))
+      .then(() => setFetchTimes(times => ({ ...times, categoryLookup: Date.now() - times.categoryLookup })))
+      .catch((e) => {
+        console.error(e);
+        alert("A critical error occurred while fetching category lookup data")
+      });
+
+    fetch("/db/appearance-canon-lookup.min.json")
+      .then(res => res.json())
+      .then(lookup => setAppearanceCLookup(lookup))
+      .then(() => console.log(`Fetched appearance-canon-lookup.min.json in ${Date.now() - fetchTimes.appearanceCLookup} ms`))
+      .then(() => setFetchTimes(times => ({ ...times, appearanceCLookup: Date.now() - times.appearanceCLookup })))
+      .catch((e) => {
+        console.error(e);
+        alert("A critical error occurred while fetching appearance (canon) lookup data")
+      });
+
+    fetch("/db/appearance-non-canon-lookup.min.json")
+      .then(res => res.json())
+      .then(lookup => setAppearanceNCLookup(lookup))
+      .then(() => console.log(`Fetched appearance-non-canon-lookup.min.json in ${Date.now() - fetchTimes.appearanceNCLookup} ms`))
+      .then(() => setFetchTimes(times => ({ ...times, appearanceNCLookup: Date.now() - times.appearanceNCLookup })))
+      .catch((e) => {
+        console.error(e);
+        alert("A critical error occurred while fetching appearance (non-canon) lookup data")
+      });
+
+    fetch("/db/appearance-legends-lookup.min.json")
+      .then(res => res.json())
+      .then(lookup => setAppearanceLLookup(lookup))
+      .then(() => console.log(`Fetched appearance-legends-lookup.min.json in ${Date.now() - fetchTimes.appearanceLLookup} ms`))
+      .then(() => setFetchTimes(times => ({ ...times, appearanceLLookup: Date.now() - times.appearanceLLookup })))
+      .catch((e) => {
+        console.error(e);
+        alert("A critical error occurred while fetching appearance (legends) lookup data")
+      });
+
+    fetch("/db/appearance-non-canon-legends-lookup.min.json")
+      .then(res => res.json())
+      .then(lookup => setAppearanceNCLLookup(lookup))
+      .then(() => console.log(`Fetched appearance-non-canon-legends-lookup.min.json in ${Date.now() - fetchTimes.appearanceNCLLookup} ms`))
+      .then(() => setFetchTimes(times => ({ ...times, appearanceNCLLookup: Date.now() - times.appearanceNCLLookup })))
+      .catch((e) => {
+        console.error(e);
+        alert("A critical error occurred while fetching appearance (non-canon legends) lookup data")
+      });
+
+  }, [hasFetchedCharData, fetchTimes.characterNames, fetchTimes.characters, fetchTimes.categoryLookup, fetchTimes.appearanceCLookup, fetchTimes.appearanceNCLookup, fetchTimes.appearanceLLookup, fetchTimes.appearanceNCLLookup]);
 
   // Filter
-  const loadedFiler = typeof window !== "undefined" && window.localStorage.getItem("bwb-filters") ? JSON.parse(window.localStorage.getItem("bwb-filters") as string) : null;
+  const loadedFilter = typeof window !== "undefined" && window.localStorage.getItem("bwb-filters") ? JSON.parse(window.localStorage.getItem("bwb-filters") as string) : null;
   const [filter, setFilter] = useState<Filter>(
     typeof window !== "undefined" && window.localStorage.getItem("bwb-filters")
       ? [...defaultFilters].map(defaultCat => ({
         ...defaultCat,
         filters: defaultCat.filters.map(defaultFil => ({
           ...defaultFil,
-          state: Boolean(loadedFiler.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.filters.find((savedFil: { id: string; state: boolean; }) => savedFil.id === defaultFil.id)?.state ?? defaultFil.state),
+          state: Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.filters.find((savedFil: { id: string; state: boolean; }) => savedFil.id === defaultFil.id)?.state ?? defaultFil.state),
         }))
       }))
       : defaultFilters
@@ -169,7 +241,7 @@ export default function App() {
       {/* Filter modal bg */}
       <div
         hidden={!isFilterPanelExpanded}
-        className="z-10 absolute top-0 left-0 min-w-screen w-screen min-h-screen h-screen bg-eclipse-500/20 transition-all"
+        className="z-10 absolute top-0 left-0 min-w-screen w-screen min-h-screen h-screen bg-eclipse-500/30 transition-all"
         onClick={() => setFilterPanelOpen(false)}
       ></div>
       {/* Filter panel */}
@@ -178,7 +250,7 @@ export default function App() {
           bg-eclipse-700
           absolute top-0 right-0 
           z-20
-          py-5 px-6
+          py-5 px-6 pe-3
           w-11/12 md:w-2/5
           h-screen
           transition-all
@@ -186,7 +258,7 @@ export default function App() {
           flex flex-col gap-y-6
         `}
       >
-        <header className="flex flex-row justify-between items-center mt-3.5 sticky top-8">
+        <header className="flex flex-row justify-between items-center pe-3 mt-3.5 sticky top-8">
           <button className="w-fit px-3 hover:bg-hyper-500">
             <LinkIcon
               className="size-8"
@@ -213,50 +285,72 @@ export default function App() {
           Current character pool is {characterNames?.length ?? "loading..."}
         </p>
 
-        {filter.map((category) =>
-          <div key={`filter-category-${category.id}`} className="flex flex-col">
-            <p className="text-lg font-bold">{category.label}</p>
+        <div className="overflow-y-scroll flex flex-col gap-y-[inherit] pe-3">
+          {filter.map((category) =>
+            <div key={`filter-category-${category.id}`} className="flex flex-col ">
+              <p className="text-lg font-bold">{category.label}</p>
 
-            <ul className="flex flex-col gap-y-1">
-              {category.filters.map((f) =>
-                <li key={`filter-${f.id}`} className="flex flex-row justify-start items-center gap-x-3">
-                  <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer">
-                    <input
-                      checked={f.state}
-                      type="checkbox"
-                      onChange={() => {
-                        const newFilter = filter.map((cat) => {
-                          if (cat.id !== category.id) return cat;
+              {/* If toggle is allowed */}
+              {category.state !== undefined && (
+                <label className="flex flex-row justify-center items-center gap-x-3 cursor-pointer mb-2">
+                  <div className="flex flex-col gap-y-0.5 text-sm">
+                    <span>{category.stateLabel}</span>
+                  </div>
 
-                          return {
-                            ...cat,
-                            filters: cat.filters.map((fil) => {
-                              if (fil.id !== f.id) return fil;
+                  <input
+                    checked={category.state}
+                    type="checkbox"
+                    onChange={() => {
+                      const newFilter = filter.map((cat) => {
+                        if (cat.id !== category.id) return cat;
 
-                              return { ...fil, state: !fil.state };
-                            }),
-                          };
-                        });
+                        return { ...cat, state: !cat.state };
+                      });
 
-                        setFilter(newFilter);
-                      }}
-                    />
-
-                    <div className="flex flex-col gap-y-0.5">
-                      <span>{f.label}</span>
-                      <span className="text-xs italic text-star/70">{f.help}</span>
-                    </div>
-                  </label>
-                </li>
+                      setFilter(newFilter);
+                    }}
+                  />
+                </label>
               )}
-            </ul>
-          </div>
-        )}
-        <div>
-          <p className="text-lg font-bold">Appearances</p>
-          <ul>
 
-          </ul>
+              <ul className={`flex flex-col gap-y-1 ${category.state !== undefined && !category.state ? "opacity-50 *:pointer-events-none cursor-not-allowed" : ""}`}>
+                {category.filters.map((f) =>
+                  <li key={`filter-${f.id}`} className="flex flex-row justify-start items-center gap-x-3">
+                    <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer">
+                      <input
+                        checked={f.state}
+                        type="checkbox"
+                        onChange={() => {
+                          // Disable if category is toggled off due to keyboard navigation
+                          if (category.state !== undefined && !category.state) return;
+
+                          const newFilter = filter.map((cat) => {
+                            if (cat.id !== category.id) return cat;
+
+                            return {
+                              ...cat,
+                              filters: cat.filters.map((fil) => {
+                                if (fil.id !== f.id) return fil;
+
+                                return { ...fil, state: !fil.state };
+                              }),
+                            };
+                          });
+
+                          setFilter(newFilter);
+                        }}
+                      />
+
+                      <div className="flex flex-col gap-y-0.5">
+                        <span>{f.label}</span>
+                        <span className="text-xs italic text-star/70">{f.help}</span>
+                      </div>
+                    </label>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
         </div>
 
         <div>
@@ -365,12 +459,11 @@ export default function App() {
       </p>
 
       <p className="w-[26ch] flex flex-col gap-y-0.5">
-        <span className="italic text-star/70">
-          {!characterNames && "Loading character names..."}
-        </span>
-        <span className="italic text-star/70">
-          {!characters && "Loading character data..."}
-        </span>
+        {/* Loading status texts */}
+        <span className="italic text-star/70">{!(categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup) && "Loading lookup tables..."}</span>
+        <span className="italic text-star/70">{!characterNames && "Loading character names..."}</span>
+        <span className="italic text-star/70">{!characters && "Loading character data..."}</span>
+
         <span>
           Characters loaded:
           {" "}

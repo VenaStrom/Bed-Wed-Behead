@@ -10,6 +10,8 @@ export type Filter = {
   id: string;
   label: string;
   filters: FilterOption[];
+  state?: boolean; // Only for categories that can be toggled on/off as a whole
+  stateLabel?: string; // Help text for the category toggle
 }[];
 export const defaultFilters: Filter = [
   {
@@ -53,6 +55,10 @@ export const defaultFilters: Filter = [
         state: true,
       },
       {
+        // When canon is selected, show canon + non-canon
+        // When legends is selected, show legends + non-canon legends
+        // When both are selected, show all four
+        // When only this is selected, show only non-canon + non-canon legends
         id: "allow-non-canonical",
         label: "Show Non-Canon",
         help: <>Show characters from <a href="https://starwars.fandom.com/wiki/Category:Non-canon_articles" target="_blank">non-canon</a> and <a href="https://starwars.fandom.com/wiki/Category:Non-canon_Legends_articles" target="_blank">non-canon legends</a>.</>,
@@ -63,17 +69,75 @@ export const defaultFilters: Filter = [
   {
     id: "appearances",
     label: "Appearances",
+    state: false,
+    stateLabel: "Filter by appearances on/off",
     filters: [
-      // Skywalker saga,
-      // The Clone Wars,
-      // Rebels,
-      // The Bad Batch,
-      // The Mandalorian & TBOBF,
-      // Obi - Wan Kenobi,
-      // Andor & Rogue One,
-      // Ahsoka,
-      // The Acolyte,
-      // Skeleton Crew,
+      {
+        id: "allow-skywalker-saga",
+        label: "Skywalker Saga",
+        help: "Show characters that appeared in Episodes I-IX.",
+        state: true,
+      },
+      {
+        id: "allow-the-clone-wars",
+        label: "The Clone Wars",
+        help: "Show characters that appeared in The Clone Wars (2008-2020)",
+        state: true,
+      },
+      {
+        id: "allow-the-bad-batch",
+        label: "The Bad Batch",
+        help: "Show characters that appeared in The Bad Batch.",
+        state: true,
+      },
+      {
+        id: "allow-rebels",
+        label: "Rebels",
+        help: "Show characters that appeared in Star Wars Rebels.",
+        state: true,
+      },
+      {
+        id: "allow-mandalorian-tbof",
+        label: "The Mandalorian & TBOBF",
+        help: "Show characters that appeared in The Mandalorian and The Book of Boba Fett.",
+        state: true,
+      },
+      {
+        id: "allow-obi-wan-kenobi",
+        label: "Obi-Wan Kenobi",
+        help: "Show characters that appeared in Obi-Wan Kenobi.",
+        state: true,
+      },
+      {
+        id: "allow-andor-rogue-one",
+        label: "Andor & Rogue One",
+        help: "Show characters that appeared in Andor and Rogue One.",
+        state: true,
+      },
+      {
+        id: "allow-ahsoka",
+        label: "Ahsoka",
+        help: "Show characters that appeared in Ahsoka.",
+        state: true,
+      },
+      {
+        id: "allow-the-acolyte",
+        label: "The Acolyte",
+        help: "Show characters that appeared in The Acolyte.",
+        state: true,
+      },
+      {
+        id: "allow-skeleton-crew",
+        label: "Skeleton Crew",
+        help: "Show characters that appeared in Skeleton Crew.",
+        state: true,
+      },
+      {
+        id: "allow-legacy-cartoons",
+        label: "Legacy cartoons",
+        help: <>Show characters that appeared in legacy cartoons (Ewoks, Droids, etc.). See <a href="https://starwars.fandom.com/wiki/Category:Legends_animated_television_series" target="_blank">here</a> and <a href="https://starwars.fandom.com/wiki/Category:Star_Wars_Vintage_Collection" target="_blank">here</a> for reference.</>,
+        state: true,
+      }
     ],
   }
 ];
