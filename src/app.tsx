@@ -2,8 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
-import { protoDecode } from "./proto/proto.ts";
-import { base64ToUint8Array } from "./functions/baseConverter.ts";
 import { defaultFilters, Filter } from "./functions/filters.tsx";
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
@@ -45,7 +43,6 @@ export default function App() {
 
     fetch("/db/characters.min.json")
       .then(res => res.json())
-      .then(base64 => protoDecode(base64ToUint8Array(base64 as string)))
       .then(chars => setMinimizedCharacters(chars))
       .then(() => console.log(`Fetched characters.min.json in ${Date.now() - minCharFetchTime} ms`))
       .then(() => setMinCharFetchTime(Date.now() - minCharFetchTime))
