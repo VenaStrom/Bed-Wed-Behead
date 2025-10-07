@@ -97,7 +97,13 @@ export const defaultFilters: Filter = [
         state: true,
       },
       {
-        id: "allow-mandalorian-tbof",
+        id: "allow-andor-rogue-one",
+        label: "Andor & Rogue One",
+        help: "Show characters that appeared in Andor and Rogue One.",
+        state: true,
+      },
+      {
+        id: "allow-mandalorian-tbobf",
         label: "The Mandalorian & TBOBF",
         help: "Show characters that appeared in The Mandalorian and The Book of Boba Fett.",
         state: true,
@@ -106,12 +112,6 @@ export const defaultFilters: Filter = [
         id: "allow-obi-wan-kenobi",
         label: "Obi-Wan Kenobi",
         help: "Show characters that appeared in Obi-Wan Kenobi.",
-        state: true,
-      },
-      {
-        id: "allow-andor-rogue-one",
-        label: "Andor & Rogue One",
-        help: "Show characters that appeared in Andor and Rogue One.",
         state: true,
       },
       {
@@ -134,10 +134,36 @@ export const defaultFilters: Filter = [
       },
       {
         id: "allow-legacy-cartoons",
-        label: "Legacy cartoons",
-        help: <>Show characters that appeared in legacy cartoons (Ewoks, Droids, etc.). See <a href="https://starwars.fandom.com/wiki/Category:Legends_animated_television_series" target="_blank">here</a> and <a href="https://starwars.fandom.com/wiki/Category:Star_Wars_Vintage_Collection" target="_blank">here</a> for reference.</>,
+        label: "Old cartoons",
+        help: "Show characters that appeared in old cartoons like Ewoks, Droids, etc.",
         state: true,
       }
+    ],
+  },
+  {
+    id: "gender",
+    label: "Gender",
+    state: false,
+    stateLabel: "Filter by gender on/off",
+    filters: [
+      {
+        id: "allow-males",
+        label: "Show Males",
+        help: "Solely based on the category 'Males'.",
+        state: true,
+      },
+      {
+        id: "allow-females",
+        label: "Show Females",
+        help: "Solely based on the category 'Females'.",
+        state: true,
+      },
+      {
+        id: "allow-other-genders",
+        label: "Show Others",
+        help: "Based on categories with specified pronouns beside he/him or she/her.",
+        state: true,
+      },
     ],
   }
 ];

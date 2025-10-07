@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
@@ -130,6 +130,7 @@ export default function App() {
     typeof window !== "undefined" && window.localStorage.getItem("bwb-filters")
       ? [...defaultFilters].map(defaultCat => ({
         ...defaultCat,
+        state: defaultCat.state !== undefined ? Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.state ?? defaultCat.state) : undefined,
         filters: defaultCat.filters.map(defaultFil => ({
           ...defaultFil,
           state: Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.filters.find((savedFil: { id: string; state: boolean; }) => savedFil.id === defaultFil.id)?.state ?? defaultFil.state),
@@ -137,6 +138,7 @@ export default function App() {
       }))
       : defaultFilters
   );
+  const usingDefaultFilter = useMemo(() => JSON.stringify(defaultFilters) === JSON.stringify(filter), [filter]);
 
   // Save filter to localStorage on change
   useEffect(() => {
@@ -258,12 +260,23 @@ export default function App() {
           flex flex-col gap-y-6
         `}
       >
-        <header className="flex flex-row justify-between items-center pe-3 mt-3.5 sticky top-8">
-          <button className="w-fit px-3 hover:bg-hyper-500">
+        <header className="flex flex-row flex-wrap-reverse xl:justify-between items-end justify-end gap-2 pe-3 mt-3.5 sticky top-8">
+          <button className="px-3 hover:bg-hyper-500">
             <LinkIcon
-              className="size-8"
+              className="size-6"
             />
-            Share filter
+            Share&nbsp;filter
+          </button>
+
+          <span className="flex-1 xl:hidden"></span>
+
+          {/* Reset filter button */}
+          <button
+            className={`w-fit px-3 hover:bg-hyper-500 transition-all ${usingDefaultFilter ? "hidden" : ""}`}
+            onClick={() => setFilter(defaultFilters)}
+          >
+            Reset&nbsp;to&nbsp;default
+            <RefreshIcon className="size-6 inline ms-1" />
           </button>
 
           <button
@@ -277,7 +290,7 @@ export default function App() {
           `}
           >
             Close
-            <CloseIcon className="size-8 transition-all" />
+            <CloseIcon className="size-6 transition-all" />
           </button>
         </header>
 
@@ -285,7 +298,7 @@ export default function App() {
           Current character pool is {characterNames?.length ?? "loading..."}
         </p>
 
-        <div className="overflow-y-scroll flex flex-col gap-y-[inherit] pe-3">
+        <div className="overflow-y-scroll flex flex-col gap-y-8 pe-3">
           {filter.map((category) =>
             <div key={`filter-category-${category.id}`} className="flex flex-col ">
               <p className="text-lg font-bold">{category.label}</p>
@@ -314,10 +327,62 @@ export default function App() {
               )}
 
               <ul className={`flex flex-col gap-y-1 ${category.state !== undefined && !category.state ? "opacity-50 *:pointer-events-none cursor-not-allowed" : ""}`}>
+                {/* Toggle buttons */}
+                <li className="flex flex-row justify-start items-center gap-x-3 *:py-1 *:bg-transparent *:text-sm *:italic *:text-star/70">
+                  <button className="hover:bg-hyper-400 hover:text-eclipse-700"
+                    onClick={() => {
+                      const newFilter = filter.map((cat) => {
+                        if (cat.id !== category.id) return cat;
+
+                        return {
+                          ...cat,
+                          filters: cat.filters.map((fil) => ({ ...fil, state: true })),
+                        };
+                      });
+                      setFilter(newFilter);
+                    }}
+                  >
+                    Enable all <CheckmarkIcon className="size-5 inline ms-1" />
+                  </button>
+
+                  <button className="hover:bg-jump-400 hover:text-star"
+                    onClick={() => {
+                      const newFilter = filter.map((cat) => {
+                        if (cat.id !== category.id) return cat;
+
+                        return {
+                          ...cat,
+                          filters: cat.filters.map((fil) => ({ ...fil, state: false })),
+                        };
+                      });
+                      setFilter(newFilter);
+                    }}
+                  >
+                    Disable all <CloseIcon className="size-5 inline ms-1" />
+                  </button>
+
+                  <button className="hover:bg-hyper-500 hover:text-star"
+                    onClick={() => {
+                      const newFilter = filter.map((cat) => {
+                        if (cat.id !== category.id) return cat;
+
+                        return {
+                          ...cat,
+                          filters: cat.filters.map((fil) => ({ ...fil, state: !fil.state })),
+                        };
+                      });
+                      setFilter(newFilter);
+                    }}
+                  >
+                    Invert <RefreshIcon className="size-5 inline ms-1" />
+                  </button>
+                </li>
+
                 {category.filters.map((f) =>
                   <li key={`filter-${f.id}`} className="flex flex-row justify-start items-center gap-x-3">
-                    <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer">
+                    <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer ps-0.5 w-full">
                       <input
+                        className="size-5 min-w-5"
                         checked={f.state}
                         type="checkbox"
                         onChange={() => {
@@ -351,13 +416,6 @@ export default function App() {
               </ul>
             </div>
           )}
-        </div>
-
-        <div>
-          <p className="text-lg font-bold">Gender</p>
-          <ul>
-
-          </ul>
         </div>
 
         <div className="flex-1"></div>
