@@ -37,7 +37,7 @@ export const defaultFilters: Filter = [
         state: false,
       },
       {
-        id: "allow-droids", 
+        id: "allow-droids",
         label: "Show Droids",
         help: "Show droid characters (may not be perfect).",
         state: true,

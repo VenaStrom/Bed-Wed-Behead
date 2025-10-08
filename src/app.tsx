@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon } from "./components/icons.tsx";
+import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, NoticeIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
 import { defaultFilters, Filter } from "./functions/filters.tsx";
@@ -171,6 +171,18 @@ export default function App() {
     refresh();
   }
 
+  const [toasts, setToasts] = useState<{ text: string, good?: boolean }[]>([]);
+  const toast = (text: string, good: boolean = true) => {
+    setToasts([...toasts, { text, good }]);
+
+    setTimeout(() => {
+      setToasts(currentToasts => {
+        const [, ...remaining] = currentToasts;
+        return remaining;
+      });
+    }, 3000);
+  };
+
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
       {/* Heading */}
@@ -260,7 +272,21 @@ export default function App() {
         `}
       >
         <header className="flex flex-row justify-between items-end gap-2 pe-3 mt-3.5 sticky top-8">
-          <button className="px-3 hover:bg-hyper-500">
+          {/* Share filter button */}
+          <button
+            className="px-3 hover:bg-hyper-500"
+            onClick={() => {
+              if (typeof navigator?.clipboard?.writeText !== "function") {
+                toast("Clipboard API not supported on this browser", false);
+                return;
+              }
+              toast("Failed to copy filter to clipboard", false)
+              return;
+              navigator.clipboard.writeText(JSON.stringify(filter, null, 2))
+                .then(() => toast("Copied filter to clipboard!"))
+                .catch(() => toast("Failed to copy filter to clipboard", false));
+            }}
+          >
             <LinkIcon className="size-6" />
             Share&nbsp;filter
           </button>
@@ -274,6 +300,7 @@ export default function App() {
             Reset&nbsp;filter
           </button>
 
+          {/* Close filter panel button */}
           <button
             onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
             className={`
@@ -502,6 +529,7 @@ export default function App() {
       w-full absolute bottom-1
       px-2
     `}>
+      {/* License */}
       <p className="flex flex-col gap-y-0.5">
         <span>
           Licensed under <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">CC-BY-SA</a>
@@ -511,6 +539,45 @@ export default function App() {
         </span>
       </p>
 
+      {/* Toast */}
+      <div className="z-30 flex flex-col gap-y-2 absolute w-full justify-center items-center bottom-2 pointer-events-none">
+        {toasts.map((t, i) =>
+          <div
+            key={`toast-${i}`}
+            className={`
+              bg-star text-eclipse-500
+              text-lg
+              [font-style:normal]
+              font-normal
+              rounded-lg
+              p-5
+              flex flex-row justify-center items-center gap-x-3
+              pointer-events-auto
+            `}
+          >
+            {t.good ?
+              <SpaceshipIcon className="size-7 me-2" />
+              :
+              <NoticeIcon className="size-7 me-2" />
+            }
+            {t.text}
+            <button className="bg-transparent hover:text-jump-700">
+              <CloseIcon
+                className="size-7"
+                onClick={() => {
+                  setToasts(currentToasts => {
+                    const newToasts = [...currentToasts];
+                    newToasts.splice(i, 1);
+                    return newToasts;
+                  });
+                }}
+              />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Loading status */}
       <p className="w-[26ch] flex flex-col gap-y-0.5">
         {/* Loading status texts */}
         <span className="italic text-star/70">{!(categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup) && "Loading lookup tables..."}</span>
