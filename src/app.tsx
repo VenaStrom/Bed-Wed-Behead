@@ -45,7 +45,6 @@ export default function App() {
   /** Appearances in Non-Canon Legends */
   const [appearanceNCLLookup, setAppearanceNCLLookup] = useState<Record<string, string> | null>(null);
 
-
   // Fetch character data
   useEffect(() => {
     if (hasFetchedCharData) return;
@@ -230,7 +229,7 @@ export default function App() {
           onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
           className={`
             z-10
-            px-3 me-6 
+            px-3 me-6
             hover:[&_.icon]:rotate-[120deg] 
             hover:bg-star hover:text-eclipse-500
             ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
@@ -250,33 +249,29 @@ export default function App() {
       <aside
         className={`
           bg-eclipse-700
-          absolute top-0 right-0 
+          absolute top-0 right-0
           z-20
           py-5 px-6 pe-3
-          w-11/12 md:w-2/5
+          w-[50ch] max-w-11/12
           h-screen
           transition-all
           ${isFilterPanelExpanded ? `translate-x-0` : `translate-x-full *:hidden`}
-          flex flex-col gap-y-6
+          flex flex-col gap-y-2
         `}
       >
-        <header className="flex flex-row flex-wrap-reverse xl:justify-between items-end justify-end gap-2 pe-3 mt-3.5 sticky top-8">
+        <header className="flex flex-row justify-between items-end gap-2 pe-3 mt-3.5 sticky top-8">
           <button className="px-3 hover:bg-hyper-500">
-            <LinkIcon
-              className="size-6"
-            />
+            <LinkIcon className="size-6" />
             Share&nbsp;filter
           </button>
-
-          <span className="flex-1 xl:hidden"></span>
 
           {/* Reset filter button */}
           <button
             className={`w-fit px-3 hover:bg-hyper-500 transition-all ${usingDefaultFilter ? "hidden" : ""}`}
             onClick={() => setFilter(defaultFilters)}
           >
-            Reset&nbsp;to&nbsp;default
-            <RefreshIcon className="size-6 inline ms-1" />
+            <RefreshIcon className="size-6 inline" />
+            Reset&nbsp;filter
           </button>
 
           <button
@@ -294,7 +289,7 @@ export default function App() {
           </button>
         </header>
 
-        <p className="text-star text-sm font-normal w-full text-center italic">
+        <p className="text-star text-sm font-normal w-full text-center italic py-2">
           Current character pool is {characterNames?.length ?? "loading..."}
         </p>
 
