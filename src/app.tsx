@@ -280,8 +280,7 @@ export default function App() {
                 toast("Clipboard API not supported on this browser", false);
                 return;
               }
-              toast("Failed to copy filter to clipboard", false)
-              return;
+
               navigator.clipboard.writeText(JSON.stringify(filter, null, 2))
                 .then(() => toast("Copied filter to clipboard!"))
                 .catch(() => toast("Failed to copy filter to clipboard", false));
