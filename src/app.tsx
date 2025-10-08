@@ -124,18 +124,51 @@ export default function App() {
   }, [hasFetchedCharData, fetchTimes.characterNames, fetchTimes.characters, fetchTimes.categoryLookup, fetchTimes.appearanceCLookup, fetchTimes.appearanceNCLookup, fetchTimes.appearanceLLookup, fetchTimes.appearanceNCLLookup]);
 
   // Filter
-  const loadedFilter = typeof window !== "undefined" && window.localStorage.getItem("bwb-filters") ? JSON.parse(window.localStorage.getItem("bwb-filters") as string) : null;
-  const [filter, setFilter] = useState<Filter>(
-    typeof window !== "undefined" && window.localStorage.getItem("bwb-filters")
-      ? [...defaultFilters].map(defaultCat => ({
+  const [filter, setFilter] = useState<Filter>((() => {
+    // If url has filter param, use that without saving to localStorage until modified
+    // else if localStorage has saved filter, use that
+    // else use default filter
+    if (typeof window === "undefined") return defaultFilters;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlFilter = urlParams.get("f");
+    if (urlFilter) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(urlFilter));
+        if (Array.isArray(parsed) && parsed.every(item => typeof item === "object" && item !== null && "id" in item && "label" in item && "filters" in item && Array.isArray(item.filters))) {
+          return parsed as Filter;
+        } else {
+          console.warn("Invalid filter format in URL, falling back to saved or default filter");
+        }
+      } catch (e) {
+        console.error("Error parsing filter from URL, falling back to saved or default filter", e);
+      }
+    }
+
+    const loadedFilter = window.localStorage.getItem("bwb-filters") ? JSON.parse(window.localStorage.getItem("bwb-filters") as string) : null;
+    if (loadedFilter) {
+      return [...defaultFilters].map(defaultCat => ({
         ...defaultCat,
         state: defaultCat.state !== undefined ? Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.state ?? defaultCat.state) : undefined,
         filters: defaultCat.filters.map(defaultFil => ({
           ...defaultFil,
           state: Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.filters.find((savedFil: { id: string; state: boolean; }) => savedFil.id === defaultFil.id)?.state ?? defaultFil.state),
         }))
-      }))
-      : defaultFilters
+      }));
+    }
+
+    return defaultFilters;
+  })()
+    // typeof window !== "undefined" && window.localStorage.getItem("bwb-filters")
+    //   ? [...defaultFilters].map(defaultCat => ({
+    //     ...defaultCat,
+    //     state: defaultCat.state !== undefined ? Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.state ?? defaultCat.state) : undefined,
+    //     filters: defaultCat.filters.map(defaultFil => ({
+    //       ...defaultFil,
+    //       state: Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.filters.find((savedFil: { id: string; state: boolean; }) => savedFil.id === defaultFil.id)?.state ?? defaultFil.state),
+    //     }))
+    //   }))
+    //   : defaultFilters
   );
   const usingDefaultFilter = useMemo(() => JSON.stringify(defaultFilters) === JSON.stringify(filter), [filter]);
 
@@ -281,7 +314,7 @@ export default function App() {
                 return;
               }
 
-              navigator.clipboard.writeText(JSON.stringify(filter, null, 2))
+              navigator.clipboard.writeText(window.location + "?f=" + encodeURIComponent(JSON.stringify(filter)))
                 .then(() => toast("Copied filter to clipboard!"))
                 .catch(() => toast("Failed to copy filter to clipboard", false));
             }}
