@@ -10,3 +10,5 @@
   - [ ] Profiles + options (maybe introduce a context? instead of passing state getter and setter props)
   - [ ] Filter panel
   - [ ] Toast
+
+- [ ] Rethink share filter button :ugh:

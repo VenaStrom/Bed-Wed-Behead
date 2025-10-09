@@ -130,16 +130,25 @@ export default function App() {
     // else use default filter
     if (typeof window === "undefined") return defaultFilters;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlFilter = urlParams.get("f");
-    if (urlFilter) {
+    const minimizedUrlFilter = new URLSearchParams(window.location.search).get("f");
+    if (minimizedUrlFilter) {
       try {
-        const parsed = JSON.parse(decodeURIComponent(urlFilter));
-        if (Array.isArray(parsed) && parsed.every(item => typeof item === "object" && item !== null && "id" in item && "label" in item && "filters" in item && Array.isArray(item.filters))) {
-          return parsed as Filter;
-        } else {
-          console.warn("Invalid filter format in URL, falling back to saved or default filter");
-        }
+        const parsedJSON = JSON.parse(decodeURIComponent(minimizedUrlFilter));
+
+        const unpacked = [...defaultFilters];
+        parsedJSON.forEach((cat: { id: string; state?: boolean; filters: Record<string, boolean>; }) => {
+          const catToMod = unpacked.find(c => c.id === cat.id);
+          if (!catToMod) return;
+
+          if (cat.state !== undefined) catToMod.state = cat.state;
+          Object.entries(cat.filters).forEach(([filId, filState]) => {
+            const filToMod = catToMod.filters.find(f => f.id === filId);
+            if (!filToMod) return;
+
+            filToMod.state = filState;
+          });
+        });
+        return unpacked;
       } catch (e) {
         console.error("Error parsing filter from URL, falling back to saved or default filter", e);
       }
@@ -158,23 +167,20 @@ export default function App() {
     }
 
     return defaultFilters;
-  })()
-    // typeof window !== "undefined" && window.localStorage.getItem("bwb-filters")
-    //   ? [...defaultFilters].map(defaultCat => ({
-    //     ...defaultCat,
-    //     state: defaultCat.state !== undefined ? Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.state ?? defaultCat.state) : undefined,
-    //     filters: defaultCat.filters.map(defaultFil => ({
-    //       ...defaultFil,
-    //       state: Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.filters.find((savedFil: { id: string; state: boolean; }) => savedFil.id === defaultFil.id)?.state ?? defaultFil.state),
-    //     }))
-    //   }))
-    //   : defaultFilters
-  );
+  })());
   const usingDefaultFilter = useMemo(() => JSON.stringify(defaultFilters) === JSON.stringify(filter), [filter]);
 
   // Save filter to localStorage on change
   useEffect(() => {
     if (typeof window !== "undefined") {
+      // Remove filter param from URL if present
+      const url = new URL(window.location.href);
+      if (url.searchParams.has("f")) {
+        url.searchParams.delete("f");
+        window.history.replaceState({}, document.title, url.toString());
+      }
+
+      // Save to localStorage
       window.localStorage.setItem("bwb-filters", JSON.stringify(filter));
     }
   }, [filter]);
@@ -314,7 +320,18 @@ export default function App() {
                 return;
               }
 
-              navigator.clipboard.writeText(window.location + "?f=" + encodeURIComponent(JSON.stringify(filter)))
+              const shortenedFilters = filter.map(f => {
+                const short = {
+                  id: f.id,
+                  state: f.state,
+                  filters: {} as Record<string, boolean>,
+                };
+                f.filters.forEach(fil => short.filters[fil.id] = fil.state);
+                return short;
+              });
+
+              // navigator.clipboard.writeText(window.location + "?f=" + encodeURIComponent(JSON.stringify(filter)))
+              navigator.clipboard.writeText(window.location + "?f=" + encodeURIComponent(JSON.stringify(shortenedFilters)))
                 .then(() => toast("Copied filter to clipboard!"))
                 .catch(() => toast("Failed to copy filter to clipboard", false));
             }}
