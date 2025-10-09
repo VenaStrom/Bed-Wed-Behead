@@ -125,34 +125,7 @@ export default function App() {
 
   // Filter
   const [filter, setFilter] = useState<Filter>((() => {
-    // If url has filter param, use that without saving to localStorage until modified
-    // else if localStorage has saved filter, use that
-    // else use default filter
     if (typeof window === "undefined") return defaultFilters;
-
-    const minimizedUrlFilter = new URLSearchParams(window.location.search).get("f");
-    if (minimizedUrlFilter) {
-      try {
-        const parsedJSON = JSON.parse(decodeURIComponent(minimizedUrlFilter));
-
-        const unpacked = [...defaultFilters];
-        parsedJSON.forEach((cat: { id: string; state?: boolean; filters: Record<string, boolean>; }) => {
-          const catToMod = unpacked.find(c => c.id === cat.id);
-          if (!catToMod) return;
-
-          if (cat.state !== undefined) catToMod.state = cat.state;
-          Object.entries(cat.filters).forEach(([filId, filState]) => {
-            const filToMod = catToMod.filters.find(f => f.id === filId);
-            if (!filToMod) return;
-
-            filToMod.state = filState;
-          });
-        });
-        return unpacked;
-      } catch (e) {
-        console.error("Error parsing filter from URL, falling back to saved or default filter", e);
-      }
-    }
 
     const loadedFilter = window.localStorage.getItem("bwb-filters") ? JSON.parse(window.localStorage.getItem("bwb-filters") as string) : null;
     if (loadedFilter) {
@@ -172,17 +145,7 @@ export default function App() {
 
   // Save filter to localStorage on change
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Remove filter param from URL if present
-      const url = new URL(window.location.href);
-      if (url.searchParams.has("f")) {
-        url.searchParams.delete("f");
-        window.history.replaceState({}, document.title, url.toString());
-      }
-
-      // Save to localStorage
-      window.localStorage.setItem("bwb-filters", JSON.stringify(filter));
-    }
+    if (typeof window !== "undefined") window.localStorage.setItem("bwb-filters", JSON.stringify(filter));
   }, [filter]);
 
   // TODO: use to allow for single character rerolls.
@@ -311,35 +274,6 @@ export default function App() {
         `}
       >
         <header className="flex flex-row justify-between items-end gap-2 pe-3 mt-3.5 sticky top-8">
-          {/* Share filter button */}
-          <button
-            className="px-3 hover:bg-hyper-500"
-            onClick={() => {
-              if (typeof navigator?.clipboard?.writeText !== "function") {
-                toast("Clipboard API not supported on this browser", false);
-                return;
-              }
-
-              const shortenedFilters = filter.map(f => {
-                const short = {
-                  id: f.id,
-                  state: f.state,
-                  filters: {} as Record<string, boolean>,
-                };
-                f.filters.forEach(fil => short.filters[fil.id] = fil.state);
-                return short;
-              });
-
-              // navigator.clipboard.writeText(window.location + "?f=" + encodeURIComponent(JSON.stringify(filter)))
-              navigator.clipboard.writeText(window.location + "?f=" + encodeURIComponent(JSON.stringify(shortenedFilters)))
-                .then(() => toast("Copied filter to clipboard!"))
-                .catch(() => toast("Failed to copy filter to clipboard", false));
-            }}
-          >
-            <LinkIcon className="size-6" />
-            Share&nbsp;filter
-          </button>
-
           {/* Reset filter button */}
           <button
             className={`w-fit px-3 hover:bg-hyper-500 transition-all ${usingDefaultFilter ? "hidden" : ""}`}
@@ -348,6 +282,8 @@ export default function App() {
             <RefreshIcon className="size-6 inline" />
             Reset&nbsp;filter
           </button>
+
+          <span className="flex-1"></span>
 
           {/* Close filter panel button */}
           <button

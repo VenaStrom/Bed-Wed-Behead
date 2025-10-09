@@ -11,4 +11,5 @@
   - [ ] Filter panel
   - [ ] Toast
 
-- [ ] Rethink share filter button :ugh:
+- [x] Rethink share filter button :ugh:
+  - [x] remove it for now
