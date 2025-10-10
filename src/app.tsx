@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, NoticeIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
-import { defaultFilters, Filter, filterChar } from "./functions/filters.tsx";
+import { defaultFilters, Filter, FilterCategory, filterChar, FilterOption } from "./functions/filters.tsx";
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
@@ -127,16 +127,26 @@ export default function App() {
   const [filter, setFilter] = useState<Filter>((() => {
     if (typeof window === "undefined") return defaultFilters;
 
-    const loadedFilter = window.localStorage.getItem("bwb-filters") ? JSON.parse(window.localStorage.getItem("bwb-filters") as string) : null;
-    if (loadedFilter) {
-      return [...defaultFilters].map(defaultCat => ({
-        ...defaultCat,
-        state: defaultCat.state !== undefined ? Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.state ?? defaultCat.state) : undefined,
-        filters: defaultCat.filters.map(defaultFil => ({
-          ...defaultFil,
-          state: Boolean(loadedFilter.find((savedCat: { id: string; filters: { id: string; state: boolean; }[]; }) => savedCat.id === defaultCat.id)?.filters.find((savedFil: { id: string; state: boolean; }) => savedFil.id === defaultFil.id)?.state ?? defaultFil.state),
-        }))
-      }));
+    const loadedStates = window.localStorage.getItem("bwb-filter-states") ? JSON.parse(window.localStorage.getItem("bwb-filter-states") as string) : null;
+    if (loadedStates) {
+      return {
+        ...defaultFilters,
+        ...Object.fromEntries(
+          Object.entries(loadedStates)
+            .map(([catId, cat]: [string, FilterCategory]) => [catId, {
+              ...defaultFilters[catId],
+              id: cat.id,
+              ...cat.state ? { state: cat.state } : {},
+              filters: Object.fromEntries(Object.entries(cat.filters)
+                .map(([filId, fil]: [string, FilterOption]) => [filId, {
+                  ...defaultFilters[catId].filters[filId],
+                  id: fil.id,
+                  state: fil.state,
+                }]),
+              ),
+            }])
+        ),
+      };
     }
 
     return defaultFilters;
@@ -145,7 +155,10 @@ export default function App() {
 
   // Save filter to localStorage on change
   useEffect(() => {
-    if (typeof window !== "undefined") window.localStorage.setItem("bwb-filters", JSON.stringify(filter));
+    if (typeof window !== "undefined") {
+      const toSave = Object.fromEntries(Object.entries(filter).map(([catId, cat]) => [catId, { ...cat, filters: Object.fromEntries(Object.entries(cat.filters).map(([filId, fil]) => [filId, { id: fil.id, state: fil.state }])) }]));
+      window.localStorage.setItem("bwb-filter-states", JSON.stringify(toSave));
+    }
   }, [filter]);
 
   const [toasts, setToasts] = useState<{ text: string, good?: boolean }[]>([]);
@@ -336,7 +349,7 @@ export default function App() {
         </p>
 
         <div className="overflow-y-scroll flex flex-col gap-y-8 pe-3">
-          {filter.map((category) =>
+          {Object.values(filter).map((category) =>
             <div key={`filter-category-${category.id}`} className="flex flex-col ">
               <p className="text-lg font-bold">{category.label}</p>
 
@@ -351,11 +364,7 @@ export default function App() {
                     checked={category.state}
                     type="checkbox"
                     onChange={() => {
-                      const newFilter = filter.map((cat) => {
-                        if (cat.id !== category.id) return cat;
-
-                        return { ...cat, state: !cat.state };
-                      });
+                      const newFilter = { ...filter, [category.id]: { ...category, state: !category.state } };
 
                       setFilter(newFilter);
                     }}
@@ -368,14 +377,8 @@ export default function App() {
                 <li className="flex flex-row justify-start items-center gap-x-3 *:py-1 *:bg-transparent *:text-sm *:italic *:text-star/70">
                   <button className="hover:bg-hyper-400 hover:text-eclipse-700"
                     onClick={() => {
-                      const newFilter = filter.map((cat) => {
-                        if (cat.id !== category.id) return cat;
+                      const newFilter = { ...filter, [category.id]: { ...category, filters: Object.fromEntries(Object.entries(category.filters).map(([filId, fil]) => [filId, { ...fil, state: true }])) } };
 
-                        return {
-                          ...cat,
-                          filters: cat.filters.map((fil) => ({ ...fil, state: true })),
-                        };
-                      });
                       setFilter(newFilter);
                     }}
                   >
@@ -384,14 +387,8 @@ export default function App() {
 
                   <button className="hover:bg-jump-400 hover:text-star"
                     onClick={() => {
-                      const newFilter = filter.map((cat) => {
-                        if (cat.id !== category.id) return cat;
+                      const newFilter = { ...filter, [category.id]: { ...category, filters: Object.fromEntries(Object.entries(category.filters).map(([filId, fil]) => [filId, { ...fil, state: false }])) } };
 
-                        return {
-                          ...cat,
-                          filters: cat.filters.map((fil) => ({ ...fil, state: false })),
-                        };
-                      });
                       setFilter(newFilter);
                     }}
                   >
@@ -400,14 +397,8 @@ export default function App() {
 
                   <button className="hover:bg-hyper-500 hover:text-star"
                     onClick={() => {
-                      const newFilter = filter.map((cat) => {
-                        if (cat.id !== category.id) return cat;
+                      const newFilter = { ...filter, [category.id]: { ...category, filters: Object.fromEntries(Object.entries(category.filters).map(([filId, fil]) => [filId, { ...fil, state: !fil.state }])) } };
 
-                        return {
-                          ...cat,
-                          filters: cat.filters.map((fil) => ({ ...fil, state: !fil.state })),
-                        };
-                      });
                       setFilter(newFilter);
                     }}
                   >
@@ -415,7 +406,7 @@ export default function App() {
                   </button>
                 </li>
 
-                {category.filters.map((f) =>
+                {Object.values(category.filters).map((f) =>
                   <li key={`filter-${f.id}`} className="flex flex-row justify-start items-center gap-x-3">
                     <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer ps-0.5 w-full">
                       <input
@@ -426,18 +417,7 @@ export default function App() {
                           // Disable if category is toggled off due to keyboard navigation
                           if (category.state !== undefined && !category.state) return;
 
-                          const newFilter = filter.map((cat) => {
-                            if (cat.id !== category.id) return cat;
-
-                            return {
-                              ...cat,
-                              filters: cat.filters.map((fil) => {
-                                if (fil.id !== f.id) return fil;
-
-                                return { ...fil, state: !fil.state };
-                              }),
-                            };
-                          });
+                          const newFilter = { ...filter, [category.id]: { ...category, filters: { ...category.filters, [f.id]: { ...f, state: !f.state } } } };
 
                           setFilter(newFilter);
                         }}
