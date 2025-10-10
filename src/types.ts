@@ -1,15 +1,15 @@
 
 export type ProfileState = {
   name: string | null;
-  wikiLink: string | null;
-  imageLink: string | null;
+  wikiRoute: string | null;
+  imageRoute: string | null;
   selectedOption: BWBChoice[keyof BWBChoice] | null;
 };
 export type ProfileStates = [ProfileState, ProfileState, ProfileState];
 export const emptyProfile: ProfileState = {
   name: null,
-  wikiLink: null,
-  imageLink: null,
+  wikiRoute: null,
+  imageRoute: null,
   selectedOption: null,
 } as const;
 

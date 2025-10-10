@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Character } from "../types.ts";
 
 export type FilterOption = {
   id: string;
@@ -173,3 +174,7 @@ export const defaultFilters: Filter = [
     ],
   }
 ];
+
+export function filterChar(character: Character, filters: Filter): boolean {
+  return true;
+}

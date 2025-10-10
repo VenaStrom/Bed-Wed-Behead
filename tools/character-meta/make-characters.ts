@@ -62,7 +62,9 @@ async function makeCharacter(characterRoute: string) {
       console.warn(`Infobox image URL does not start with base URL: ${infoboxImg} for ${characterRoute}, skipping`);
     }
     else {
-      const imgURL = infoboxImg.replace(imageBaseURL, "");
+      const imgURL = infoboxImg
+        .replace(imageBaseURL, "")
+        .replace(/\/revision\/.*/, ""); // Remove dynamic data due to cors issues
       character.image = imgURL;
     }
   }

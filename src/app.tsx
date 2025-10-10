@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
-import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, LinkIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, NoticeIcon } from "./components/icons.tsx";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, NoticeIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
-import { defaultFilters, Filter } from "./functions/filters.tsx";
+import { defaultFilters, Filter, filterChar } from "./functions/filters.tsx";
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
@@ -148,33 +148,8 @@ export default function App() {
     if (typeof window !== "undefined") window.localStorage.setItem("bwb-filters", JSON.stringify(filter));
   }, [filter]);
 
-  // TODO: use to allow for single character rerolls.
-  // function clearProfile(index: number) {
-  //   const newProfiles = [...profiles];
-  //   newProfiles[index] = { ...emptyProfile };
-  //   setProfiles(newProfiles as ProfileStates);
-  // }
-
-  function clearProfiles() {
-    setProfiles([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
-  }
-
-  function refresh() {
-    setRolls(rolls + 1);
-
-    clearProfiles();
-  }
-
-  function commit() {
-    setRolls(rolls + 1);
-
-    // Stuff
-
-    refresh();
-  }
-
   const [toasts, setToasts] = useState<{ text: string, good?: boolean }[]>([]);
-  const toast = (text: string, good: boolean = true) => {
+  const toast = useCallback((text: string, good: boolean = true) => {
     setToasts([...toasts, { text, good }]);
 
     setTimeout(() => {
@@ -183,7 +158,62 @@ export default function App() {
         return remaining;
       });
     }, 3000);
-  };
+  }, [toasts]);
+
+  // TODO: use to allow for single character rerolls.
+  // function clearProfile(index: number) {
+  //   const newProfiles = [...profiles];
+  //   newProfiles[index] = { ...emptyProfile };
+  //   setProfiles(newProfiles as ProfileStates);
+  // }
+
+  const clearProfiles = useCallback(() => {
+    setProfiles([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
+  }, []);
+
+  const refresh = useCallback(() => {
+    setRolls(rolls + 1);
+
+    clearProfiles();
+
+    if (!(categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characterNames && characters)) {
+      toast("Data is still loading, please wait", false);
+      return;
+    }
+
+    // Filter characters based on filter state
+    const filteredCharacters = characters.filter(c => filterChar(c, filter));
+
+    // Get 3 random characters from filtered list
+    const newProfiles: ProfileStates = [0, 1, 2].map(() => {
+      const randomChar = filteredCharacters[Math.floor(Math.random() * filteredCharacters.length)];
+      return {
+        name: randomChar.name,
+        wikiRoute: randomChar.route,
+        imageRoute: randomChar.image?.replace(/\/revision\/.*/, "") ?? null,
+        selectedOption: null,
+      };
+    }) as ProfileStates;
+
+    setProfiles(newProfiles);
+  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characterNames, characters, clearProfiles, filter, rolls, toast]);
+
+  const commit = useCallback(() => {
+    setRolls(rolls + 1);
+
+    // Stuff
+
+    refresh();
+  }, [refresh, rolls]);
+
+  const [hasDoneInitialRole, setHasDoneInitialRole] = useState(false);
+  useEffect(() => {
+    if (hasDoneInitialRole) return;
+    if (categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characterNames && characters) {
+      refresh();
+      setHasDoneInitialRole(true);
+    }
+  }, [hasDoneInitialRole, categoryLookup, appearanceCLookup, appearanceNCLookup, appearanceLLookup, appearanceNCLLookup, characterNames, characters, refresh]);
 
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
@@ -436,24 +466,25 @@ export default function App() {
       </aside>
 
       {/* Profiles */}
-      <section className="flex flex-row gap-x-8 justify-center items-center">
+      <section className="flex flex-row gap-x-12 justify-center items-center">
         {new Array(3).fill(0).map((_, i) => {
           const profile = profiles[i];
           return (
-            <div className="flex flex-col gap-y-4" key={`profile-column-${i}`}>
+            <div className="flex flex-col gap-y-4 w-2/5 rounded-xl bg-eclipse-700/60" key={`profile-column-${i}`}>
               {/* Profile */}
               <a
-                href={profile.wikiLink ? wikiBaseUrl + profile.wikiLink : undefined}
+                href={profile.wikiRoute ? wikiBaseUrl + profile.wikiRoute : undefined}
                 className={`
-                  flex flex-col justify-center items-center gap-y-2 hover:[&_.link]:underline
-                  ${!profile.wikiLink && "pointer-events-none text-star/60"}
+                  flex flex-col justify-center items-center gap-y-3 hover:[&_.link]:underline
+                  ${!profile.wikiRoute && "pointer-events-none text-star/60"}
                 `}
                 target="_blank" rel="noopener"
               >
-                <img className="size-48 rounded-sm" src={profile.imageLink ? imageBaseURL + profile.imageLink : "/alien-headshot.png"} alt="Headshot of character" />
-                <div className="w-full flex flex-row gap-x-2 items-center justify-end">
-                  <span className="w-full text-lg text-center">{profile.name || "..."}</span>
-                  <ExternalLinkIcon className="size-5 absolute" />
+                <img className="size-48 rounded-sm object-contain" src={profile.imageRoute ? imageBaseURL + profile.imageRoute : "/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
+
+                <div className="w-full flex flex-row items-center justify-center gap-x-2 h-9">
+                  <p className="flex-1 text-base text-center max-w-[18ch]">{profile.name || "..."}</p>
+                  <ExternalLinkIcon className="size-5 relative right-0" />
                 </div>
               </a>
 
