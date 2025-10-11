@@ -212,6 +212,56 @@ const nonCanonHash = "6cca68f1";
 const legendsHash = "a3b84346";
 const nonCanonLegendsHash = "42a381df";
 
+// Appearance magic strings
+const skywalkerSagaHashes = [
+  "4312d9a7", // 'Phantom menace'
+  "d441250e", // 'Attack of the Clones'
+  "b02dd266", // 'Revenge of the Sith'
+  "4b84e12d", // 'A New Hope'
+  "64c427d3", // 'The Empire Strikes Back'
+  "a39cca04", // 'Return of the Jedi'
+  "903256c6", // 'The Force Awakens'
+  "94ba1bb2", // 'The Last Jedi'
+  "0d7a2606", // 'The Rise of Skywalker'
+  "629eab23", // 'LEGO Star Wars: The Skywalker Saga' hihi :)
+];
+const cloneWarsHashes = [
+  "afbcefd8", // 'The Clone Wars (film)'
+  "ce4f465b", // 'The Clone Wars (2008-2020)'
+];
+const badBatchHashes = [
+  "6fa7c73a", // 'The Bad Batch'
+];
+const rebelsHashes = [
+  "215c3919", // 'Star Wars Rebels'
+];
+const andorRogueOneHashes = [
+  "2fc6ba34", // 'Rogue One: A Star Wars Story'
+  "993a4cbf", // 'Andor'
+];
+const mandalorianTBOBFHashes = [
+  "d30c7291", // 'The Mandalorian'
+  "dc42254b", // 'The Book of Boba Fett'
+];
+const obiWanKenobiHashes = [
+  "7012cde5", // 'Obi-Wan Kenobi'
+];
+const ahsokaHashes = [
+  "060d8f86", // 'Ahsoka'
+];
+const theAcolyteHashes = [
+  "43e1c3f2", // 'The Acolyte'
+];
+const skeletonCrewHashes = [
+  "2ac227f0", // 'Skeleton Crew'
+];
+const legacyCartoonsHashes = [
+  "7952b246", // 'Ewoks (1985-1986)'
+  "4ba75f90", // 'Droids (1985-1986)'
+  "3932aac4", // 'Ewoks: The Battle for Endor (1985)'
+  "9503d8c0", // 'Ewoks: The Caravan of Courage (1984)'
+];
+
 export function filterCharacters(characters: Character[], filters: Filters, categories: FilterCategoryMeta[], categoryLookup: Record<string, string>): Character[] {
   if (filters.length === 0) return characters;
 
@@ -235,6 +285,30 @@ export function filterCharacters(characters: Character[], filters: Filters, cate
       return true;
     });
   }
+
+  const appearances = extractCategory(FilterCategoryID.appearances, categories, filters);
+  if (appearances && appearances.state !== false) {
+    // Concat all appearances into one array for easier filtering
+    characters = characters.map(c => ({ ...c, appearances: [...(c.canonAppearances || []), ...(c.legendsAppearances || []), ...(c.nonCanonAppearances || []), ...(c.nonCanonLegendsAppearances || [])] }));
+
+    characters = characters.filter(c => {
+      if (!appearances.filters["allow-skywalker-saga"] && c.appearances && c.appearances.some(hash => skywalkerSagaHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-the-clone-wars"] && c.appearances && c.appearances.some(hash => cloneWarsHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-the-bad-batch"] && c.appearances && c.appearances.some(hash => badBatchHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-rebels"] && c.appearances && c.appearances.some(hash => rebelsHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-andor-rogue-one"] && c.appearances && c.appearances.some(hash => andorRogueOneHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-mandalorian-tbobf"] && c.appearances && c.appearances.some(hash => mandalorianTBOBFHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-obi-wan-kenobi"] && c.appearances && c.appearances.some(hash => obiWanKenobiHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-ahsoka"] && c.appearances && c.appearances.some(hash => ahsokaHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-the-acolyte"] && c.appearances && c.appearances.some(hash => theAcolyteHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-skeleton-crew"] && c.appearances && c.appearances.some(hash => skeletonCrewHashes.includes(hash))) return false;
+      if (!appearances.filters["allow-legacy-cartoons"] && c.appearances && c.appearances.some(hash => legacyCartoonsHashes.includes(hash))) return false;
+      return true;
+    });
+  }
+
+  // Delete temporary appearances array
+  characters = characters.map(c => { delete c.appearances; return c; });
 
   return characters;
 }

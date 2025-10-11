@@ -32,6 +32,7 @@ export type Character = {
   nonCanonAppearances?: string[] | undefined; // Hash list
   legendsAppearances?: string[] | undefined; // Hash list
   nonCanonLegendsAppearances?: string[] | undefined; // Hash list
+  appearances?: string[] | undefined; // Combined list of all appearances, used for filtering will not be saved
 };
 
 export const FilterCategoryID = {
