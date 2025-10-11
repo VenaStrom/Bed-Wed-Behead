@@ -212,7 +212,7 @@ const nonCanonHash = "6cca68f1";
 const legendsHash = "a3b84346";
 const nonCanonLegendsHash = "42a381df";
 
-// Appearance magic strings
+// Appearance magic strings picked from appearance-lookup.json
 const skywalkerSagaHashes = [
   "4312d9a7", // 'Phantom menace'
   "d441250e", // 'Attack of the Clones'
@@ -262,6 +262,26 @@ const legacyCartoonsHashes = [
   "9503d8c0", // 'Ewoks: The Caravan of Courage (1984)'
 ];
 
+// Gender magic strings picked from category-lookup.json
+const malesHashes = [
+  "aad33621", // 'Males'
+  "a9ee438a", // 'He/him pronouns'
+  "03c93690", // 'Droids with he/him pronouns'
+  "35c77b67", // 'Droids with masculine programming'
+];
+const femalesHashes = [
+  "0b9319f3", // 'Females'
+  "7ad9c89e", // 'She/her pronouns'
+  "b405f928", // 'Droids with she/her pronouns'
+  "58501ae0", // 'Droids with feminine programming'
+];
+const otherGenderHashes = [
+  "c3c11144", // 'Non-binary'
+  "f3e3d817", // 'They/them pronouns'
+  "adb5e2a8", // 'Zhe/zher pronouns'
+  "f1253d40", // 'Droids with they/them pronouns'
+];
+
 export function filterCharacters(characters: Character[], filters: Filters, categories: FilterCategoryMeta[], categoryLookup: Record<string, string>): Character[] {
   if (filters.length === 0) return characters;
 
@@ -309,6 +329,16 @@ export function filterCharacters(characters: Character[], filters: Filters, cate
 
   // Delete temporary appearances array
   characters = characters.map(c => { delete c.appearances; return c; });
+
+  const gender = extractCategory(FilterCategoryID.gender, categories, filters);
+  if (gender && gender.state !== false) {
+    characters = characters.filter(c => {
+      if (!gender.filters["allow-males"] && c.categories && c.categories.some(hash => malesHashes.includes(hash))) return false;
+      if (!gender.filters["allow-females"] && c.categories && c.categories.some(hash => femalesHashes.includes(hash))) return false;
+      if (!gender.filters["allow-other-genders"] && c.categories && c.categories.some(hash => otherGenderHashes.includes(hash))) return false;
+      return true;
+    });
+  }
 
   return characters;
 }
