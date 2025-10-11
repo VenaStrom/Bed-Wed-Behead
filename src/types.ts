@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 
 export type ProfileState = {
   name: string | null;
@@ -31,4 +32,23 @@ export type Character = {
   nonCanonAppearances?: string[] | undefined; // Hash list
   legendsAppearances?: string[] | undefined; // Hash list
   nonCanonLegendsAppearances?: string[] | undefined; // Hash list
+};
+
+export const FilterCategoryID = ["miscellaneous", "canonicity", "appearances", "gender"] as const;
+export type FilterCategoryID = (typeof FilterCategoryID)[number];
+
+export type FilterItem = {
+  category: FilterCategoryID;
+  id: string;
+  label: string;
+  description: string | ReactNode;
+  state: boolean;
+};
+export type Filters = FilterItem[];
+
+export type FilterCategoryMeta = {
+  id: FilterCategoryID;
+  name: string;
+  state?: boolean; // Only for categories that can be toggled on/off as a whole
+  label?: string; // Help text for the category toggle
 };

@@ -13,3 +13,5 @@
 
 - [x] Rethink share filter button :ugh:
   - [x] remove it for now
+
+- [ ] Simple input validation on bwb options to not commit with missing selections

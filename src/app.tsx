@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, NoticeIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
-import { BWBChoice, emptyProfile, ProfileStates, Character } from "./types.ts";
-import { defaultFilters, Filter, FilterCategory, filterChar, FilterOption } from "./functions/filters.tsx";
+import { BWBChoice, emptyProfile, ProfileStates, Character, Filters, FilterCategoryMeta } from "./types.ts";
+import { defaultFilters, defaultFilterCategories, filterChar } from "./functions/filters.tsx";
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
@@ -124,42 +124,44 @@ export default function App() {
   }, [hasFetchedCharData, fetchTimes.characterNames, fetchTimes.characters, fetchTimes.categoryLookup, fetchTimes.appearanceCLookup, fetchTimes.appearanceNCLookup, fetchTimes.appearanceLLookup, fetchTimes.appearanceNCLLookup]);
 
   // Filter
-  const [filter, setFilter] = useState<Filter>((() => {
+  const [filter, setFilter] = useState<Filters>((() => {
     if (typeof window === "undefined") return defaultFilters;
 
-    const loadedStates = window.localStorage.getItem("bwb-filter-states") ? JSON.parse(window.localStorage.getItem("bwb-filter-states") as string) : null;
+    const loadedStates: Record<string, boolean> = window.localStorage.getItem("bwb-filter-item-states") ? JSON.parse(window.localStorage.getItem("bwb-filter-item-states") as string) : null;
     if (loadedStates) {
-      return {
-        ...defaultFilters,
-        ...Object.fromEntries(
-          Object.entries(loadedStates)
-            .map(([catId, cat]: [string, FilterCategory]) => [catId, {
-              ...defaultFilters[catId],
-              id: cat.id,
-              ...cat.state ? { state: cat.state } : {},
-              filters: Object.fromEntries(Object.entries(cat.filters)
-                .map(([filId, fil]: [string, FilterOption]) => [filId, {
-                  ...defaultFilters[catId].filters[filId],
-                  id: fil.id,
-                  state: fil.state,
-                }]),
-              ),
-            }])
-        ),
-      };
+      const loadedFilter: Filters = defaultFilters.map(f => ({
+        ...f,
+        state: f.state !== undefined ? Boolean(loadedStates[f.id]) : f.state,
+      }));
+      return loadedFilter;
     }
 
     return defaultFilters;
   })());
-  const usingDefaultFilter = useMemo(() => JSON.stringify(defaultFilters) === JSON.stringify(filter), [filter]);
+  const [filterCategories, setFilterCategories] = useState<FilterCategoryMeta[]>((() => {
+    if (typeof window === "undefined") return defaultFilterCategories;
+
+    const loadedStates: Record<string, boolean> = window.localStorage.getItem("bwb-filter-cats-states") ? JSON.parse(window.localStorage.getItem("bwb-filter-cats-states") as string) : null;
+    if (loadedStates) {
+      const loadedCats: FilterCategoryMeta[] = defaultFilterCategories.map(c => ({
+        ...c,
+        state: c.state !== undefined ? Boolean(loadedStates[c.id]) : c.state,
+      }));
+      return loadedCats;
+    }
+
+    return defaultFilterCategories;
+  })());
+  const usingDefaultFilter = useMemo(() => JSON.stringify(defaultFilters) === JSON.stringify(filter) && JSON.stringify(defaultFilterCategories) === JSON.stringify(filterCategories), [filter, filterCategories]);
 
   // Save filter to localStorage on change
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const toSave = Object.fromEntries(Object.entries(filter).map(([catId, cat]) => [catId, { ...cat, filters: Object.fromEntries(Object.entries(cat.filters).map(([filId, fil]) => [filId, { id: fil.id, state: fil.state }])) }]));
-      window.localStorage.setItem("bwb-filter-states", JSON.stringify(toSave));
-    }
-  }, [filter]);
+    if (typeof window === "undefined") return;
+    const strippedFilters = Object.fromEntries(filter.map(f => ([f.id, f.state])));
+    const strippedCategories = Object.fromEntries(filterCategories.map(c => ([c.id, c.state])));
+    window.localStorage.setItem("bwb-filter-item-states", JSON.stringify(strippedFilters));
+    window.localStorage.setItem("bwb-filter-cats-states", JSON.stringify(strippedCategories));
+  }, [filter, filterCategories]);
 
   const [toasts, setToasts] = useState<{ text: string, good?: boolean }[]>([]);
   const toast = useCallback((text: string, good: boolean = true) => {
@@ -320,7 +322,7 @@ export default function App() {
           {/* Reset filter button */}
           <button
             className={`w-fit px-3 hover:bg-hyper-500 transition-all ${usingDefaultFilter ? "hidden" : ""}`}
-            onClick={() => setFilter(defaultFilters)}
+            onClick={() => { setFilter(defaultFilters); setFilterCategories(defaultFilterCategories); }}
           >
             <RefreshIcon className="size-6 inline" />
             Reset&nbsp;filter
@@ -349,37 +351,36 @@ export default function App() {
         </p>
 
         <div className="overflow-y-scroll flex flex-col gap-y-8 pe-3">
-          {Object.values(filter).map((category) =>
+          {filterCategories.map((category) =>
             <div key={`filter-category-${category.id}`} className="flex flex-col ">
-              <p className="text-lg font-bold">{category.label}</p>
+              <p className="text-lg font-bold">{category.name}</p>
 
-              {/* If toggle is allowed */}
+              {/* If toggle category is allowed */}
               {category.state !== undefined && (
                 <label className="flex flex-row justify-center items-center gap-x-3 cursor-pointer mb-2">
                   <div className="flex flex-col gap-y-0.5 text-sm">
-                    <span>{category.stateLabel}</span>
+                    <span>{category.label}</span>
                   </div>
 
                   <input
                     checked={category.state}
                     type="checkbox"
                     onChange={() => {
-                      const newFilter = { ...filter, [category.id]: { ...category, state: !category.state } };
-
-                      setFilter(newFilter);
+                      const newCategories = filterCategories.map(c => c.id === category.id ? { ...c, state: !c.state } : c);
+                      setFilterCategories(newCategories);
                     }}
                   />
                 </label>
               )}
 
               <ul className={`flex flex-col gap-y-1 ${category.state !== undefined && !category.state ? "opacity-50 *:pointer-events-none cursor-not-allowed" : ""}`}>
-                {/* Toggle buttons */}
+                {/* Mass operations buttons */}
                 <li className="flex flex-row justify-start items-center gap-x-3 *:py-1 *:bg-transparent *:text-sm *:italic *:text-star/70">
                   <button className="hover:bg-hyper-400 hover:text-eclipse-700"
                     onClick={() => {
-                      const newFilter = { ...filter, [category.id]: { ...category, filters: Object.fromEntries(Object.entries(category.filters).map(([filId, fil]) => [filId, { ...fil, state: true }])) } };
-
-                      setFilter(newFilter);
+                      // All filters in this category to true
+                      const newFilters = [...filter.map(f => f.category === category.id ? { ...f, state: true } : f)];
+                      setFilter(newFilters);
                     }}
                   >
                     Enable all <CheckmarkIcon className="size-5 inline ms-1" />
@@ -387,9 +388,9 @@ export default function App() {
 
                   <button className="hover:bg-jump-400 hover:text-star"
                     onClick={() => {
-                      const newFilter = { ...filter, [category.id]: { ...category, filters: Object.fromEntries(Object.entries(category.filters).map(([filId, fil]) => [filId, { ...fil, state: false }])) } };
-
-                      setFilter(newFilter);
+                      // All filters in this category to false
+                      const newFilters = [...filter.map(f => f.category === category.id ? { ...f, state: false } : f)];
+                      setFilter(newFilters);
                     }}
                   >
                     Disable all <CloseIcon className="size-5 inline ms-1" />
@@ -397,16 +398,17 @@ export default function App() {
 
                   <button className="hover:bg-hyper-500 hover:text-star"
                     onClick={() => {
-                      const newFilter = { ...filter, [category.id]: { ...category, filters: Object.fromEntries(Object.entries(category.filters).map(([filId, fil]) => [filId, { ...fil, state: !fil.state }])) } };
-
-                      setFilter(newFilter);
+                      // Invert all filters in this category
+                      const newFilters = [...filter.map(f => f.category === category.id ? { ...f, state: !f.state } : f)];
+                      setFilter(newFilters);
                     }}
                   >
                     Invert <RefreshIcon className="size-5 inline ms-1" />
                   </button>
                 </li>
 
-                {Object.values(category.filters).map((f) =>
+                {/* All filter options in category */}
+                {filter.filter(f => f.category === category.id).map(f =>
                   <li key={`filter-${f.id}`} className="flex flex-row justify-start items-center gap-x-3">
                     <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer ps-0.5 w-full">
                       <input
@@ -414,18 +416,14 @@ export default function App() {
                         checked={f.state}
                         type="checkbox"
                         onChange={() => {
-                          // Disable if category is toggled off due to keyboard navigation
-                          if (category.state !== undefined && !category.state) return;
-
-                          const newFilter = { ...filter, [category.id]: { ...category, filters: { ...category.filters, [f.id]: { ...f, state: !f.state } } } };
-
-                          setFilter(newFilter);
+                          const newFilters = filter.map(fl => fl.id === f.id ? { ...fl, state: !fl.state } : fl);
+                          setFilter(newFilters);
                         }}
                       />
 
                       <div className="flex flex-col gap-y-0.5">
                         <span>{f.label}</span>
-                        <span className="text-xs italic text-star/70">{f.help}</span>
+                        <span className="text-xs italic text-star/70">{f.description}</span>
                       </div>
                     </label>
                   </li>
