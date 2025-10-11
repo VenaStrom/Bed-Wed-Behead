@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, NoticeIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character, Filters, FilterCategoryMeta } from "./types.ts";
-import { defaultFilters, defaultFilterCategories, filterChar } from "./functions/filters.tsx";
+import { defaultFilters, defaultFilterCategories, filterChar, filterCharacters } from "./functions/filters.tsx";
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
@@ -153,6 +153,10 @@ export default function App() {
     return defaultFilterCategories;
   })());
   const usingDefaultFilter = useMemo(() => JSON.stringify(defaultFilters) === JSON.stringify(filter) && JSON.stringify(defaultFilterCategories) === JSON.stringify(filterCategories), [filter, filterCategories]);
+  const filteredCharacters = useMemo(() => {
+    if (!(categoryLookup && appearanceCLookup && appearanceNCLLookup && appearanceLLookup && appearanceNCLLookup && characterNames && characters)) return null;
+    return filterCharacters(characters, filter, filterCategories, categoryLookup);
+  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, categoryLookup, characterNames, characters, filter, filterCategories]);
 
   // Save filter to localStorage on change
   useEffect(() => {
@@ -191,13 +195,20 @@ export default function App() {
 
     clearProfiles();
 
-    if (!(categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characterNames && characters)) {
+    if (!(categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characterNames && characters && filteredCharacters)) {
       toast("Data is still loading, please wait", false);
       return;
     }
 
-    // Filter characters based on filter state
-    const filteredCharacters = characters.filter(c => filterChar(c, filter));
+    if (filteredCharacters.length === 0) {
+      toast("No characters match the current filter", false);
+      return;
+    }
+
+    if (filteredCharacters.length < 3) {
+      toast(`Only ${filteredCharacters.length} characters match the current filter`, false);
+      return;
+    }
 
     // Get 3 random characters from filtered list
     const newProfiles: ProfileStates = [0, 1, 2].map(() => {
@@ -211,7 +222,7 @@ export default function App() {
     }) as ProfileStates;
 
     setProfiles(newProfiles);
-  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characterNames, characters, clearProfiles, filter, rolls, toast]);
+  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characterNames, characters, clearProfiles, filteredCharacters, rolls, toast]);
 
   const commit = useCallback(() => {
     setRolls(rolls + 1);
@@ -347,7 +358,7 @@ export default function App() {
         </header>
 
         <p className="text-star text-sm font-normal w-full text-center italic py-2">
-          Current character pool is {characterNames?.length ?? "loading..."}
+          Current character pool is {filteredCharacters?.length ?? "loading..."}
         </p>
 
         <div className="overflow-y-scroll flex flex-col gap-y-8 pe-3">
@@ -577,6 +588,12 @@ export default function App() {
         <span className="italic text-star/70">{!(categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup) && "Loading lookup tables..."}</span>
         <span className="italic text-star/70">{!characterNames && "Loading character names..."}</span>
         <span className="italic text-star/70">{!characters && "Loading character data..."}</span>
+
+        <span>
+          Current pool:
+          {" "}
+          {filteredCharacters ? filteredCharacters.length : "loading..."}
+        </span>
 
         <span>
           Characters loaded:

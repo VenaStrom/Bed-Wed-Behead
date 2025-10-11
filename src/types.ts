@@ -34,8 +34,13 @@ export type Character = {
   nonCanonLegendsAppearances?: string[] | undefined; // Hash list
 };
 
-export const FilterCategoryID = ["miscellaneous", "canonicity", "appearances", "gender"] as const;
-export type FilterCategoryID = (typeof FilterCategoryID)[number];
+export const FilterCategoryID = {
+  miscellaneous: "miscellaneous",
+  canonicity: "canonicity",
+  appearances: "appearances",
+  gender: "gender",
+} as const;
+export type FilterCategoryID = (typeof FilterCategoryID)[keyof typeof FilterCategoryID];
 
 export type FilterItem = {
   category: FilterCategoryID;
