@@ -5,7 +5,6 @@ import fs from "node:fs";
 
 const filesToCopyInToolsOut = [
   "characters.min.json",
-  "character-links.min.json",
   "category-lookup.min.json",
   "appearance-canon-lookup.min.json",
   "appearance-non-canon-lookup.min.json",

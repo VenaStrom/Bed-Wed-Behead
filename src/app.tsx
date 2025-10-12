@@ -17,7 +17,6 @@ export default function App() {
   const [hasFetchedCharData, setHasFetchedCharData] = useState(false);
 
   const [fetchTimes, setFetchTimes] = useState<{
-    characterNames: number;
     characters: number;
     categoryLookup: number;
     appearanceCLookup: number;
@@ -25,7 +24,6 @@ export default function App() {
     appearanceLLookup: number;
     appearanceNCLLookup: number;
   }>({
-    characterNames: Date.now(),
     characters: Date.now(),
     categoryLookup: Date.now(),
     appearanceCLookup: Date.now(),
@@ -33,7 +31,6 @@ export default function App() {
     appearanceLLookup: Date.now(),
     appearanceNCLLookup: Date.now(),
   });
-  const [characterNames, setCharacterNames] = useState<string[] | null>(null);
   const [characters, setCharacters] = useState<Character[] | null>(null);
   const [categoryLookup, setCategoryLookup] = useState<Record<string, string> | null>(null);
   /** Appearances in Canon */
@@ -49,17 +46,6 @@ export default function App() {
   useEffect(() => {
     if (hasFetchedCharData) return;
     setHasFetchedCharData(true);
-
-    fetch("/db/characters-links.min.json")
-      .then(res => res.json())
-      .then(min => min.singleLineData.split(min.joiningCharacter))
-      .then(expanded => setCharacterNames(expanded))
-      .then(() => console.log(`Fetched characters-links.min.json in ${Date.now() - fetchTimes.characterNames} ms`))
-      .then(() => setFetchTimes(times => ({ ...times, characterNames: Date.now() - times.characterNames })))
-      .catch((e) => {
-        console.error(e);
-        alert("A critical error occurred while fetching character names")
-      });
 
     fetch("/db/characters.min.json")
       .then(res => res.json())
@@ -121,7 +107,7 @@ export default function App() {
         alert("A critical error occurred while fetching appearance (non-canon legends) lookup data")
       });
 
-  }, [hasFetchedCharData, fetchTimes.characterNames, fetchTimes.characters, fetchTimes.categoryLookup, fetchTimes.appearanceCLookup, fetchTimes.appearanceNCLookup, fetchTimes.appearanceLLookup, fetchTimes.appearanceNCLLookup]);
+  }, [hasFetchedCharData, fetchTimes, fetchTimes.characters, fetchTimes.categoryLookup, fetchTimes.appearanceCLookup, fetchTimes.appearanceNCLookup, fetchTimes.appearanceLLookup, fetchTimes.appearanceNCLLookup]);
 
   // Filter
   const [filter, setFilter] = useState<Filters>((() => {
@@ -154,9 +140,9 @@ export default function App() {
   })());
   const usingDefaultFilter = useMemo(() => JSON.stringify(defaultFilters) === JSON.stringify(filter) && JSON.stringify(defaultFilterCategories) === JSON.stringify(filterCategories), [filter, filterCategories]);
   const filteredCharacters = useMemo(() => {
-    if (!(categoryLookup && appearanceCLookup && appearanceNCLLookup && appearanceLLookup && appearanceNCLLookup && characterNames && characters)) return null;
+    if (!(categoryLookup && appearanceCLookup && appearanceNCLLookup && appearanceLLookup && appearanceNCLLookup && characters)) return null;
     return filterCharacters(characters, filter, filterCategories, categoryLookup);
-  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, categoryLookup, characterNames, characters, filter, filterCategories]);
+  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, categoryLookup, characters, filter, filterCategories]);
 
   // Save filter to localStorage on change
   useEffect(() => {
@@ -195,7 +181,7 @@ export default function App() {
 
     clearProfiles();
 
-    if (!(categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characterNames && characters && filteredCharacters)) {
+    if (!(categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characters && filteredCharacters)) {
       toast("Data is still loading, please wait", false);
       return;
     }
@@ -239,7 +225,7 @@ export default function App() {
     }
 
     setProfiles(newProfiles);
-  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characterNames, characters, clearProfiles, filteredCharacters, rolls, toast]);
+  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characters, clearProfiles, filteredCharacters, rolls, toast]);
 
   const commit = useCallback(() => {
     setRolls(rolls + 1);
@@ -252,11 +238,11 @@ export default function App() {
   const [hasDoneInitialRole, setHasDoneInitialRole] = useState(false);
   useEffect(() => {
     if (hasDoneInitialRole) return;
-    if (categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characterNames && characters) {
+    if (categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characters) {
       refresh();
       setHasDoneInitialRole(true);
     }
-  }, [hasDoneInitialRole, categoryLookup, appearanceCLookup, appearanceNCLookup, appearanceLLookup, appearanceNCLLookup, characterNames, characters, refresh]);
+  }, [hasDoneInitialRole, categoryLookup, appearanceCLookup, appearanceNCLookup, appearanceLLookup, appearanceNCLLookup, characters, refresh]);
 
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
@@ -600,10 +586,9 @@ export default function App() {
       </div>
 
       {/* Loading status */}
-      <p className="w-[26ch] flex flex-col gap-y-0.5">
+      <p className="w-[22ch] flex flex-col gap-y-0.5">
         {/* Loading status texts */}
         <span className="italic text-star/70">{!(categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup) && "Loading lookup tables..."}</span>
-        <span className="italic text-star/70">{!characterNames && "Loading character names..."}</span>
         <span className="italic text-star/70">{!characters && "Loading character data..."}</span>
 
         <span>
@@ -615,11 +600,7 @@ export default function App() {
         <span>
           Characters loaded:
           {" "}
-          {/* Loading... while names are fetched */}
-          {characterNames ? characterNames.length : "loading..."}
-          {" "}
-          {/* Spinner while data is being fetched */}
-          {!characters && <SpinnerIcon className="size-3 inline ms-1" />}
+          {characters ? characters.length : <SpinnerIcon className="size-3 inline ms-1" />}
         </span>
       </p>
     </footer>
