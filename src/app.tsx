@@ -230,12 +230,21 @@ export default function App() {
   }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characters, clearProfiles, filteredCharacters, rolls, toast]);
 
   const commit = useCallback(() => {
-    setRolls(rolls + 1);
+    // Missing selections
+    if (profiles.some(p => !p.selectedOption)) {
+      toast("Please make a selection for all three characters before committing", false);
+      return;
+    }
 
-    // Stuff
+    // Colliding selections (should not be possible with current UI)
+    const selections = profiles.map(p => p.selectedOption);
+    if (new Set(selections).size !== selections.length) {
+      toast("Please make sure all three characters have different selections before committing", false);
+      return;
+    }
 
     refresh();
-  }, [refresh, rolls]);
+  }, [profiles, refresh, toast]);
 
   // Initial roll when data is ready
   useEffect(() => {
@@ -280,6 +289,7 @@ export default function App() {
     window.addEventListener("keydown", onKeyPress);
     return () => window.removeEventListener("keydown", onKeyPress);
   }, [commit, isFilterPanelExpanded, refresh, showMnemonics]);
+
 
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
