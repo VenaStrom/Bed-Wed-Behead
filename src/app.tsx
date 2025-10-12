@@ -16,9 +16,9 @@ export default function App() {
   const [hasFetchedCharData, setHasFetchedCharData] = useState<boolean>(false);
   const [showMnemonics, setShowMnemonics] = useState<boolean>(false);
   const [hasDoneInitialRole, setHasDoneInitialRole] = useState<boolean>(false);
-  const [isFilterPanelExpanded, setFilterPanelOpen] = useState<boolean>(false);
+  const [isFilterPanelExpanded, setFilterPanelExpanded] = useState<boolean>(false);
   const [isHistoryPanelExpanded, setIsHistoryPanelExpanded] = useState<boolean>(false);
-  const closeModals = useCallback(() => { setFilterPanelOpen(false); setIsHistoryPanelExpanded(false); }, []);
+  const closeModals = useCallback(() => { setFilterPanelExpanded(false); setIsHistoryPanelExpanded(false); }, []);
 
   const [fetchTimes, setFetchTimes] = useState<{
     characters: number;
@@ -272,7 +272,7 @@ export default function App() {
 
       // Open and close filter panel on 'f'
       if (e.key === "f") {
-        setFilterPanelOpen(!isFilterPanelExpanded);
+        setFilterPanelExpanded(!isFilterPanelExpanded);
       }
 
       // Refresh on 'r' keypress
@@ -365,14 +365,14 @@ export default function App() {
 
           {/* Toggle filter panel */}
           <button
-            onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
+            onClick={() => setFilterPanelExpanded(!isFilterPanelExpanded)}
             className={`
-            z-10
-            px-3
-            hover:[&_.icon]:rotate-[120deg] 
-            hover:[&_.mnum]:text-jump-500
-            hover:bg-star hover:text-eclipse-500
-            ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
+              z-10
+              px-3
+              hover:[&_.icon]:rotate-[120deg] 
+              hover:[&_.mnum]:text-jump-500
+              hover:bg-star hover:text-eclipse-500
+              ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
           `}
           >
             <GearIcon className="icon size-8 transition-all" />
@@ -417,7 +417,7 @@ export default function App() {
 
           {/* Close filter panel button */}
           <button
-            onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
+            onClick={() => setFilterPanelExpanded(!isFilterPanelExpanded)}
             className={`
             z-10
             ps-5
@@ -552,7 +552,23 @@ export default function App() {
           flex flex-col gap-y-2
         `}
       >
-
+        <header>
+          <button
+            onClick={() => setIsHistoryPanelExpanded(!isFilterPanelExpanded)}
+            className={`
+            z-10
+            ps-5
+            pe-2
+            bg-star hover:bg-eclipse-500
+            text-eclipse-500 hover:text-jump-500
+            hover:[&_.mnum]:text-command-500
+          `}
+          >
+            Close
+            <CloseIcon className="size-6 transition-all" />
+            {showMnemonics && <span className="mnum text-jump-700">[{"\u2009"}h{"\u2009"}|{"\u2009"}Esc{"\u2009"}]</span>}
+          </button>
+        </header>
       </aside>
 
       {/* Profiles */}
