@@ -49,7 +49,7 @@ const defaultFiltersStatic = [
     category: FilterCategoryID.miscellaneous,
     id: "allow-droids",
     label: "Show Droids",
-    description: "Show droid characters (may not be perfect).",
+    description: "Whether or not to show droid characters (may not be perfect).",
     state: true,
   },
   {
@@ -212,7 +212,8 @@ const cloneWarsHashes = [
   "ce4f465b", // 'The Clone Wars (2008-2020)'
 ];
 const badBatchHashes = [
-  "6fa7c73a", // 'The Bad Batch'
+  "6fa7c73a", // 'Star Wars: The Bad Batch'
+  "881e992c", // 'The Bat Batch (episode)'
 ];
 const rebelsHashes = [
   "215c3919", // 'Star Wars Rebels'
@@ -294,17 +295,17 @@ export function filterCharacters(characters: Character[], filters: Filters, cate
     characters = characters.map(c => ({ ...c, appearances: [...(c.canonAppearances || []), ...(c.legendsAppearances || []), ...(c.nonCanonAppearances || []), ...(c.nonCanonLegendsAppearances || [])] }));
 
     characters = characters.filter(c => {
-      if (!appearances.filters["allow-skywalker-saga"] && c.appearances && c.appearances.some(hash => skywalkerSagaHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-the-clone-wars"] && c.appearances && c.appearances.some(hash => cloneWarsHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-the-bad-batch"] && c.appearances && c.appearances.some(hash => badBatchHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-rebels"] && c.appearances && c.appearances.some(hash => rebelsHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-andor-rogue-one"] && c.appearances && c.appearances.some(hash => andorRogueOneHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-mandalorian-tbobf"] && c.appearances && c.appearances.some(hash => mandalorianTBOBFHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-obi-wan-kenobi"] && c.appearances && c.appearances.some(hash => obiWanKenobiHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-ahsoka"] && c.appearances && c.appearances.some(hash => ahsokaHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-the-acolyte"] && c.appearances && c.appearances.some(hash => theAcolyteHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-skeleton-crew"] && c.appearances && c.appearances.some(hash => skeletonCrewHashes.includes(hash))) return false;
-      if (!appearances.filters["allow-legacy-cartoons"] && c.appearances && c.appearances.some(hash => legacyCartoonsHashes.includes(hash))) return false;
+      if (appearances.filters["allow-skywalker-saga"] && c.appearances && !c.appearances.some(hash => skywalkerSagaHashes.includes(hash))) return false;
+      if (appearances.filters["allow-the-clone-wars"] && c.appearances && !c.appearances.some(hash => cloneWarsHashes.includes(hash))) return false;
+      if (appearances.filters["allow-the-bad-batch"] && c.appearances && !c.appearances.some(hash => badBatchHashes.includes(hash))) return false;
+      if (appearances.filters["allow-rebels"] && c.appearances && !c.appearances.some(hash => rebelsHashes.includes(hash))) return false;
+      if (appearances.filters["allow-andor-rogue-one"] && c.appearances && !c.appearances.some(hash => andorRogueOneHashes.includes(hash))) return false;
+      if (appearances.filters["allow-mandalorian-tbobf"] && c.appearances && !c.appearances.some(hash => mandalorianTBOBFHashes.includes(hash))) return false;
+      if (appearances.filters["allow-obi-wan-kenobi"] && c.appearances && !c.appearances.some(hash => obiWanKenobiHashes.includes(hash))) return false;
+      if (appearances.filters["allow-ahsoka"] && c.appearances && !c.appearances.some(hash => ahsokaHashes.includes(hash))) return false;
+      if (appearances.filters["allow-the-acolyte"] && c.appearances && !c.appearances.some(hash => theAcolyteHashes.includes(hash))) return false;
+      if (appearances.filters["allow-skeleton-crew"] && c.appearances && !c.appearances.some(hash => skeletonCrewHashes.includes(hash))) return false;
+      if (appearances.filters["allow-legacy-cartoons"] && c.appearances && !c.appearances.some(hash => legacyCartoonsHashes.includes(hash))) return false;
       return true;
     });
   }

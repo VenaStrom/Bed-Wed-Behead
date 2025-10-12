@@ -244,6 +244,20 @@ export default function App() {
     }
   }, [hasDoneInitialRole, categoryLookup, appearanceCLookup, appearanceNCLookup, appearanceLLookup, appearanceNCLLookup, characters, refresh]);
 
+  // Open and close filter panel on 'f' and 'Escape' keypress
+  useEffect(() => {
+    function onKeyPress(e: KeyboardEvent) {
+      if (e.key === "f") {
+        setFilterPanelOpen(!isFilterPanelExpanded);
+      } else if (e.key === "Escape") {
+        setFilterPanelOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyPress);
+    return () => window.removeEventListener("keydown", onKeyPress);
+  }, [isFilterPanelExpanded]);
+
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
       {/* Heading */}
@@ -360,10 +374,6 @@ export default function App() {
           </button>
         </header>
 
-        <p className="text-star text-sm font-normal w-full text-center italic py-2">
-          Current character pool is {filteredCharacters?.length ?? "loading..."}
-        </p>
-
         <div className="overflow-y-scroll flex flex-col gap-y-8 pe-3">
           {filterCategories.map((category) =>
             <div key={`filter-category-${category.id}`} className="flex flex-col ">
@@ -447,7 +457,14 @@ export default function App() {
           )}
         </div>
 
-        <div className="flex-1"></div>
+        <p className="text-star text-sm font-normal w-full text-center py-2">
+          Current character pool is {filteredCharacters?.length ?? "loading..."}
+        </p>
+
+        <button onClick={() => { refresh(); setFilterPanelOpen(false); }} className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180 flex flex-row justify-center items-center pe-10">
+          <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
+          Play
+        </button>
 
         {/* Stats */}
         < div className="text-xs text-star/70 italic flex flex-col gap-y-1 w-full" >
@@ -472,7 +489,7 @@ export default function App() {
                 `}
                 target="_blank" rel="noopener"
               >
-                <img className="size-48 rounded-sm object-contain" src={profile.imageRoute ? imageBaseURL + profile.imageRoute : "/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
+                <img className="size-48 rounded-sm object-contain" loading="eager" src={profile.imageRoute ? imageBaseURL + profile.imageRoute : "/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
 
                 <div className="w-full flex flex-row items-center justify-center gap-x-2 h-9">
                   <p className="flex-1 text-base text-center max-w-[18ch]">{profile.name || "..."}</p>

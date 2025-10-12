@@ -28,7 +28,7 @@ export default function OptionButton({
         w-full
         select-none
         ${toggled ? `
-          bg-jump-500 text-eclipse-700
+          bg-jump-500 
           hover:bg-jump-400
           ` : `
           bg-eclipse-500
@@ -46,7 +46,7 @@ export default function OptionButton({
           // Set this profile normally
           newProfiles[profileIndex] = {
             ...newProfiles[profileIndex],
-            selectedOption: label,
+            selectedOption: toggled ? null : label,
           };
 
           const otherProfileIndexes = [0, 1, 2].filter((i) => i !== profileIndex);

@@ -1,7 +1,6 @@
-import fs from "node:fs";
-import { glob } from "glob";
+import fs, { globSync } from "node:fs";
 
-const lookupFiles = glob.sync("tools/out/*lookup.raw.json");
+const lookupFiles = globSync("tools/out/*lookup.raw.json");
 console.log("Minimizing lookups...");
 for (const filePath of lookupFiles) {
   console.log(`Processing ${filePath}...`);
