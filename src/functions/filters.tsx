@@ -188,24 +188,6 @@ function extractCategory(catID: FilterCategoryID, cats: FilterCategoryMeta[], fi
   };
 }
 
-export function filterChar(character: Character, filters: Filters, categories: FilterCategoryMeta[]): boolean {
-  if (!filters) return true;
-
-  const miscellaneous = extractCategory(FilterCategoryID.miscellaneous, categories, filters);
-  if (miscellaneous && miscellaneous.state !== false) {
-    if (miscellaneous.filters["only-with-images"] && !character.image) return false;
-    if (miscellaneous.filters["only-identified"] && character.name.startsWith("Unidentified")) return false;
-    if (miscellaneous.filters["only-common"] && (!character.canonAppearances || character.canonAppearances.length < 5) && (!character.legendsAppearances || character.legendsAppearances.length < 5)) return false;
-    if (!miscellaneous.filters["allow-droids"] && character.categories && character.categories.some(c => c.toLowerCase().includes("droid"))) return false;
-  }
-
-  const canonicity = extractCategory(FilterCategoryID.canonicity, categories, filters);
-  const appearances = extractCategory(FilterCategoryID.appearances, categories, filters);
-  const gender = extractCategory(FilterCategoryID.gender, categories, filters);
-
-  return true;
-}
-
 // Canonicity magic strings picked from category-lookup.json
 const canonHash = "dc5d0a47";
 const nonCanonHash = "6cca68f1";
