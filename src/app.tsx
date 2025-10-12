@@ -11,10 +11,12 @@ export default function App() {
   const [profiles, setProfiles] = useState<ProfileStates>([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
 
   // UI state and control state
-  const [isFilterPanelExpanded, setFilterPanelOpen] = useState(false);
+  const [isFilterPanelExpanded, setFilterPanelOpen] = useState<boolean>(false);
   const [rolls, setRolls] = useState(0);
   const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(sessionStorage.getItem("hasGottenHint")) : false);
-  const [hasFetchedCharData, setHasFetchedCharData] = useState(false);
+  const [hasFetchedCharData, setHasFetchedCharData] = useState<boolean>(false);
+  const [showMnemonics, setShowMnemonics] = useState<boolean>(false);
+  const [hasDoneInitialRole, setHasDoneInitialRole] = useState<boolean>(false);
 
   const [fetchTimes, setFetchTimes] = useState<{
     characters: number;
@@ -235,7 +237,7 @@ export default function App() {
     refresh();
   }, [refresh, rolls]);
 
-  const [hasDoneInitialRole, setHasDoneInitialRole] = useState(false);
+  // Initial roll when data is ready
   useEffect(() => {
     if (hasDoneInitialRole) return;
     if (categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characters) {
@@ -244,19 +246,40 @@ export default function App() {
     }
   }, [hasDoneInitialRole, categoryLookup, appearanceCLookup, appearanceNCLookup, appearanceLLookup, appearanceNCLLookup, characters, refresh]);
 
-  // Open and close filter panel on 'f' and 'Escape' keypress
+  // Key handlers
   useEffect(() => {
     function onKeyPress(e: KeyboardEvent) {
+      // Show mnemonics if filter panel is closed and 'Alt' is held
+      if (showMnemonics) {
+        setShowMnemonics(false);
+      }
+      else if (e.altKey) {
+        setShowMnemonics(true);
+      }
+
+      // Open and close filter panel on 'f' and 'Escape' keypress
       if (e.key === "f") {
         setFilterPanelOpen(!isFilterPanelExpanded);
-      } else if (e.key === "Escape") {
+      }
+      else if (e.key === "Escape") {
         setFilterPanelOpen(false);
+      }
+
+      // Refresh on 'r' keypress
+      else if (e.key === "r") {
+        refresh();
+        setFilterPanelOpen(false);
+      }
+
+      // Commit on 'Enter' keypress
+      else if (e.key === "Enter") {
+        commit();
       }
     }
 
     window.addEventListener("keydown", onKeyPress);
     return () => window.removeEventListener("keydown", onKeyPress);
-  }, [isFilterPanelExpanded]);
+  }, [commit, isFilterPanelExpanded, refresh, showMnemonics]);
 
   return (<>
     <main className="flex flex-col items-center gap-y-6 pt-8">
@@ -318,12 +341,14 @@ export default function App() {
             z-10
             px-3 me-6
             hover:[&_.icon]:rotate-[120deg] 
+            hover:[&_.mnum]:text-jump-500
             hover:bg-star hover:text-eclipse-500
             ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
           `}
         >
           <GearIcon className="icon size-8 transition-all" />
           Filter
+          {showMnemonics && <span className="mnum text-command-500">[{"\u2009"}f{"\u2009"}]</span>}
         </button>
       </div>
       {/* Filter modal bg */}
@@ -367,10 +392,12 @@ export default function App() {
             pe-2
             bg-star hover:bg-eclipse-500
             text-eclipse-500 hover:text-jump-500
+            hover:[&_.mnum]:text-command-500
           `}
           >
             Close
             <CloseIcon className="size-6 transition-all" />
+            {showMnemonics && <span className="mnum text-jump-500">[{"\u2009"}f{"\u2009"}|{"\u2009"}Esc{"\u2009"}]</span>}
           </button>
         </header>
 
@@ -461,9 +488,13 @@ export default function App() {
           Current character pool is {filteredCharacters?.length ?? "loading..."}
         </p>
 
-        <button onClick={() => { refresh(); setFilterPanelOpen(false); }} className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180 flex flex-row justify-center items-center pe-10">
+        <button
+          onClick={() => { refresh(); setFilterPanelOpen(false); }}
+          className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180 flex flex-row justify-center items-center pe-10"
+        >
           <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
           Play
+          {showMnemonics && <span className="text-command-500">[{"\u2009"}r{"\u2009"}]</span>}
         </button>
 
         {/* Stats */}
@@ -539,11 +570,13 @@ export default function App() {
         <button onClick={refresh} className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180">
           <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
           Refresh
+          {showMnemonics && <span className="text-command-500">[{"\u2009"}r{"\u2009"}]</span>}
         </button>
 
         <button onClick={commit} className="px-3 hover:bg-jump-500 hover:[&_.icon]:animate-jitter">
           <SpaceshipIcon className="icon size-8" />
           Commit
+          {showMnemonics && <span className="text-command-500">[{"\u2009"}Enter{"\u2009"}]</span>}
         </button>
       </section>
     </main >
@@ -611,10 +644,10 @@ export default function App() {
         <span>
           Current pool:
           {" "}
-          {filteredCharacters ? filteredCharacters.length : "loading..."}
+          {filteredCharacters ? filteredCharacters.length : "calculating..."}
         </span>
 
-        <span>
+        <span className="flex flex-row justify-start items-center">
           Characters loaded:
           {" "}
           {characters ? characters.length : <SpinnerIcon className="size-3 inline ms-1" />}
