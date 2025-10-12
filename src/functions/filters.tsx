@@ -333,9 +333,9 @@ export function filterCharacters(characters: Character[], filters: Filters, cate
   const gender = extractCategory(FilterCategoryID.gender, categories, filters);
   if (gender && gender.state !== false) {
     characters = characters.filter(c => {
-      if (!gender.filters["allow-males"] && c.categories && c.categories.some(hash => malesHashes.includes(hash))) return false;
-      if (!gender.filters["allow-females"] && c.categories && c.categories.some(hash => femalesHashes.includes(hash))) return false;
-      if (!gender.filters["allow-other-genders"] && c.categories && c.categories.some(hash => otherGenderHashes.includes(hash))) return false;
+      if (gender.filters["allow-males"] && c.categories && !c.categories.some(hash => malesHashes.includes(hash))) return false;
+      if (gender.filters["allow-females"] && c.categories && !c.categories.some(hash => femalesHashes.includes(hash))) return false;
+      if (gender.filters["allow-other-genders"] && c.categories && !c.categories.some(hash => otherGenderHashes.includes(hash))) return false;
       return true;
     });
   }

@@ -211,15 +211,32 @@ export default function App() {
     }
 
     // Get 3 random characters from filtered list
-    const newProfiles: ProfileStates = [0, 1, 2].map(() => {
-      const randomChar = filteredCharacters[Math.floor(Math.random() * filteredCharacters.length)];
-      return {
+    const newProfiles: ProfileStates = [{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }];
+    for (let index = 0; index < newProfiles.length; index++) {
+      let randomChar: Character | null = null;
+
+      for (let tries = 0; tries < 10; tries++) {
+        const candidate = filteredCharacters[Math.floor(Math.random() * filteredCharacters.length)];
+
+        // Already selected
+        if (newProfiles.some(p => p.wikiRoute === candidate.route)) continue;
+
+        randomChar = candidate;
+        break;
+      }
+
+      if (!randomChar) {
+        toast("An unknown error occurred while selecting a character", false);
+        return;
+      }
+
+      newProfiles[index] = {
         name: randomChar.name,
         wikiRoute: randomChar.route,
         imageRoute: randomChar.image?.replace(/\/revision\/.*/, "") ?? null,
         selectedOption: null,
       };
-    }) as ProfileStates;
+    }
 
     setProfiles(newProfiles);
   }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characterNames, characters, clearProfiles, filteredCharacters, rolls, toast]);
