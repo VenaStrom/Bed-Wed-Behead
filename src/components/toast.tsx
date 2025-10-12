@@ -1,17 +1,44 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { CloseIcon, NoticeIcon, SpaceshipIcon } from "./icons.tsx";
+import { ToastContext, ToastMessage } from "./toast.internal.ts";
 
-export type ToastMessage = {
-  text: string;
-  good?: boolean;
-};
+export function ToastProvider({ children }: { children: React.ReactNode }) {
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-function Toaster({ toasts }: { toasts: ToastMessage[] }) {
+  const removeToast = useCallback((id: string) => {
+    setToasts(current => current.filter(t => t.id !== id));
+  }, []);
+
+  const toast = useCallback((text: string, good: boolean = true) => {
+    const id = Math.random().toString(36).slice(2, 9);
+    const newToast: ToastMessage = { id, text, good };
+    setToasts(current => [...current, newToast]);
+
+    setTimeout(() => {
+      setToasts(current => current.filter(t => t.id !== id));
+    }, 3000);
+  }, []);
+
+  const value = useMemo(() => ({ toast, removeToast, toasts }), [toast, removeToast, toasts]);
+
+  return (
+    <ToastContext.Provider value={value}>
+      {children}
+    </ToastContext.Provider>
+  );
+}
+
+export function Toaster() {
+  const ctx = useContext(ToastContext);
+  if (!ctx) return null;
+
+  const { toasts, removeToast } = ctx;
+
   return (
     <div className="z-30 flex flex-col gap-y-2 absolute w-full justify-center items-center bottom-2 pointer-events-none">
-      {toasts.map((t, i) =>
+      {toasts.map((t) => (
         <div
-          key={`toast-${i}`}
+          key={t.id}
           className={`
             bg-star text-eclipse-500
             text-lg
@@ -23,42 +50,13 @@ function Toaster({ toasts }: { toasts: ToastMessage[] }) {
             pointer-events-auto
           `}
         >
-          {t.good ?
-            <SpaceshipIcon className="size-7 me-2" />
-            :
-            <NoticeIcon className="size-7 me-2" />
-          }
+          {t.good ? <SpaceshipIcon className="size-7 me-2" /> : <NoticeIcon className="size-7 me-2" />}
           {t.text}
-          <button className="bg-transparent hover:text-jump-700">
-            <CloseIcon
-              className="size-7"
-              onClick={() => {
-                setToasts(currentToasts => {
-                  const newToasts = [...currentToasts];
-                  newToasts.splice(i, 1);
-                  return newToasts;
-                });
-              }}
-            />
+          <button className="bg-transparent hover:text-jump-700" onClick={() => removeToast(t.id)}>
+            <CloseIcon className="size-7" />
           </button>
         </div>
-      )}
+      ))}
     </div>
   );
-}
-
-export function useToaster() {
-  const [toasts, setToasts] = useState<ToastMessage[]>([]);
-  const toast = useCallback((text: string, good: boolean = true) => {
-    setToasts([...toasts, { text, good }]);
-
-    setTimeout(() => {
-      setToasts(currentToasts => {
-        const [_, ...remaining] = currentToasts;
-        return remaining;
-      });
-    }, 3000);
-  }, [toasts]);
-
-  return { toast};
 }

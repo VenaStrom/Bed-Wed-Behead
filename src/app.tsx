@@ -5,7 +5,7 @@ import { defaultFilters, defaultFilterCategories, filterCharacters } from "./fun
 import FilterPanel, { FilterPanelButton } from "./components/filter-panel.tsx";
 import HistoryPanel, { HistoryPanelButton } from "./components/history-panel.tsx";
 import Profile from "./components/profile.tsx";
-import { useToaster } from "./components/toast.tsx";
+import { useToast } from "./components/useToast.ts";
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
@@ -14,7 +14,7 @@ export default function App() {
   const [profiles, setProfiles] = useState<ProfileStates>([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
 
   // UI state and control state
-  const { toast, Toaster } = useToaster();
+  const { toast } = useToast();
   const [rolls, setRolls] = useState(0);
   const [hasFetchedCharData, setHasFetchedCharData] = useState<boolean>(false);
   const [showMnemonics, setShowMnemonics] = useState<boolean>(false);
