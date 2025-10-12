@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, NoticeIcon } from "./components/icons.tsx";
+import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, NoticeIcon, HistoryIcon } from "./components/icons.tsx";
 import OptionButton from "./components/option-button.tsx";
 import { BWBChoice, emptyProfile, ProfileStates, Character, Filters, FilterCategoryMeta } from "./types.ts";
 import { defaultFilters, defaultFilterCategories, filterCharacters } from "./functions/filters.tsx";
@@ -11,12 +11,14 @@ export default function App() {
   const [profiles, setProfiles] = useState<ProfileStates>([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
 
   // UI state and control state
-  const [isFilterPanelExpanded, setFilterPanelOpen] = useState<boolean>(false);
   const [rolls, setRolls] = useState(0);
   const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(sessionStorage.getItem("hasGottenHint")) : false);
   const [hasFetchedCharData, setHasFetchedCharData] = useState<boolean>(false);
   const [showMnemonics, setShowMnemonics] = useState<boolean>(false);
   const [hasDoneInitialRole, setHasDoneInitialRole] = useState<boolean>(false);
+  const [isFilterPanelExpanded, setFilterPanelOpen] = useState<boolean>(false);
+  const [isHistoryPanelExpanded, setIsHistoryPanelExpanded] = useState<boolean>(false);
+  const closeModals = useCallback(() => { setFilterPanelOpen(false); setIsHistoryPanelExpanded(false); }, []);
 
   const [fetchTimes, setFetchTimes] = useState<{
     characters: number;
@@ -179,6 +181,8 @@ export default function App() {
   }, []);
 
   const refresh = useCallback(() => {
+    closeModals();
+
     setRolls(rolls + 1);
 
     clearProfiles();
@@ -227,7 +231,7 @@ export default function App() {
     }
 
     setProfiles(newProfiles);
-  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characters, clearProfiles, filteredCharacters, rolls, toast]);
+  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characters, clearProfiles, closeModals, filteredCharacters, rolls, toast]);
 
   const commit = useCallback(() => {
     // Missing selections
@@ -266,107 +270,125 @@ export default function App() {
         setShowMnemonics(true);
       }
 
-      // Open and close filter panel on 'f' and 'Escape' keypress
+      // Open and close filter panel on 'f'
       if (e.key === "f") {
         setFilterPanelOpen(!isFilterPanelExpanded);
-      }
-      else if (e.key === "Escape") {
-        setFilterPanelOpen(false);
       }
 
       // Refresh on 'r' keypress
       else if (e.key === "r") {
         refresh();
-        setFilterPanelOpen(false);
       }
 
       // Commit on 'Enter' keypress
       else if (e.key === "Enter") {
         commit();
       }
+
+      // Open history panel on 'h' keypress
+      else if (e.key === "h") {
+        setIsHistoryPanelExpanded(!isHistoryPanelExpanded);
+      }
+
+      // Close modals on 'Escape' keypress
+      else if (e.key === "Escape") {
+        closeModals();
+      }
     }
 
     window.addEventListener("keydown", onKeyPress);
     return () => window.removeEventListener("keydown", onKeyPress);
-  }, [commit, isFilterPanelExpanded, refresh, showMnemonics]);
+  }, [closeModals, commit, isFilterPanelExpanded, isHistoryPanelExpanded, refresh, showMnemonics]);
 
 
   return (<>
-    <main className="flex flex-col items-center gap-y-6 pt-8">
+    <main className="flex flex-col h-screen items-center gap-y-6 pt-7">
       {/* Heading */}
       <header className="flex flex-col items-center gap-y-2 justify-center">
-        <img src="/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
+        <img className="min-h-16 max-h-full" src="/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
         <h1 className="text-center text-xl italic font-semibold">
           Bed Wed & Behead
         </h1>
       </header>
 
-      {/* Filter button */}
-      <div className="w-full absolute flex flex-row justify-end items-start gap-x-3">
-        {/* Filter hint */}
-        {!hasGottenHint && !isFilterPanelExpanded && rolls >= 3 && (
-          <div className={`
+      {/* Top buttons */}
+      <div className="w-full absolute flex flex-row justify-between items-start px-6">
+        {/* History button */}
+        <button className="px-3 hover:bg-jump-500">
+          <HistoryIcon className="size-8" />
+          History
+          {showMnemonics && <span className="mnum text-command-500">[{"\u2009"}h{"\u2009"}]</span>}
+        </button>
+
+        {/* Filter button */}
+        <div className="flex flex-row justify-end items-start gap-x-3">
+          {/* Filter hint */}
+          {!hasGottenHint && !isFilterPanelExpanded && rolls >= 3 && (
+            <div className={`
             bg-eclipse-500
             rounded-lg
             p-3
             flex flex-col justify-center items-center gap-y-2
             shadow-eclipse-700 shadow-2xl
           `}>
-            <div className="flex flex-row justify-start items-center gap-x-2">
-              <span>
-                Never heard of {" "}
-                <a
-                  className="visited:text-shadow-hyper-500"
-                  href="https://starwars.fandom.com/wiki/Unidentified_Hebekrr_Minor_magistrate%27s_granddaughter%27s_wife"
-                  target="_blank"
-                >
-                  Unidentified Hebekrr Minor magistrate's granddaughter's wife
-                </a>?
-              </span>
+              <div className="flex flex-row justify-start items-center gap-x-2">
+                <span>
+                  Never heard of {" "}
+                  <a
+                    className="visited:text-shadow-hyper-500"
+                    href="https://starwars.fandom.com/wiki/Unidentified_Hebekrr_Minor_magistrate%27s_granddaughter%27s_wife"
+                    target="_blank"
+                  >
+                    Unidentified Hebekrr Minor magistrate's granddaughter's wife
+                  </a>?
+                </span>
 
-              <span className="flex flex-row justify-start items-center">
-                Try these filters!
-                <RightArrowIcon className="size-6 ms-2 inline" />
-              </span>
+                <span className="flex flex-row justify-start items-center">
+                  Try these filters!
+                  <RightArrowIcon className="size-6 ms-2 inline" />
+                </span>
+              </div>
+
+              {/* Confirm hint */}
+              <button
+                onClick={() => {
+                  setHasGottenHint(true);
+                  sessionStorage.setItem("hasGottenHint", "true");
+                }}
+                className="bg-eclipse-700 hover:bg-jump-500"
+              >
+                <CheckmarkIcon className="size-6" />
+                Got it!
+              </button>
             </div>
+          )}
 
-            {/* Confirm hint */}
-            <button
-              onClick={() => {
-                setHasGottenHint(true);
-                sessionStorage.setItem("hasGottenHint", "true");
-              }}
-              className="bg-eclipse-700 hover:bg-jump-500"
-            >
-              <CheckmarkIcon className="size-6" />
-              Got it!
-            </button>
-          </div>
-        )}
-
-        {/* Toggle filter panel */}
-        <button
-          onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
-          className={`
+          {/* Toggle filter panel */}
+          <button
+            onClick={() => setFilterPanelOpen(!isFilterPanelExpanded)}
+            className={`
             z-10
-            px-3 me-6
+            px-3
             hover:[&_.icon]:rotate-[120deg] 
             hover:[&_.mnum]:text-jump-500
             hover:bg-star hover:text-eclipse-500
             ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
           `}
-        >
-          <GearIcon className="icon size-8 transition-all" />
-          Filter
-          {showMnemonics && <span className="mnum text-command-500">[{"\u2009"}f{"\u2009"}]</span>}
-        </button>
+          >
+            <GearIcon className="icon size-8 transition-all" />
+            Filter
+            {showMnemonics && <span className="mnum text-command-500">[{"\u2009"}f{"\u2009"}]</span>}
+          </button>
+        </div>
       </div>
-      {/* Filter modal bg */}
+
+      {/* Modal Bg */}
       <div
-        hidden={!isFilterPanelExpanded}
+        hidden={!(isFilterPanelExpanded || isHistoryPanelExpanded)}
         className="z-10 absolute top-0 left-0 min-w-screen w-screen min-h-screen h-screen bg-eclipse-500/30 transition-all"
-        onClick={() => setFilterPanelOpen(false)}
-      ></div>
+        onClick={closeModals}
+      />
+
       {/* Filter panel */}
       <aside
         className={`
@@ -407,9 +429,11 @@ export default function App() {
           >
             Close
             <CloseIcon className="size-6 transition-all" />
-            {showMnemonics && <span className="mnum text-jump-500">[{"\u2009"}f{"\u2009"}|{"\u2009"}Esc{"\u2009"}]</span>}
+            {showMnemonics && <span className="mnum text-jump-700">[{"\u2009"}f{"\u2009"}|{"\u2009"}Esc{"\u2009"}]</span>}
           </button>
         </header>
+
+        <p className="text-2xl font-bold text-center">Filters</p>
 
         <div className="overflow-y-scroll flex flex-col gap-y-8 pe-3">
           {filterCategories.map((category) =>
@@ -499,7 +523,7 @@ export default function App() {
         </p>
 
         <button
-          onClick={() => { refresh(); setFilterPanelOpen(false); }}
+          onClick={refresh}
           className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180 flex flex-row justify-center items-center pe-10"
         >
           <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
@@ -513,6 +537,22 @@ export default function App() {
             You have <span title="Refreshed or committed" className="underline decoration-dotted cursor-help">played</span> {rolls} times this <span title="Resets on page refresh" className="underline decoration-dotted cursor-help">session</span>
           </span>
         </div>
+      </aside>
+      {/* History panel */}
+      <aside
+        className={`
+          bg-eclipse-700
+          absolute top-0 left-0
+          z-20
+          py-5 px-6 pe-3
+          w-[50ch] max-w-11/12
+          h-screen
+          transition-all
+          ${isHistoryPanelExpanded ? `translate-x-0` : `-translate-x-full *:hidden`}
+          flex flex-col gap-y-2
+        `}
+      >
+
       </aside>
 
       {/* Profiles */}
@@ -576,7 +616,7 @@ export default function App() {
       </section>
 
       {/* Controls */}
-      <section className="w-full flex flex-row justify-center items-center gap-x-10">
+      <section className="w-full flex flex-row justify-center items-center gap-x-10 pb-4">
         <button onClick={refresh} className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180">
           <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
           Refresh
