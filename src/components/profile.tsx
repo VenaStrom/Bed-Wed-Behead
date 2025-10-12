@@ -1,7 +1,18 @@
+import { imageBaseURL, wikiBaseUrl } from "../app.tsx";
+import { BWBChoice, ProfileStates } from "../types.ts";
 import { BedIcon, ExternalLinkIcon, SwordIcon, WeddingIcon } from "./icons.tsx";
 import OptionButton from "./option-button.tsx";
 
-export default function Profile({ }: {}) {
+export default function Profile({
+  profiles,
+  index: i,
+  setProfiles,
+}: {
+  profiles: ProfileStates;
+  index: number;
+  setProfiles: React.Dispatch<React.SetStateAction<ProfileStates>>;
+}) {
+  const profile = profiles[i];
   return (
     <div className="flex flex-col gap-y-4 w-2/5 rounded-xl bg-eclipse-700/60" key={`profile-column-${i}`}>
       {/* Profile */}
@@ -22,14 +33,12 @@ export default function Profile({ }: {}) {
       </a>
 
       {/* Answer list */}
-      <ul
-        className="flex flex-col gap-y-3"
-      >
+      <ul className="flex flex-col gap-y-3">
         <li>
           <OptionButton
             profiles={profiles}
-            profilesSetter={setProfiles}
-            profileIndex={i}
+            setProfiles={setProfiles}
+            index={i}
             label={BWBChoice.BED}
             icon={<BedIcon className="size-10 scale-105" />}
           />
@@ -37,8 +46,8 @@ export default function Profile({ }: {}) {
         <li>
           <OptionButton
             profiles={profiles}
-            profilesSetter={setProfiles}
-            profileIndex={i}
+            setProfiles={setProfiles}
+            index={i}
             label={BWBChoice.WED}
             icon={<WeddingIcon className="size-10 scale-[85%]" />}
           />
@@ -46,8 +55,8 @@ export default function Profile({ }: {}) {
         <li>
           <OptionButton
             profiles={profiles}
-            profilesSetter={setProfiles}
-            profileIndex={i}
+            setProfiles={setProfiles}
+            index={i}
             label={BWBChoice.BEHEAD}
             icon={<SwordIcon className="size-10 scale-[70%]" />}
           />

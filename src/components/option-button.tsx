@@ -3,20 +3,20 @@ import { BWBChoice, ProfileState } from "../types.ts";
 
 export default function OptionButton({
   profiles,
-  profilesSetter,
-  profileIndex,
+  setProfiles: profilesSetter,
+  index: i,
   icon,
   label,
   ...props
 }: {
   profiles: [ProfileState, ProfileState, ProfileState];
-  profilesSetter: React.Dispatch<React.SetStateAction<[ProfileState, ProfileState, ProfileState]>>;
-  profileIndex: number;
+  setProfiles: React.Dispatch<React.SetStateAction<[ProfileState, ProfileState, ProfileState]>>;
+  index: number;
   icon: React.ReactNode;
   label: BWBChoice;
 } & React.LabelHTMLAttributes<HTMLLabelElement>
 ) {
-  const toggled = useMemo(() => profiles[profileIndex].selectedOption === label as BWBChoice, [profiles, profileIndex, label]);
+  const toggled = useMemo(() => profiles[i].selectedOption === label as BWBChoice, [profiles, i, label]);
 
   return (
     <label
@@ -44,19 +44,19 @@ export default function OptionButton({
           const newProfiles = [...profiles] as [ProfileState, ProfileState, ProfileState];
 
           // Set this profile normally
-          newProfiles[profileIndex] = {
-            ...newProfiles[profileIndex],
+          newProfiles[i] = {
+            ...newProfiles[i],
             selectedOption: toggled ? null : label,
           };
 
-          const otherProfileIndexes = [0, 1, 2].filter((i) => i !== profileIndex);
+          const otherProfileIndexes = [0, 1, 2].filter((i) => i !== i);
 
           if (otherProfileIndexes.some((i) => newProfiles[i].selectedOption === label)) {
             // If another profile has the same option, swap it with the current profile's option
             const otherProfileIndex = otherProfileIndexes.find((i) => newProfiles[i].selectedOption === label)!;
             newProfiles[otherProfileIndex] = {
               ...newProfiles[otherProfileIndex],
-              selectedOption: profiles[profileIndex].selectedOption,
+              selectedOption: profiles[i].selectedOption,
             };
           }
 

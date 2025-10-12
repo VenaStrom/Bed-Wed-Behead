@@ -1,7 +1,33 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CheckmarkIcon, CloseIcon, GearIcon, RefreshIcon, RightArrowIcon } from "./icons.tsx";
+import { Character, FilterCategoryMeta, Filters } from "../types.ts";
+import { defaultFilterCategories, defaultFilters } from "../functions/filters.tsx";
 
-export default function FilterPanel({ }: {}) {
+export default function FilterPanel({
+  isOpen,
+  setIsOpen,
+  filters,
+  setFilters,
+  filterCategories,
+  setFilterCategories,
+  showMnemonics,
+  filteredCharacters,
+  refresh,
+  rolls,
+}: {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
+  filterCategories: FilterCategoryMeta[];
+  setFilterCategories: (categories: FilterCategoryMeta[]) => void;
+  showMnemonics: boolean;
+  filteredCharacters: Character[] | null;
+  refresh: () => void;
+  rolls: number;
+}) {
+  const usingDefaultFilter = useMemo(() => JSON.stringify(defaultFilters) === JSON.stringify(filters) && JSON.stringify(defaultFilterCategories) === JSON.stringify(filterCategories), [filterCategories, filters]);
+
   return (
     <aside
       className={`
@@ -12,7 +38,7 @@ export default function FilterPanel({ }: {}) {
         w-[50ch] max-w-11/12
         h-screen
         transition-all
-        ${isFilterPanelExpanded ? `translate-x-0` : `translate-x-full *:hidden`}
+        ${isOpen ? `translate-x-0` : `translate-x-full *:hidden`}
         flex flex-col gap-y-2
       `}
     >
@@ -20,7 +46,7 @@ export default function FilterPanel({ }: {}) {
         {/* Reset filter button */}
         <button
           className={`w-fit px-3 hover:bg-hyper-500 transition-all ${usingDefaultFilter ? "hidden" : ""}`}
-          onClick={() => { setFilter(defaultFilters); setFilterCategories(defaultFilterCategories); }}
+          onClick={() => { setFilters(defaultFilters); setFilterCategories(defaultFilterCategories); }}
         >
           <RefreshIcon className="size-6 inline" />
           Reset&nbsp;filter
@@ -30,7 +56,7 @@ export default function FilterPanel({ }: {}) {
 
         {/* Close filter panel button */}
         <button
-          onClick={() => setFilterPanelExpanded(!isFilterPanelExpanded)}
+          onClick={() => setIsOpen(!isOpen)}
           className={`
             z-10
             ps-5
@@ -77,8 +103,8 @@ export default function FilterPanel({ }: {}) {
                 <button className="hover:bg-hyper-400 hover:text-eclipse-700"
                   onClick={() => {
                     // All filters in this category to true
-                    const newFilters = [...filter.map(f => f.category === category.id ? { ...f, state: true } : f)];
-                    setFilter(newFilters);
+                    const newFilters = [...filters.map(f => f.category === category.id ? { ...f, state: true } : f)];
+                    setFilters(newFilters);
                   }}
                 >
                   Enable all <CheckmarkIcon className="size-5 inline ms-1" />
@@ -87,8 +113,8 @@ export default function FilterPanel({ }: {}) {
                 <button className="hover:bg-jump-400 hover:text-star"
                   onClick={() => {
                     // All filters in this category to false
-                    const newFilters = [...filter.map(f => f.category === category.id ? { ...f, state: false } : f)];
-                    setFilter(newFilters);
+                    const newFilters = [...filters.map(f => f.category === category.id ? { ...f, state: false } : f)];
+                    setFilters(newFilters);
                   }}
                 >
                   Disable all <CloseIcon className="size-5 inline ms-1" />
@@ -97,8 +123,8 @@ export default function FilterPanel({ }: {}) {
                 <button className="hover:bg-hyper-500 hover:text-star"
                   onClick={() => {
                     // Invert all filters in this category
-                    const newFilters = [...filter.map(f => f.category === category.id ? { ...f, state: !f.state } : f)];
-                    setFilter(newFilters);
+                    const newFilters = [...filters.map(f => f.category === category.id ? { ...f, state: !f.state } : f)];
+                    setFilters(newFilters);
                   }}
                 >
                   Invert <RefreshIcon className="size-5 inline ms-1" />
@@ -106,7 +132,7 @@ export default function FilterPanel({ }: {}) {
               </li>
 
               {/* All filter options in category */}
-              {filter.filter(f => f.category === category.id).map(f =>
+              {filters.filter(f => f.category === category.id).map(f =>
                 <li key={`filter-${f.id}`} className="flex flex-row justify-start items-center gap-x-3">
                   <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer ps-0.5 w-full">
                     <input
@@ -114,8 +140,8 @@ export default function FilterPanel({ }: {}) {
                       checked={f.state}
                       type="checkbox"
                       onChange={() => {
-                        const newFilters = filter.map(fl => fl.id === f.id ? { ...fl, state: !fl.state } : fl);
-                        setFilter(newFilters);
+                        const newFilters = filters.map(fl => fl.id === f.id ? { ...fl, state: !fl.state } : fl);
+                        setFilters(newFilters);
                       }}
                     />
 
@@ -154,13 +180,23 @@ export default function FilterPanel({ }: {}) {
   );
 }
 
-export function FilterPanelButton({ }: {}) {
+export function FilterPanelButton({
+  isOpen,
+  setIsOpen,
+  rolls,
+  showMnemonics,
+}: {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  rolls: number;
+  showMnemonics: boolean;
+}) {
   const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(sessionStorage.getItem("hasGottenHint")) : false);
 
   return (
     <div className="flex flex-row justify-end items-start gap-x-3">
       {/* Filter hint */}
-      {!hasGottenHint && !isFilterPanelExpanded && rolls >= 3 && (
+      {!hasGottenHint && !isOpen && rolls >= 3 && (
         <div className={`
           bg-eclipse-500
           rounded-lg
@@ -198,19 +234,18 @@ export function FilterPanelButton({ }: {}) {
             Got it!
           </button>
         </div>
-      )
-      }
+      )}
 
       {/* Toggle filter panel */}
       <button
-        onClick={() => setFilterPanelExpanded(!isFilterPanelExpanded)}
+        onClick={() => setIsOpen(!isOpen)}
         className={`
           z-10
           px-3
           hover:[&_.icon]:rotate-[120deg] 
           hover:[&_.mnum]:text-jump-500
           hover:bg-star hover:text-eclipse-500
-          ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
+          ${isOpen ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
         `}
       >
         <GearIcon className="icon size-8 transition-all" />

@@ -1,6 +1,14 @@
 import { CloseIcon, HistoryIcon } from "./icons.tsx";
 
-export default function HistoryPanel({ }: {}) {
+export default function HistoryPanel({
+  isOpen,
+  setIsOpen,
+  showMnemonics,
+}: {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  showMnemonics: boolean;
+}) {
   return (
     <aside
       className={`
@@ -11,13 +19,13 @@ export default function HistoryPanel({ }: {}) {
         w-[50ch] max-w-11/12
         h-screen
         transition-all
-        ${isHistoryPanelExpanded ? `translate-x-0` : `-translate-x-full *:hidden`}
+        ${isOpen ? `translate-x-0` : `-translate-x-full *:hidden`}
         flex flex-col gap-y-2
       `}
     >
       <header>
         <button
-          onClick={() => setIsHistoryPanelExpanded(!isFilterPanelExpanded)}
+          onClick={() => setIsOpen(!isOpen)}
           className={`
             z-10
             ps-5
@@ -36,7 +44,11 @@ export default function HistoryPanel({ }: {}) {
   );
 }
 
-export function HistoryPanelButton({ }: {}) {
+export function HistoryPanelButton({
+  showMnemonics
+}: {
+  showMnemonics: boolean;
+}) {
   return (
     <button className="px-3 hover:bg-jump-500">
       <HistoryIcon className="size-8" />

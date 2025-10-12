@@ -6,9 +6,10 @@ import FilterPanel, { FilterPanelButton } from "./components/filter-panel.tsx";
 import HistoryPanel, { HistoryPanelButton } from "./components/history-panel.tsx";
 import Profile from "./components/profile.tsx";
 import { useToast } from "./components/useToast.ts";
+import { Toaster } from "./components/toast.tsx";
 
-const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
-const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
+export const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
+export const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
 
 export default function App() {
   const [profiles, setProfiles] = useState<ProfileStates>([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
@@ -117,7 +118,7 @@ export default function App() {
   }, [hasFetchedCharData, fetchTimes, fetchTimes.characters, fetchTimes.categoryLookup, fetchTimes.appearanceCLookup, fetchTimes.appearanceNCLookup, fetchTimes.appearanceLLookup, fetchTimes.appearanceNCLLookup]);
 
   // Filter
-  const [filter, setFilter] = useState<Filters>((() => {
+  const [filters, setFilters] = useState<Filters>((() => {
     if (typeof window === "undefined") return defaultFilters;
 
     const loadedStates: Record<string, boolean> = window.localStorage.getItem("bwb-filter-item-states") ? JSON.parse(window.localStorage.getItem("bwb-filter-item-states") as string) : null;
@@ -145,22 +146,19 @@ export default function App() {
 
     return defaultFilterCategories;
   })());
-  const usingDefaultFilter = useMemo(() => JSON.stringify(defaultFilters) === JSON.stringify(filter) && JSON.stringify(defaultFilterCategories) === JSON.stringify(filterCategories), [filter, filterCategories]);
   const filteredCharacters = useMemo(() => {
     if (!(categoryLookup && appearanceCLookup && appearanceNCLLookup && appearanceLLookup && appearanceNCLLookup && characters)) return null;
-    return filterCharacters(characters, filter, filterCategories, categoryLookup);
-  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, categoryLookup, characters, filter, filterCategories]);
+    return filterCharacters(characters, filters, filterCategories, categoryLookup);
+  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, categoryLookup, characters, filters, filterCategories]);
 
   // Save filter to localStorage on change
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const strippedFilters = Object.fromEntries(filter.map(f => ([f.id, f.state])));
+    const strippedFilters = Object.fromEntries(filters.map(f => ([f.id, f.state])));
     const strippedCategories = Object.fromEntries(filterCategories.map(c => ([c.id, c.state])));
     window.localStorage.setItem("bwb-filter-item-states", JSON.stringify(strippedFilters));
     window.localStorage.setItem("bwb-filter-cats-states", JSON.stringify(strippedCategories));
-  }, [filter, filterCategories]);
-
-
+  }, [filters, filterCategories]);
 
   // TODO: use to allow for single character rerolls.
   // function clearProfile(index: number) {
@@ -306,9 +304,16 @@ export default function App() {
 
       {/* Top buttons */}
       <div className="w-full absolute flex flex-row justify-between items-start px-6">
-        <HistoryPanelButton />
+        <HistoryPanelButton
+          showMnemonics={showMnemonics}
+        />
 
-        <FilterPanelButton />
+        <FilterPanelButton
+          showMnemonics={showMnemonics}
+          rolls={rolls}
+          isOpen={isFilterPanelExpanded}
+          setIsOpen={setFilterPanelExpanded}
+        />
       </div>
 
       {/* Modal Bg */}
@@ -318,16 +323,35 @@ export default function App() {
         onClick={closeModals}
       />
 
-      <FilterPanel />
+      <FilterPanel
+        filters={filters}
+        filterCategories={filterCategories}
+        filteredCharacters={filteredCharacters}
+        isOpen={isFilterPanelExpanded}
+        setIsOpen={setFilterPanelExpanded}
+        setFilters={setFilters}
+        setFilterCategories={setFilterCategories}
+        refresh={refresh}
+        rolls={rolls}
+        showMnemonics={showMnemonics}
+      />
 
-      <HistoryPanel />
+      <HistoryPanel
+        isOpen={isHistoryPanelExpanded}
+        setIsOpen={setIsHistoryPanelExpanded}
+        showMnemonics={showMnemonics}
+      />
 
       {/* Profiles */}
       <section className="flex flex-row gap-x-12 justify-center items-center">
-        {new Array(3).fill(0).map((_, i) => {
-          const profile = profiles[i];
-          return <Profile />;
-        })}
+        {new Array(3).fill(0).map((_, i) =>
+          <Profile
+            key={`profile-${i}`}
+            index={i}
+            profiles={profiles}
+            setProfiles={setProfiles}
+          />
+        )}
       </section>
 
       {/* Refresh and Commit */}
