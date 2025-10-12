@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BedIcon, GearIcon, ExternalLinkIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon, RightArrowIcon, CheckmarkIcon, CloseIcon, SpinnerIcon, NoticeIcon, HistoryIcon } from "./components/icons.tsx";
-import OptionButton from "./components/option-button.tsx";
-import { BWBChoice, emptyProfile, ProfileStates, Character, Filters, FilterCategoryMeta } from "./types.ts";
+import { RefreshIcon, SpaceshipIcon, SpinnerIcon } from "./components/icons.tsx";
+import { emptyProfile, ProfileStates, Character, Filters, FilterCategoryMeta } from "./types.ts";
 import { defaultFilters, defaultFilterCategories, filterCharacters } from "./functions/filters.tsx";
+import FilterPanel, { FilterPanelButton } from "./components/filter-panel.tsx";
+import HistoryPanel, { HistoryPanelButton } from "./components/history-panel.tsx";
+import Profile from "./components/profile.tsx";
+import { useToaster } from "./components/toast.tsx";
 
 const wikiBaseUrl = "https://starwars.fandom.com/wiki/";
 const imageBaseURL = "https://static.wikia.nocookie.net/starwars/images/";
@@ -11,8 +14,8 @@ export default function App() {
   const [profiles, setProfiles] = useState<ProfileStates>([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
 
   // UI state and control state
+  const { toast, Toaster } = useToaster();
   const [rolls, setRolls] = useState(0);
-  const [hasGottenHint, setHasGottenHint] = useState(typeof window !== "undefined" ? Boolean(sessionStorage.getItem("hasGottenHint")) : false);
   const [hasFetchedCharData, setHasFetchedCharData] = useState<boolean>(false);
   const [showMnemonics, setShowMnemonics] = useState<boolean>(false);
   const [hasDoneInitialRole, setHasDoneInitialRole] = useState<boolean>(false);
@@ -157,17 +160,7 @@ export default function App() {
     window.localStorage.setItem("bwb-filter-cats-states", JSON.stringify(strippedCategories));
   }, [filter, filterCategories]);
 
-  const [toasts, setToasts] = useState<{ text: string, good?: boolean }[]>([]);
-  const toast = useCallback((text: string, good: boolean = true) => {
-    setToasts([...toasts, { text, good }]);
 
-    setTimeout(() => {
-      setToasts(currentToasts => {
-        const [, ...remaining] = currentToasts;
-        return remaining;
-      });
-    }, 3000);
-  }, [toasts]);
 
   // TODO: use to allow for single character rerolls.
   // function clearProfile(index: number) {
@@ -313,73 +306,9 @@ export default function App() {
 
       {/* Top buttons */}
       <div className="w-full absolute flex flex-row justify-between items-start px-6">
-        {/* History button */}
-        <button className="px-3 hover:bg-jump-500">
-          <HistoryIcon className="size-8" />
-          History
-          {showMnemonics && <span className="mnum text-command-500">[{"\u2009"}h{"\u2009"}]</span>}
-        </button>
+        <HistoryPanelButton />
 
-        {/* Filter button */}
-        <div className="flex flex-row justify-end items-start gap-x-3">
-          {/* Filter hint */}
-          {!hasGottenHint && !isFilterPanelExpanded && rolls >= 3 && (
-            <div className={`
-            bg-eclipse-500
-            rounded-lg
-            p-3
-            flex flex-col justify-center items-center gap-y-2
-            shadow-eclipse-700 shadow-2xl
-          `}>
-              <div className="flex flex-row justify-start items-center gap-x-2">
-                <span>
-                  Never heard of {" "}
-                  <a
-                    className="visited:text-shadow-hyper-500"
-                    href="https://starwars.fandom.com/wiki/Unidentified_Hebekrr_Minor_magistrate%27s_granddaughter%27s_wife"
-                    target="_blank"
-                  >
-                    Unidentified Hebekrr Minor magistrate's granddaughter's wife
-                  </a>?
-                </span>
-
-                <span className="flex flex-row justify-start items-center">
-                  Try these filters!
-                  <RightArrowIcon className="size-6 ms-2 inline" />
-                </span>
-              </div>
-
-              {/* Confirm hint */}
-              <button
-                onClick={() => {
-                  setHasGottenHint(true);
-                  sessionStorage.setItem("hasGottenHint", "true");
-                }}
-                className="bg-eclipse-700 hover:bg-jump-500"
-              >
-                <CheckmarkIcon className="size-6" />
-                Got it!
-              </button>
-            </div>
-          )}
-
-          {/* Toggle filter panel */}
-          <button
-            onClick={() => setFilterPanelExpanded(!isFilterPanelExpanded)}
-            className={`
-              z-10
-              px-3
-              hover:[&_.icon]:rotate-[120deg] 
-              hover:[&_.mnum]:text-jump-500
-              hover:bg-star hover:text-eclipse-500
-              ${isFilterPanelExpanded ? `bg-star text-eclipse-500 [&_.icon]:rotate-[120deg]` : ``}
-          `}
-          >
-            <GearIcon className="icon size-8 transition-all" />
-            Filter
-            {showMnemonics && <span className="mnum text-command-500">[{"\u2009"}f{"\u2009"}]</span>}
-          </button>
-        </div>
+        <FilterPanelButton />
       </div>
 
       {/* Modal Bg */}
@@ -389,249 +318,19 @@ export default function App() {
         onClick={closeModals}
       />
 
-      {/* Filter panel */}
-      <aside
-        className={`
-          bg-eclipse-700
-          absolute top-0 right-0
-          z-20
-          py-5 px-6 pe-3
-          w-[50ch] max-w-11/12
-          h-screen
-          transition-all
-          ${isFilterPanelExpanded ? `translate-x-0` : `translate-x-full *:hidden`}
-          flex flex-col gap-y-2
-        `}
-      >
-        <header className="flex flex-row justify-between items-end gap-2 pe-3 mt-3.5 sticky top-8">
-          {/* Reset filter button */}
-          <button
-            className={`w-fit px-3 hover:bg-hyper-500 transition-all ${usingDefaultFilter ? "hidden" : ""}`}
-            onClick={() => { setFilter(defaultFilters); setFilterCategories(defaultFilterCategories); }}
-          >
-            <RefreshIcon className="size-6 inline" />
-            Reset&nbsp;filter
-          </button>
+      <FilterPanel />
 
-          <span className="flex-1"></span>
-
-          {/* Close filter panel button */}
-          <button
-            onClick={() => setFilterPanelExpanded(!isFilterPanelExpanded)}
-            className={`
-            z-10
-            ps-5
-            pe-2
-            bg-star hover:bg-eclipse-500
-            text-eclipse-500 hover:text-jump-500
-            hover:[&_.mnum]:text-command-500
-          `}
-          >
-            Close
-            <CloseIcon className="size-6 transition-all" />
-            {showMnemonics && <span className="mnum text-jump-700">[{"\u2009"}f{"\u2009"}|{"\u2009"}Esc{"\u2009"}]</span>}
-          </button>
-        </header>
-
-        <p className="text-2xl font-bold text-center">Filters</p>
-
-        <div className="overflow-y-scroll flex flex-col gap-y-8 pe-3">
-          {filterCategories.map((category) =>
-            <div key={`filter-category-${category.id}`} className="flex flex-col ">
-              <p className="text-lg font-bold">{category.name}</p>
-
-              {/* If toggle category is allowed */}
-              {category.state !== undefined && (
-                <label className="flex flex-row justify-center items-center gap-x-3 cursor-pointer mb-2">
-                  <div className="flex flex-col gap-y-0.5 text-sm">
-                    <span>{category.label}</span>
-                  </div>
-
-                  <input
-                    checked={category.state}
-                    type="checkbox"
-                    onChange={() => {
-                      const newCategories = filterCategories.map(c => c.id === category.id ? { ...c, state: !c.state } : c);
-                      setFilterCategories(newCategories);
-                    }}
-                  />
-                </label>
-              )}
-
-              <ul className={`flex flex-col gap-y-1 ${category.state !== undefined && !category.state ? "opacity-50 *:pointer-events-none cursor-not-allowed" : ""}`}>
-                {/* Mass operations buttons */}
-                <li className="flex flex-row justify-start items-center gap-x-3 *:py-1 *:bg-transparent *:text-sm *:italic *:text-star/70">
-                  <button className="hover:bg-hyper-400 hover:text-eclipse-700"
-                    onClick={() => {
-                      // All filters in this category to true
-                      const newFilters = [...filter.map(f => f.category === category.id ? { ...f, state: true } : f)];
-                      setFilter(newFilters);
-                    }}
-                  >
-                    Enable all <CheckmarkIcon className="size-5 inline ms-1" />
-                  </button>
-
-                  <button className="hover:bg-jump-400 hover:text-star"
-                    onClick={() => {
-                      // All filters in this category to false
-                      const newFilters = [...filter.map(f => f.category === category.id ? { ...f, state: false } : f)];
-                      setFilter(newFilters);
-                    }}
-                  >
-                    Disable all <CloseIcon className="size-5 inline ms-1" />
-                  </button>
-
-                  <button className="hover:bg-hyper-500 hover:text-star"
-                    onClick={() => {
-                      // Invert all filters in this category
-                      const newFilters = [...filter.map(f => f.category === category.id ? { ...f, state: !f.state } : f)];
-                      setFilter(newFilters);
-                    }}
-                  >
-                    Invert <RefreshIcon className="size-5 inline ms-1" />
-                  </button>
-                </li>
-
-                {/* All filter options in category */}
-                {filter.filter(f => f.category === category.id).map(f =>
-                  <li key={`filter-${f.id}`} className="flex flex-row justify-start items-center gap-x-3">
-                    <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer ps-0.5 w-full">
-                      <input
-                        className="size-5 min-w-5"
-                        checked={f.state}
-                        type="checkbox"
-                        onChange={() => {
-                          const newFilters = filter.map(fl => fl.id === f.id ? { ...fl, state: !fl.state } : fl);
-                          setFilter(newFilters);
-                        }}
-                      />
-
-                      <div className="flex flex-col gap-y-0.5">
-                        <span>{f.label}</span>
-                        <span className="text-xs italic text-star/70">{f.description}</span>
-                      </div>
-                    </label>
-                  </li>
-                )}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        <p className="text-star text-sm font-normal w-full text-center py-2">
-          Current character pool is {filteredCharacters?.length ?? "loading..."}
-        </p>
-
-        <button
-          onClick={refresh}
-          className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180 flex flex-row justify-center items-center pe-10"
-        >
-          <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
-          Play
-          {showMnemonics && <span className="text-command-500">[{"\u2009"}r{"\u2009"}]</span>}
-        </button>
-
-        {/* Stats */}
-        < div className="text-xs text-star/70 italic flex flex-col gap-y-1 w-full" >
-          <span className="text-center">
-            You have <span title="Refreshed or committed" className="underline decoration-dotted cursor-help">played</span> {rolls} times this <span title="Resets on page refresh" className="underline decoration-dotted cursor-help">session</span>
-          </span>
-        </div>
-      </aside>
-      {/* History panel */}
-      <aside
-        className={`
-          bg-eclipse-700
-          absolute top-0 left-0
-          z-20
-          py-5 px-6 pe-3
-          w-[50ch] max-w-11/12
-          h-screen
-          transition-all
-          ${isHistoryPanelExpanded ? `translate-x-0` : `-translate-x-full *:hidden`}
-          flex flex-col gap-y-2
-        `}
-      >
-        <header>
-          <button
-            onClick={() => setIsHistoryPanelExpanded(!isFilterPanelExpanded)}
-            className={`
-            z-10
-            ps-5
-            pe-2
-            bg-star hover:bg-eclipse-500
-            text-eclipse-500 hover:text-jump-500
-            hover:[&_.mnum]:text-command-500
-          `}
-          >
-            Close
-            <CloseIcon className="size-6 transition-all" />
-            {showMnemonics && <span className="mnum text-jump-700">[{"\u2009"}h{"\u2009"}|{"\u2009"}Esc{"\u2009"}]</span>}
-          </button>
-        </header>
-      </aside>
+      <HistoryPanel />
 
       {/* Profiles */}
       <section className="flex flex-row gap-x-12 justify-center items-center">
         {new Array(3).fill(0).map((_, i) => {
           const profile = profiles[i];
-          return (
-            <div className="flex flex-col gap-y-4 w-2/5 rounded-xl bg-eclipse-700/60" key={`profile-column-${i}`}>
-              {/* Profile */}
-              <a
-                href={profile.wikiRoute ? wikiBaseUrl + profile.wikiRoute : undefined}
-                className={`
-                  flex flex-col justify-center items-center gap-y-3 hover:[&_.link]:underline
-                  ${!profile.wikiRoute && "pointer-events-none text-star/60"}
-                `}
-                target="_blank" rel="noopener"
-              >
-                <img className="size-48 rounded-sm object-contain" loading="eager" src={profile.imageRoute ? imageBaseURL + profile.imageRoute : "/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
-
-                <div className="w-full flex flex-row items-center justify-center gap-x-2 h-9">
-                  <p className="flex-1 text-base text-center max-w-[18ch]">{profile.name || "..."}</p>
-                  <ExternalLinkIcon className="size-5 relative right-0" />
-                </div>
-              </a>
-
-              {/* Answer list */}
-              <ul
-                className="flex flex-col gap-y-3"
-              >
-                <li>
-                  <OptionButton
-                    profiles={profiles}
-                    profilesSetter={setProfiles}
-                    profileIndex={i}
-                    label={BWBChoice.BED}
-                    icon={<BedIcon className="size-10 scale-105" />}
-                  />
-                </li>
-                <li>
-                  <OptionButton
-                    profiles={profiles}
-                    profilesSetter={setProfiles}
-                    profileIndex={i}
-                    label={BWBChoice.WED}
-                    icon={<WeddingIcon className="size-10 scale-[85%]" />}
-                  />
-                </li>
-                <li>
-                  <OptionButton
-                    profiles={profiles}
-                    profilesSetter={setProfiles}
-                    profileIndex={i}
-                    label={BWBChoice.BEHEAD}
-                    icon={<SwordIcon className="size-10 scale-[70%]" />}
-                  />
-                </li>
-              </ul>
-            </div>
-          );
+          return <Profile />;
         })}
       </section>
 
-      {/* Controls */}
+      {/* Refresh and Commit */}
       <section className="w-full flex flex-row justify-center items-center gap-x-10 pb-4">
         <button onClick={refresh} className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180">
           <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
@@ -663,43 +362,7 @@ export default function App() {
         </span>
       </p>
 
-      {/* Toast */}
-      <div className="z-30 flex flex-col gap-y-2 absolute w-full justify-center items-center bottom-2 pointer-events-none">
-        {toasts.map((t, i) =>
-          <div
-            key={`toast-${i}`}
-            className={`
-              bg-star text-eclipse-500
-              text-lg
-              [font-style:normal]
-              font-normal
-              rounded-lg
-              p-5
-              flex flex-row justify-center items-center gap-x-3
-              pointer-events-auto
-            `}
-          >
-            {t.good ?
-              <SpaceshipIcon className="size-7 me-2" />
-              :
-              <NoticeIcon className="size-7 me-2" />
-            }
-            {t.text}
-            <button className="bg-transparent hover:text-jump-700">
-              <CloseIcon
-                className="size-7"
-                onClick={() => {
-                  setToasts(currentToasts => {
-                    const newToasts = [...currentToasts];
-                    newToasts.splice(i, 1);
-                    return newToasts;
-                  });
-                }}
-              />
-            </button>
-          </div>
-        )}
-      </div>
+      <Toaster />
 
       {/* Loading status */}
       <p className="w-[22ch] flex flex-col gap-y-0.5">
