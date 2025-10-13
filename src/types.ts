@@ -58,3 +58,10 @@ export type FilterCategoryMeta = {
   state?: boolean; // Only for categories that can be toggled on/off as a whole
   label?: string; // Help text for the category toggle
 };
+
+export type HistoryItem = {
+  id: string;
+  profiles: ProfileStates; // 3 profiles
+  date: Date;
+  rollType: "skip" | "commit";
+};

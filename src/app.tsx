@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshIcon, SpaceshipIcon, SpinnerIcon } from "./components/icons.tsx";
-import { emptyProfile, ProfileStates, Character, Filters, FilterCategoryMeta } from "./types.ts";
+import { emptyProfile, ProfileStates, Character, Filters, FilterCategoryMeta, HistoryItem } from "./types.ts";
 import { defaultFilters, defaultFilterCategories, filterCharacters } from "./functions/filters.tsx";
 import FilterPanel, { FilterPanelButton } from "./components/filter-panel.tsx";
 import HistoryPanel, { HistoryPanelButton } from "./components/history-panel.tsx";
@@ -22,6 +22,9 @@ export default function App() {
   const [hasDoneInitialRole, setHasDoneInitialRole] = useState<boolean>(false);
   const [isFilterPanelExpanded, setFilterPanelExpanded] = useState<boolean>(false);
   const [isHistoryPanelExpanded, setIsHistoryPanelExpanded] = useState<boolean>(false);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [persistentHistory, setPersistentHistory] = useState<boolean>(typeof window !== "undefined" ? localStorage.getItem("bwb-history-persistent") === "true" : false);
+  const [hasLoadedHistory, setHasLoadedHistory] = useState<boolean>(false);
   const closeModals = useCallback(() => { setFilterPanelExpanded(false); setIsHistoryPanelExpanded(false); }, []);
 
   const [fetchTimes, setFetchTimes] = useState<{
@@ -171,7 +174,7 @@ export default function App() {
     setProfiles([{ ...emptyProfile }, { ...emptyProfile }, { ...emptyProfile }]);
   }, []);
 
-  const refresh = useCallback(() => {
+  const refresh = useCallback((type: "commit" | "initial" | "skip" = "skip") => {
     closeModals();
 
     setRolls(rolls + 1);
@@ -182,15 +185,24 @@ export default function App() {
       toast("Data is still loading, please wait", false);
       return;
     }
-
     if (filteredCharacters.length === 0) {
       toast("No characters match the current filter", false);
       return;
     }
-
     if (filteredCharacters.length < 3) {
       toast(`Only ${filteredCharacters.length} characters match the current filter`, false);
       return;
+    }
+
+    // Add to history
+    if (type === "commit" || type === "skip") {
+      const newHistoryItem: HistoryItem = {
+        id: Math.random().toString(36).slice(2, 9),
+        rollType: type,
+        date: new Date(),
+        profiles: [...profiles],
+      };
+      setHistory([newHistoryItem, ...history]);
     }
 
     // Get 3 random characters from filtered list
@@ -222,9 +234,11 @@ export default function App() {
     }
 
     setProfiles(newProfiles);
-  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characters, clearProfiles, closeModals, filteredCharacters, rolls, toast]);
+  }, [appearanceCLookup, appearanceLLookup, appearanceNCLLookup, appearanceNCLookup, categoryLookup, characters, clearProfiles, closeModals, filteredCharacters, history, profiles, rolls, toast]);
 
   const commit = useCallback(() => {
+    closeModals();
+
     // Missing selections
     if (profiles.some(p => !p.selectedOption)) {
       toast("Please make a selection for all three characters before committing", false);
@@ -238,14 +252,14 @@ export default function App() {
       return;
     }
 
-    refresh();
-  }, [profiles, refresh, toast]);
+    refresh("commit");
+  }, [closeModals, profiles, refresh, toast]);
 
   // Initial roll when data is ready
   useEffect(() => {
     if (hasDoneInitialRole) return;
     if (categoryLookup && appearanceCLookup && appearanceNCLookup && appearanceLLookup && appearanceNCLLookup && characters) {
-      refresh();
+      refresh("initial");
       setHasDoneInitialRole(true);
     }
   }, [hasDoneInitialRole, categoryLookup, appearanceCLookup, appearanceNCLookup, appearanceLLookup, appearanceNCLLookup, characters, refresh]);
@@ -262,27 +276,27 @@ export default function App() {
       }
 
       // Open and close filter panel on 'f'
-      if (e.key === "f") {
+      if (e.key === "f" && !e.ctrlKey && !e.metaKey) {
         setFilterPanelExpanded(!isFilterPanelExpanded);
       }
 
       // Refresh on 'r' keypress
-      else if (e.key === "r") {
+      else if (e.key === "r" && !e.ctrlKey && !e.metaKey) {
         refresh();
       }
 
       // Commit on 'Enter' keypress
-      else if (e.key === "Enter") {
+      else if (e.key === "Enter" && !e.ctrlKey && !e.metaKey) {
         commit();
       }
 
       // Open history panel on 'h' keypress
-      else if (e.key === "h") {
+      else if (e.key === "h" && !e.ctrlKey && !e.metaKey) {
         setIsHistoryPanelExpanded(!isHistoryPanelExpanded);
       }
 
       // Close modals on 'Escape' keypress
-      else if (e.key === "Escape") {
+      else if (e.key === "Escape" && !e.ctrlKey && !e.metaKey) {
         closeModals();
       }
     }
@@ -291,6 +305,22 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKeyPress);
   }, [closeModals, commit, isFilterPanelExpanded, isHistoryPanelExpanded, refresh, showMnemonics]);
 
+  // Load saved history from localStorage if persistent is enabled
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (persistentHistory && !hasLoadedHistory) {
+      setHistory(JSON.parse(localStorage.getItem("bwb-history") || "[]"));
+      setHasLoadedHistory(true);
+    }
+  }, [hasLoadedHistory, persistentHistory, setHistory]);
+
+  // Save history to localStorage if persistent is enabled
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (persistentHistory && hasLoadedHistory) {
+      localStorage.setItem("bwb-history", JSON.stringify(history));
+    }
+  }, [hasLoadedHistory, history, persistentHistory]);
 
   return (<>
     <main className="flex flex-col h-screen items-center gap-y-6 pt-7">
@@ -305,6 +335,8 @@ export default function App() {
       {/* Top buttons */}
       <div className="w-full absolute flex flex-row justify-between items-start px-6">
         <HistoryPanelButton
+          isOpen={isHistoryPanelExpanded}
+          setIsOpen={setIsHistoryPanelExpanded}
           showMnemonics={showMnemonics}
         />
 
@@ -323,23 +355,28 @@ export default function App() {
         onClick={closeModals}
       />
 
+      <HistoryPanel
+        showMnemonics={showMnemonics}
+        setPersistent={setPersistentHistory}
+        setIsOpen={setIsHistoryPanelExpanded}
+        setHistory={setHistory}
+        persistent={persistentHistory}
+        isOpen={isHistoryPanelExpanded}
+        history={history}
+        characters={characters}
+      />
+
       <FilterPanel
-        filters={filters}
-        filterCategories={filterCategories}
-        filteredCharacters={filteredCharacters}
-        isOpen={isFilterPanelExpanded}
+        showMnemonics={showMnemonics}
         setIsOpen={setFilterPanelExpanded}
         setFilters={setFilters}
         setFilterCategories={setFilterCategories}
-        refresh={refresh}
         rolls={rolls}
-        showMnemonics={showMnemonics}
-      />
-
-      <HistoryPanel
-        isOpen={isHistoryPanelExpanded}
-        setIsOpen={setIsHistoryPanelExpanded}
-        showMnemonics={showMnemonics}
+        refresh={refresh}
+        isOpen={isFilterPanelExpanded}
+        filters={filters}
+        filteredCharacters={filteredCharacters}
+        filterCategories={filterCategories}
       />
 
       {/* Profiles */}
@@ -356,7 +393,7 @@ export default function App() {
 
       {/* Refresh and Commit */}
       <section className="w-full flex flex-row justify-center items-center gap-x-10 pb-4">
-        <button onClick={refresh} className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180">
+        <button onClick={() => refresh()} className="px-3 hover:bg-hyper-500 hover:[&_.icon]:rotate-180">
           <RefreshIcon className="icon size-8 hover:rotate-180 transition-all" />
           Refresh
           {showMnemonics && <span className="text-command-500">[{"\u2009"}r{"\u2009"}]</span>}
