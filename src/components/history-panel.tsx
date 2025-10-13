@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { Character, HistoryItem } from "../types.ts";
-import { CloseIcon, HistoryIcon } from "./icons.tsx";
+import { HistoryItem, RollType } from "../types.ts";
+import { CloseIcon, HistoryIcon, RefreshIcon, SpaceshipIcon } from "./icons.tsx";
+import { imageBaseURL } from "../app.tsx";
+import { useState } from "react";
 
 export default function HistoryPanel({
   isOpen,
@@ -8,7 +9,6 @@ export default function HistoryPanel({
   showMnemonics,
   history,
   setHistory,
-  characters,
   persistent,
   setPersistent
 }: {
@@ -17,11 +17,10 @@ export default function HistoryPanel({
   showMnemonics: boolean;
   history: HistoryItem[];
   setHistory: (history: HistoryItem[]) => void;
-  characters: Character[] | null;
   persistent: boolean;
   setPersistent: (persistent: boolean) => void;
 }) {
-
+  const [showSkipped, setShowSkipped] = useState<boolean>(false);
 
   return (
     <aside
@@ -30,7 +29,7 @@ export default function HistoryPanel({
         absolute top-0 left-0
         z-20
         py-5 px-6 pe-3
-        w-[50ch] max-w-11/12
+        w-[55ch] max-w-11/12
         h-screen
         transition-all
         ${isOpen ? `translate-x-0` : `-translate-x-full *:hidden`}
@@ -53,12 +52,8 @@ export default function HistoryPanel({
           <CloseIcon className="size-6 transition-all" />
           {showMnemonics && <span className="mnum text-jump-700">[{"\u2009"}h{"\u2009"}|{"\u2009"}Esc{"\u2009"}]</span>}
         </button>
-      </header>
 
-      <p className="text-2xl font-bold text-center">History</p>
-
-      {/* Persistent checkbox */}
-      <div className="w-full flex flex-row justify-center items-center">
+        {/* Persistent checkbox */}
         <label className="flex flex-row items-center gap-x-2 mb-2">
           Save persistent history locally
           <input
@@ -78,17 +73,53 @@ export default function HistoryPanel({
             }}
           />
         </label>
+      </header>
+
+      <p className="text-2xl font-bold text-center">History</p>
+
+      <div className="w-full flex flex-row justify-center items-center">
+        <label className="flex flex-row items-center gap-x-2">
+          <input
+            type="checkbox"
+            checked={showSkipped}
+            onChange={(e) => setShowSkipped(e.target.checked)}
+          />
+          Show skipped
+        </label>
       </div>
 
-      {history.map((item, index) => (
-        <div className="w-full flex flex-row gap-x-4" key={`history-item-${index}`}>
-          {item.profiles.map((p, pIndex) => (
-            <div key={`history-item-${index}-profile-${pIndex}`} className="flex flex-col gap-y-1">
-              {p.name}
-            </div>
-          ))}
-        </div>
-      ))}
+      <ul className="flex flex-col gap-y-4 overflow-y-auto">
+        {history
+          .filter(item => showSkipped && item.rollType === RollType.SKIP || item.rollType === RollType.COMMIT)
+          .map((item, index) => (
+            <li className={`w-full flex flex-col justify-between bg-eclipse-500 rounded-lg p-3 gap-y-1`} key={`history-item-${item.id}`}>
+              <div className={`w-full flex flex-row justify-start items-center`}>
+                {item.rollType === RollType.COMMIT &&
+                  <p className="flex flex-row items-center gap-x-1 text-jump-500">
+                    <SpaceshipIcon />
+                    Committed
+                  </p>
+                }
+                {item.rollType === RollType.SKIP &&
+                  <p className="flex flex-row items-center gap-x-1 text-command-500">
+                    <RefreshIcon />
+                    Skipped
+                  </p>
+                }
+              </div>
+
+              <div className="w-full flex flex-row justify-between items-center gap-x-2">
+                {item.profiles.map((p, pIndex) => (
+                  <div key={`history-item-${index}-profile-${pIndex}`} className="flex flex-col items-center flex-1">
+                    <img className="size-24 rounded-sm object-contain" loading="eager" src={p.imageRoute ? imageBaseURL + p.imageRoute : "/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
+                    {p.name}
+                  </div>
+                ))}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
     </aside>
   );
 }

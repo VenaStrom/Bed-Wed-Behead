@@ -59,9 +59,14 @@ export type FilterCategoryMeta = {
   label?: string; // Help text for the category toggle
 };
 
+export const RollType = {
+  SKIP: "skip",
+  COMMIT: "commit",
+};
+export type RollType = typeof RollType[keyof typeof RollType];
 export type HistoryItem = {
   id: string;
   profiles: ProfileStates; // 3 profiles
   date: Date;
-  rollType: "skip" | "commit";
+  rollType: RollType;
 };

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshIcon, SpaceshipIcon, SpinnerIcon } from "./components/icons.tsx";
-import { emptyProfile, ProfileStates, Character, Filters, FilterCategoryMeta, HistoryItem } from "./types.ts";
+import { emptyProfile, ProfileStates, Character, Filters, FilterCategoryMeta, HistoryItem, RollType } from "./types.ts";
 import { defaultFilters, defaultFilterCategories, filterCharacters } from "./functions/filters.tsx";
 import FilterPanel, { FilterPanelButton } from "./components/filter-panel.tsx";
 import HistoryPanel, { HistoryPanelButton } from "./components/history-panel.tsx";
@@ -195,7 +195,7 @@ export default function App() {
     }
 
     // Add to history
-    if (type === "commit" || type === "skip") {
+    if (type === RollType.COMMIT || type === RollType.SKIP) {
       const newHistoryItem: HistoryItem = {
         id: Math.random().toString(36).slice(2, 9),
         rollType: type,
@@ -363,7 +363,6 @@ export default function App() {
         persistent={persistentHistory}
         isOpen={isHistoryPanelExpanded}
         history={history}
-        characters={characters}
       />
 
       <FilterPanel
