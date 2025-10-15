@@ -1,6 +1,6 @@
-import { HistoryItem, RollType } from "../types.ts";
-import { CloseIcon, HistoryIcon, RefreshIcon, SpaceshipIcon } from "./icons.tsx";
-import { imageBaseURL } from "../app.tsx";
+import { BWBChoice, HistoryItem, RollType } from "../types.ts";
+import { BedIcon, CloseIcon, ExternalLinkIcon, HistoryIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon } from "./icons.tsx";
+import { imageBaseURL, wikiBaseUrl } from "../app.tsx";
 import { useState } from "react";
 
 export default function HistoryPanel({
@@ -93,7 +93,8 @@ export default function HistoryPanel({
           .filter(item => showSkipped && item.rollType === RollType.SKIP || item.rollType === RollType.COMMIT)
           .map((item, index) => (
             <li className={`w-full flex flex-col justify-between bg-eclipse-500 rounded-lg p-3 gap-y-1`} key={`history-item-${item.id}`}>
-              <div className={`w-full flex flex-row justify-start items-center`}>
+              {/* Roll type */}
+              <div className={`w-full flex flex-row justify-between items-center pb-1`}>
                 {item.rollType === RollType.COMMIT &&
                   <p className="flex flex-row items-center gap-x-1 text-jump-500">
                     <SpaceshipIcon />
@@ -106,16 +107,59 @@ export default function HistoryPanel({
                     Skipped
                   </p>
                 }
+
+                <span className="text-xs">
+                  {new Date(item.date).toLocaleString()}
+                </span>
               </div>
 
+              {/* Images */}
               <div className="w-full flex flex-row justify-between items-center gap-x-2">
                 {item.profiles.map((p, pIndex) => (
-                  <div key={`history-item-${index}-profile-${pIndex}`} className="flex flex-col items-center flex-1">
+                  <a
+                    key={`history-item-${index}-profile-${pIndex}`}
+                    className="flex flex-col items-center flex-1 text-sm gap-y-2"
+                    href={p.wikiRoute ? wikiBaseUrl + p.wikiRoute : undefined}
+                    target="_blank" rel="noopener"
+                  >
                     <img className="size-24 rounded-sm object-contain" loading="eager" src={p.imageRoute ? imageBaseURL + p.imageRoute : "/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
-                    {p.name}
-                  </div>
+                    <span>
+                      {p.name}
+                      <ExternalLinkIcon className="size-4 inline ms-1" />
+                    </span>
+                  </a>
                 ))}
               </div>
+
+              {/* Selected options */}
+              {item.rollType === RollType.COMMIT &&
+                <div className="w-full flex flex-row justify-between items-center gap-x-2">
+                  {item.profiles.map(p => (
+                    <span className="flex-1 flex flex-row gap-x-2 justify-center items-center [&>svg]:text-jump-500">
+                      {p.selectedOption === BWBChoice.BED ? <>
+                        <BedIcon className="size-8 scale-105" />
+                        {BWBChoice.BED}
+                      </>
+                        :
+                        p.selectedOption === BWBChoice.WED ? <>
+                          <WeddingIcon className="size-8 scale-[85%]" />
+                          {BWBChoice.WED}
+                        </>
+                          :
+                          p.selectedOption === BWBChoice.BEHEAD ? <>
+                            <SwordIcon className="size-8 scale-[70%]" />
+                            {BWBChoice.BEHEAD}
+                          </>
+                            :
+                            <>
+                              <CloseIcon className="size-8" />
+                              Error
+                            </>
+                      }
+                    </span>
+                  ))}
+                </div>
+              }
             </li>
           ))
         }
