@@ -133,7 +133,7 @@ export default function HistoryPanel({
                       href={p.wikiRoute ? wikiBaseUrl + p.wikiRoute : undefined}
                       target="_blank" rel="noopener"
                     >
-                      <img className="size-24 rounded-sm object-contain" loading="eager" src={p.imageRoute ? imageBaseURL + p.imageRoute : "/Bed-Wed-Behead/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
+                      <img className="size-24 rounded-sm object-contain" src={p.imageRoute ? imageBaseURL + p.imageRoute : "/Bed-Wed-Behead/alien-headshot.png"} alt="Headshot of character" />
                       <span>
                         {p.name}
                         <ExternalLinkIcon className="size-4 inline ms-1" />
@@ -147,8 +147,11 @@ export default function HistoryPanel({
                 <div className="w-full flex flex-row justify-between items-center gap-x-2">
                   {item.profiles
                     .sort(sortByChoice)
-                    .map(p => (
-                      <span className="flex-1 flex flex-row gap-x-2 justify-center items-center [&>svg]:text-jump-500">
+                    .map((p, pIndex) => (
+                      <span
+                        className="flex-1 flex flex-row gap-x-2 justify-center items-center [&>svg]:text-jump-500"
+                        key={`history-item-${index}-profile-choice-${pIndex}`}
+                      >
                         {p.selectedOption === BWBChoice.BED ? <>
                           <BedIcon className="size-8 scale-105" />
                           {BWBChoice.BED}

@@ -50,8 +50,6 @@ jobs:
         with:
           # Upload dist folder
           path: "./dist"
-          # Distribute dist into root of the site
-          destination-dir: "/"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

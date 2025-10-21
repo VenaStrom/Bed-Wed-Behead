@@ -24,7 +24,7 @@ export default function Profile({
         `}
         target="_blank" rel="noopener"
       >
-        <img className="size-48 rounded-sm object-contain" loading="eager" src={profile.imageRoute ? imageBaseURL + profile.imageRoute : "/Bed-Wed-Behead/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
+        <img className="size-48 rounded-sm object-contain" loading="eager" src={profile.imageRoute ? imageBaseURL + profile.imageRoute : "/Bed-Wed-Behead/alien-headshot.png"} alt="Headshot of character" />
 
         <div className="w-full flex flex-row items-center justify-center gap-x-2 h-9">
           <p className="flex-1 text-base text-center max-w-[18ch]">{profile.name || "..."}</p>
