@@ -58,7 +58,7 @@ export default function App() {
     if (hasFetchedCharData) return;
     setHasFetchedCharData(true);
 
-    fetch("/db/characters.min.json")
+    fetch("/Bed-Wed-Behead/db/characters.min.json")
       .then(res => res.json())
       .then(chars => setCharacters(chars))
       .then(() => console.log(`Fetched characters.min.json in ${Date.now() - fetchTimes.characters} ms`))
@@ -68,7 +68,7 @@ export default function App() {
         alert("A critical error occurred while fetching character data")
       });
 
-    fetch("/db/category-lookup.min.json")
+    fetch("/Bed-Wed-Behead/db/category-lookup.min.json")
       .then(res => res.json())
       .then(lookup => setCategoryLookup(lookup))
       .then(() => console.log(`Fetched category-lookup.min.json in ${Date.now() - fetchTimes.categoryLookup} ms`))
@@ -78,7 +78,7 @@ export default function App() {
         alert("A critical error occurred while fetching category lookup data")
       });
 
-    fetch("/db/appearance-canon-lookup.min.json")
+    fetch("/Bed-Wed-Behead/db/appearance-canon-lookup.min.json")
       .then(res => res.json())
       .then(lookup => setAppearanceCLookup(lookup))
       .then(() => console.log(`Fetched appearance-canon-lookup.min.json in ${Date.now() - fetchTimes.appearanceCLookup} ms`))
@@ -88,7 +88,7 @@ export default function App() {
         alert("A critical error occurred while fetching appearance (canon) lookup data")
       });
 
-    fetch("/db/appearance-non-canon-lookup.min.json")
+    fetch("/Bed-Wed-Behead/db/appearance-non-canon-lookup.min.json")
       .then(res => res.json())
       .then(lookup => setAppearanceNCLookup(lookup))
       .then(() => console.log(`Fetched appearance-non-canon-lookup.min.json in ${Date.now() - fetchTimes.appearanceNCLookup} ms`))
@@ -98,7 +98,7 @@ export default function App() {
         alert("A critical error occurred while fetching appearance (non-canon) lookup data")
       });
 
-    fetch("/db/appearance-legends-lookup.min.json")
+    fetch("/Bed-Wed-Behead/db/appearance-legends-lookup.min.json")
       .then(res => res.json())
       .then(lookup => setAppearanceLLookup(lookup))
       .then(() => console.log(`Fetched appearance-legends-lookup.min.json in ${Date.now() - fetchTimes.appearanceLLookup} ms`))
@@ -108,7 +108,7 @@ export default function App() {
         alert("A critical error occurred while fetching appearance (legends) lookup data")
       });
 
-    fetch("/db/appearance-non-canon-legends-lookup.min.json")
+    fetch("/Bed-Wed-Behead/db/appearance-non-canon-legends-lookup.min.json")
       .then(res => res.json())
       .then(lookup => setAppearanceNCLLookup(lookup))
       .then(() => console.log(`Fetched appearance-non-canon-legends-lookup.min.json in ${Date.now() - fetchTimes.appearanceNCLLookup} ms`))
@@ -326,7 +326,7 @@ export default function App() {
     <main className="flex flex-col h-screen items-center gap-y-6 pt-7">
       {/* Heading */}
       <header className="flex flex-col items-center gap-y-2 justify-center">
-        <img className="min-h-16 max-h-full" src="/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
+        <img className="min-h-16 max-h-full" src="/Bed-Wed-Behead/bwb-logo.png" title="[Aurebesh] Bed Wed & Behead" alt="Bed Wed & Behead" />
         <h1 className="text-center text-xl italic font-semibold">
           Bed Wed & Behead
         </h1>

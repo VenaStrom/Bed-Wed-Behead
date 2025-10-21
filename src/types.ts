@@ -10,7 +10,7 @@ export type ProfileStates = [ProfileState, ProfileState, ProfileState];
 export const emptyProfile: ProfileState = {
   name: null,
   wikiRoute: null,
-  imageRoute: "/alien-headshot.png",
+  imageRoute: "/Bed-Wed-Behead/alien-headshot.png",
   selectedOption: null,
 } as const;
 

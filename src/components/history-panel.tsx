@@ -133,7 +133,7 @@ export default function HistoryPanel({
                       href={p.wikiRoute ? wikiBaseUrl + p.wikiRoute : undefined}
                       target="_blank" rel="noopener"
                     >
-                      <img className="size-24 rounded-sm object-contain" loading="eager" src={p.imageRoute ? imageBaseURL + p.imageRoute : "/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
+                      <img className="size-24 rounded-sm object-contain" loading="eager" src={p.imageRoute ? imageBaseURL + p.imageRoute : "/Bed-Wed-Behead/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
                       <span>
                         {p.name}
                         <ExternalLinkIcon className="size-4 inline ms-1" />
