@@ -1,4 +1,4 @@
-import { BWBChoice, HistoryItem, RollType } from "../types.ts";
+import { BWBChoice, HistoryItem, ProfileState, RollType } from "../types.ts";
 import { BedIcon, CloseIcon, ExternalLinkIcon, HistoryIcon, RefreshIcon, SpaceshipIcon, SwordIcon, WeddingIcon } from "./icons.tsx";
 import { imageBaseURL, wikiBaseUrl } from "../app.tsx";
 import { useState } from "react";
@@ -21,6 +21,15 @@ export default function HistoryPanel({
   setPersistent: (persistent: boolean) => void;
 }) {
   const [showSkipped, setShowSkipped] = useState<boolean>(false);
+
+  function sortByChoice(a: ProfileState, b: ProfileState) {
+    const order: BWBChoice[] = [BWBChoice.BED, BWBChoice.WED, BWBChoice.BEHEAD];
+
+    if (!a.selectedOption) return 1;
+    if (!b.selectedOption) return -1;
+
+    return order.indexOf(a.selectedOption as BWBChoice) - order.indexOf(b.selectedOption as BWBChoice);
+  }
 
   return (
     <aside
@@ -115,49 +124,53 @@ export default function HistoryPanel({
 
               {/* Images */}
               <div className="w-full flex flex-row justify-between items-center gap-x-2">
-                {item.profiles.map((p, pIndex) => (
-                  <a
-                    key={`history-item-${index}-profile-${pIndex}`}
-                    className="flex flex-col items-center flex-1 text-sm gap-y-2"
-                    href={p.wikiRoute ? wikiBaseUrl + p.wikiRoute : undefined}
-                    target="_blank" rel="noopener"
-                  >
-                    <img className="size-24 rounded-sm object-contain" loading="eager" src={p.imageRoute ? imageBaseURL + p.imageRoute : "/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
-                    <span>
-                      {p.name}
-                      <ExternalLinkIcon className="size-4 inline ms-1" />
-                    </span>
-                  </a>
-                ))}
+                {item.profiles
+                  .sort(sortByChoice)
+                  .map((p, pIndex) => (
+                    <a
+                      key={`history-item-${index}-profile-${pIndex}`}
+                      className="flex flex-col items-center flex-1 text-sm gap-y-2"
+                      href={p.wikiRoute ? wikiBaseUrl + p.wikiRoute : undefined}
+                      target="_blank" rel="noopener"
+                    >
+                      <img className="size-24 rounded-sm object-contain" loading="eager" src={p.imageRoute ? imageBaseURL + p.imageRoute : "/alien-headshot.png"} crossOrigin="anonymous" alt="Headshot of character" />
+                      <span>
+                        {p.name}
+                        <ExternalLinkIcon className="size-4 inline ms-1" />
+                      </span>
+                    </a>
+                  ))}
               </div>
 
               {/* Selected options */}
               {item.rollType === RollType.COMMIT &&
                 <div className="w-full flex flex-row justify-between items-center gap-x-2">
-                  {item.profiles.map(p => (
-                    <span className="flex-1 flex flex-row gap-x-2 justify-center items-center [&>svg]:text-jump-500">
-                      {p.selectedOption === BWBChoice.BED ? <>
-                        <BedIcon className="size-8 scale-105" />
-                        {BWBChoice.BED}
-                      </>
-                        :
-                        p.selectedOption === BWBChoice.WED ? <>
-                          <WeddingIcon className="size-8 scale-[85%]" />
-                          {BWBChoice.WED}
+                  {item.profiles
+                    .sort(sortByChoice)
+                    .map(p => (
+                      <span className="flex-1 flex flex-row gap-x-2 justify-center items-center [&>svg]:text-jump-500">
+                        {p.selectedOption === BWBChoice.BED ? <>
+                          <BedIcon className="size-8 scale-105" />
+                          {BWBChoice.BED}
                         </>
                           :
-                          p.selectedOption === BWBChoice.BEHEAD ? <>
-                            <SwordIcon className="size-8 scale-[70%]" />
-                            {BWBChoice.BEHEAD}
+                          p.selectedOption === BWBChoice.WED ? <>
+                            <WeddingIcon className="size-8 scale-[85%]" />
+                            {BWBChoice.WED}
                           </>
                             :
-                            <>
-                              <CloseIcon className="size-8" />
-                              Error
+                            p.selectedOption === BWBChoice.BEHEAD ? <>
+                              <SwordIcon className="size-8 scale-[70%]" />
+                              {BWBChoice.BEHEAD}
                             </>
-                      }
-                    </span>
-                  ))}
+                              :
+                              <>
+                                <CloseIcon className="size-8" />
+                                Error
+                              </>
+                        }
+                      </span>
+                    ))}
                 </div>
               }
             </li>
