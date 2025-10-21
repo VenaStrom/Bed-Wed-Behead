@@ -49,6 +49,7 @@ export type FilterItem = {
   label: string;
   description: string | ReactNode;
   state: boolean;
+  threshold?: number; // Only for filters that require a numeric threshold
 };
 export type Filters = FilterItem[];
 

@@ -44,6 +44,7 @@ const defaultFiltersStatic = [
     label: "Only common",
     description: "Show only characters that have many appearances.",
     state: false,
+    threshold: 20, // Default threshold for common characters
   },
   {
     category: FilterCategoryID.miscellaneous,
@@ -265,7 +266,12 @@ const otherGenderHashes = [
   "f1253d40", // 'Droids with they/them pronouns'
 ];
 
-export function filterCharacters(characters: Character[], filters: Filters, categories: FilterCategoryMeta[], categoryLookup: Record<string, string>): Character[] {
+export function filterCharacters(
+  characters: Character[],
+  filters: Filters,
+  categories: FilterCategoryMeta[],
+  categoryLookup: Record<string, string>,
+): Character[] {
   if (filters.length === 0) return characters;
 
   const miscellaneous = extractCategory(FilterCategoryID.miscellaneous, categories, filters);
@@ -273,7 +279,7 @@ export function filterCharacters(characters: Character[], filters: Filters, cate
     characters = characters.filter(c => {
       if (miscellaneous.filters["only-with-images"] && !c.image) return false;
       if (miscellaneous.filters["only-identified"] && c.name.startsWith("Unidentified")) return false;
-      if (miscellaneous.filters["only-common"] && (c.canonAppearances?.length || 0) + (c.legendsAppearances?.length || 0) < 20) return false;
+      if (miscellaneous.filters["only-common"] && (c.canonAppearances?.length || 0) + (c.legendsAppearances?.length || 0) < (filters.find(c => c.id === "only-common")?.threshold || 20)) return false;
       if (!miscellaneous.filters["allow-droids"] && c.categories && c.categories.some(hash => categoryLookup[hash].toLowerCase().includes("droid"))) return false;
       return true;
     });

@@ -133,7 +133,7 @@ export default function FilterPanel({
 
               {/* All filter options in category */}
               {filters.filter(f => f.category === category.id).map(f =>
-                <li key={`filter-${f.id}`} className="flex flex-row justify-start items-center gap-x-3">
+                <li key={`filter-${f.id}`} className="flex flex-col justify-start items-start gap-x-3">
                   <label className="flex flex-row justify-start items-center gap-x-3 cursor-pointer ps-0.5 w-full">
                     <input
                       className="size-5 min-w-5"
@@ -150,6 +150,18 @@ export default function FilterPanel({
                       <span className="text-xs italic text-star/70">{f.description}</span>
                     </div>
                   </label>
+                  {f.threshold !== undefined &&
+                    <label className="flex flex-row gap-x-3 ps-1 pe-10 w-full">
+                      {f.threshold}
+                      <input type="range" className="flex-1"
+                        step={1} min={0} max={700} value={f.threshold}
+                        onChange={(e) => {
+                          const newFilters = filters.map(fl => fl.id === f.id ? { ...fl, threshold: Number(e.target.value) } : fl);
+                          setFilters(newFilters);
+                        }}
+                      />
+                    </label>
+                  }
                 </li>
               )}
             </ul>
