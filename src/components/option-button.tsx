@@ -1,22 +1,22 @@
 import { useMemo } from "react";
-import { BWBChoice, ProfileState } from "../types.ts";
+import { BWBChoice, ProfileStates } from "../types.ts";
 
 export default function OptionButton({
   profiles,
-  setProfiles: profilesSetter,
-  index: i,
+  setProfiles,
+  index: profileIndex,
   icon,
   label,
   ...props
 }: {
-  profiles: [ProfileState, ProfileState, ProfileState];
-  setProfiles: React.Dispatch<React.SetStateAction<[ProfileState, ProfileState, ProfileState]>>;
+  profiles: ProfileStates;
+  setProfiles: React.Dispatch<React.SetStateAction<ProfileStates>>;
   index: number;
   icon: React.ReactNode;
   label: BWBChoice;
 } & React.LabelHTMLAttributes<HTMLLabelElement>
 ) {
-  const toggled = useMemo(() => profiles[i].selectedOption === label as BWBChoice, [profiles, i, label]);
+  const toggled = useMemo(() => profiles[profileIndex].selectedOption === label as BWBChoice, [profiles, profileIndex, label]);
 
   return (
     <label
@@ -41,26 +41,26 @@ export default function OptionButton({
 
       <input
         onChange={() => {
-          const newProfiles = [...profiles] as [ProfileState, ProfileState, ProfileState];
+          const newProfiles = [...profiles] as ProfileStates;
 
           // Set this profile normally
-          newProfiles[i] = {
-            ...newProfiles[i],
+          newProfiles[profileIndex] = {
+            ...newProfiles[profileIndex],
             selectedOption: toggled ? null : label,
           };
 
-          const otherProfileIndexes = [0, 1, 2].filter((i) => i !== i);
+          const otherProfileIndexes: number[] = [0, 1, 2].filter((i) => i !== profileIndex);
 
           if (otherProfileIndexes.some((i) => newProfiles[i].selectedOption === label)) {
             // If another profile has the same option, swap it with the current profile's option
             const otherProfileIndex = otherProfileIndexes.find((i) => newProfiles[i].selectedOption === label)!;
             newProfiles[otherProfileIndex] = {
               ...newProfiles[otherProfileIndex],
-              selectedOption: profiles[i].selectedOption,
+              selectedOption: profiles[profileIndex].selectedOption,
             };
           }
 
-          profilesSetter(newProfiles);
+          setProfiles(newProfiles);
         }}
         checked={toggled}
         className="hidden"

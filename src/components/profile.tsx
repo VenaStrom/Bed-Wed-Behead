@@ -5,12 +5,12 @@ import OptionButton from "./option-button.tsx";
 
 export default function Profile({
   profiles,
-  index: i,
   setProfiles,
+  index: i,
 }: {
   profiles: ProfileStates;
-  index: number;
   setProfiles: React.Dispatch<React.SetStateAction<ProfileStates>>;
+  index: number;
 }) {
   const profile = profiles[i];
   return (
